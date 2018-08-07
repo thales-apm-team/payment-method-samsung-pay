@@ -1,0 +1,1 @@
+# payment-method-samsung-pay
