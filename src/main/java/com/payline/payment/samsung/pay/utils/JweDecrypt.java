@@ -11,7 +11,6 @@ import java.util.Base64;
 
 public class JweDecrypt {
 
-
     public static final String RSA = "RSA";
     public static final String AES = "AES";
     public static final String AES_GCM_NO_PADDING = "AES/GCM/NoPadding";
@@ -26,6 +25,7 @@ public class JweDecrypt {
         String privateKeyFilePath = "./rsapriv.der";
         getDecryptedData(encPayload, privateKeyFilePath);
     }
+
     /**
      * @param encPayload encPayload.
      * @param privateKeyFilePath private key path.
@@ -66,4 +66,5 @@ public class JweDecrypt {
         }
         return new String(plainText);
     }
+
 }
