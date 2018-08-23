@@ -1,28 +1,24 @@
 package com.payline.payment.samsung.pay.bean.rest.request;
 
-import com.payline.payment.samsung.pay.exception.InvalidRequestException;
-import com.payline.pmapi.bean.payment.ContractProperty;
-import com.payline.pmapi.bean.payment.Order;
-import com.payline.pmapi.bean.payment.PaylineEnvironment;
-import com.payline.pmapi.bean.payment.request.PaymentRequest;
-import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
-
-import java.util.Map;
-
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.CONTRACT_CONFIG__MERCHANT_NAME;
 import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PARTNER_CONFIG__SERVICE_ID;
+
+import com.payline.payment.samsung.pay.exception.InvalidRequestException;
+import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
 
 /**
  * Created by Thales on 16/08/2018.
  */
-public class PaymentCredentialRequest {
+public class PaymentCredentialGetRequest {
 
     private String id;
 
     private String serviceId;
 
-    protected PaymentCredentialRequest(String id,
-                                       String serviceId) {
+    /**
+     * Constructor
+     */
+    protected PaymentCredentialGetRequest(String id,
+                                          String serviceId) {
 
         this.id         = id;
         this.serviceId  = serviceId;
@@ -37,15 +33,15 @@ public class PaymentCredentialRequest {
         return this.serviceId;
     }
 
-    public static class Builder {
+    public static final class Builder {
 
-        public PaymentCredentialRequest fromRedirectionPaymentRequest(RedirectionPaymentRequest paylineRequest) throws InvalidRequestException {
+        public PaymentCredentialGetRequest fromRedirectionPaymentRequest(RedirectionPaymentRequest paylineRequest) throws InvalidRequestException {
 
             // Check the input request for NPEs and mandatory fields
             this.checkInputRequest(paylineRequest);
 
-            // Instantiate the PaymentCredentialRequest from input request
-            PaymentCredentialRequest request = new PaymentCredentialRequest(
+            // Instantiate the PaymentCredentialGetRequest from input request
+            PaymentCredentialGetRequest request = new PaymentCredentialGetRequest(
                     paylineRequest.getTransactionId(),
                     paylineRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG__SERVICE_ID)
             );

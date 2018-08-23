@@ -1,9 +1,9 @@
-package com.payline.payment.samsung.pay.utils;
+package com.payline.payment.samsung.pay.utils.type;
 
 /**
  * Created by Thales on 21/08/2018.
  */
-public enum PaymentStatus {
+public enum PaymentStatusEnum {
 
     CHARGED,
     CANCELLED,

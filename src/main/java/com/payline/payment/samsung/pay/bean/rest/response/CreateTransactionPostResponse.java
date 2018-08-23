@@ -7,7 +7,7 @@ import com.payline.payment.samsung.pay.bean.rest.response.nesteed.EncryptionInfo
 /**
  * Created by Thales on 20/08/2018.
  */
-public class CreateTransactionResponse extends AbstractJsonResponse {
+public class CreateTransactionPostResponse extends AbstractJsonResponse {
 
     @SerializedName("id")
     private String id;
@@ -21,7 +21,7 @@ public class CreateTransactionResponse extends AbstractJsonResponse {
     /**
      * Constructor
      */
-    protected CreateTransactionResponse() {
+    protected CreateTransactionPostResponse() {
         super();
     }
 
@@ -37,10 +37,10 @@ public class CreateTransactionResponse extends AbstractJsonResponse {
         return this.encryptionInfo;
     }
 
-    public static class Builder {
-        public CreateTransactionResponse fromJson( String jsonContent ) {
+    public static final class Builder {
+        public CreateTransactionPostResponse fromJson(String jsonContent ) {
             Gson gson = new Gson();
-            return gson.fromJson( jsonContent, CreateTransactionResponse.class );
+            return gson.fromJson( jsonContent, CreateTransactionPostResponse.class );
         }
     }
 

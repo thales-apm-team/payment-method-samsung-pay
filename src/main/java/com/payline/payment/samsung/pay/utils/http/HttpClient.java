@@ -21,7 +21,7 @@ public abstract class HttpClient {
      * @param writeTimeout Default write timeout (in seconds) for new connections. A value of 0 means no timeout.
      * @param readTimeout Default read timeout (in seconds) for new connections. A value of 0 means no timeout.
      */
-    public HttpClient( int connectTimeout, int writeTimeout, int readTimeout ) {
+    protected HttpClient( int connectTimeout, int writeTimeout, int readTimeout ) {
 
         this.client = new OkHttpClient.Builder()
                 .connectTimeout( connectTimeout, TimeUnit.SECONDS )
@@ -43,7 +43,7 @@ public abstract class HttpClient {
      * @return The response returned from the HTTP call
      * @throws IOException
      */
-    public Response doPost(String scheme, String host, String path, RequestBody body, String contentType, String requestId)
+    protected Response doPost(String scheme, String host, String path, RequestBody body, String contentType, String requestId)
             throws IOException {
 
         // create url
@@ -78,7 +78,7 @@ public abstract class HttpClient {
      * @return The response returned from the HTTP call
      * @throws IOException
      */
-    public Response doGet(String scheme, String host, String path, Map<String, String> queryAttributes, String contentType, String requestId)
+    protected Response doGet(String scheme, String host, String path, Map<String, String> queryAttributes, String contentType, String requestId)
             throws IOException {
 
         // create url

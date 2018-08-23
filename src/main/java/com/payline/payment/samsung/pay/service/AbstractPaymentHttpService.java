@@ -1,22 +1,24 @@
 package com.payline.payment.samsung.pay.service;
 
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
+
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
-import com.payline.payment.samsung.pay.exception.InvalidRequestException;
-import com.payline.payment.samsung.pay.utils.config.ConfigProperties;
-import com.payline.payment.samsung.pay.utils.http.JsonHttpClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.payline.payment.samsung.pay.bean.rest.response.AbstractJsonResponse;
+import com.payline.payment.samsung.pay.exception.InvalidRequestException;
+import com.payline.payment.samsung.pay.utils.config.ConfigProperties;
+import com.payline.payment.samsung.pay.utils.http.JsonHttpClient;
+import com.payline.payment.samsung.pay.utils.type.WSRequestResultEnum;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.bean.payment.response.PaymentResponseFailure;
 
 import okhttp3.Response;
-
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
 
 /**
  * This abstract service handles the common issues encountered when sending, receiving and processing a {@link PaymentRequest} (or subclass)
@@ -26,8 +28,6 @@ import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
 public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
 
     private static final Logger logger = LogManager.getLogger( AbstractPaymentHttpService.class );
-
-    private static final String DEFAULT_ERROR_CODE = "no code transmitted";
 
     protected JsonHttpClient httpClient;
 
@@ -50,7 +50,7 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
      * @throws InvalidRequestException Thrown if the input request in not valid
      * @throws NoSuchAlgorithmException Thrown if the HMAC algorithm is not available
      */
-    public abstract Response createSendRequest(T paymentRequest ) throws IOException, InvalidRequestException, NoSuchAlgorithmException;
+    public abstract Response createSendRequest(T paymentRequest ) throws IOException, InvalidRequestException;
 
     /**
      * Process the response from the HTTP call.
@@ -75,28 +75,42 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
             // Mandate the child class to create and send the request (which is specific to each implementation)
             Response response = this.createSendRequest( paymentRequest );
 
-            if ( response != null && response.code() == 200 && response.body() != null ) {
+            if ( response != null && response.code() == HTTP_OK && response.body() != null ) {
                 // Mandate the child class to process the request when it's OK (which is specific to each implementation)
                 return this.processResponse( response );
-            } else if ( response != null && response.code() != 200 ) {
-                logger.error( "An HTTP error occurred while sending the request: " + response.message() );
+            } else if ( response != null && response.code() != HTTP_OK ) {
+                this.logger.error( "An HTTP error occurred while sending the request: " + response.message() );
                 return buildPaymentResponseFailure( Integer.toString( response.code() ), FailureCause.COMMUNICATION_ERROR );
             } else {
-                logger.error( "The HTTP response or its body is null and should not be" );
+                this.logger.error( "The HTTP response or its body is null and should not be" );
                 return buildPaymentResponseFailure( DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR );
             }
 
         } catch ( InvalidRequestException e ) {
-            logger.error( "The input payment request is invalid: " + e.getMessage() );
+            this.logger.error( "The input payment request is invalid: " + e.getMessage() );
             return buildPaymentResponseFailure( DEFAULT_ERROR_CODE, FailureCause.INVALID_DATA );
         } catch ( IOException e ) {
-            logger.error( "An IOException occurred while sending the HTTP request or receiving the response: " + e.getMessage() );
+            this.logger.error( "An IOException occurred while sending the HTTP request or receiving the response: " + e.getMessage() );
             return buildPaymentResponseFailure( DEFAULT_ERROR_CODE, FailureCause.COMMUNICATION_ERROR );
         } catch ( Exception e ) {
-            logger.error( "An unexpected error occurred: ", e );
+            this.logger.error( "An unexpected error occurred: ", e );
             return buildPaymentResponseFailure( DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR );
         }
 
+    }
+
+    /**
+     *
+     * @param response
+     * @return
+     */
+    protected PaymentResponse processGenericErrorResponse(AbstractJsonResponse response) {
+        WSRequestResultEnum resultEnum = WSRequestResultEnum.fromResultCodeValue(response.getResultCode());
+        if (resultEnum != null) {
+            return buildPaymentResponseFailure( response.getResultMessage(), resultEnum.getPaylineResult() );
+        } else {
+            return buildPaymentResponseFailure( response.getResultMessage(), FailureCause.INVALID_DATA );
+        }
     }
 
     /**

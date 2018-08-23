@@ -33,7 +33,7 @@ public class JsonHttpClient extends HttpClient {
      * @throws IOException
      */
     public Response doPost(String scheme, String host, String path, String jsonContent ) throws IOException {
-        // FIXME : Use the right X-Request-Id
+        // FIXME : Cf. Confluence Q4 - Use the right X-Request-Id
         String requestId = "0123456789";
         RequestBody body = RequestBody.create( MediaType.parse( CONTENT_TYPE ), jsonContent );
         return super.doPost( scheme, host, path, body, CONTENT_TYPE, requestId );
@@ -49,7 +49,7 @@ public class JsonHttpClient extends HttpClient {
      * @throws IOException
      */
     public Response doGet(String scheme, String host, String path, Map<String, String> queryAttributes ) throws IOException {
-        // FIXME : Use the right X-Request-Id
+        // FIXME : Cf. Confluence Q4 - Use the right X-Request-Id
         String requestId = "0123456789";
         return super.doGet( scheme, host, path, queryAttributes, CONTENT_TYPE, requestId );
     }

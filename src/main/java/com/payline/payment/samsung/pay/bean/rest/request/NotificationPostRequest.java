@@ -6,13 +6,13 @@ import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PAYMENT_
 import com.google.gson.annotations.SerializedName;
 import com.payline.payment.samsung.pay.bean.rest.request.nesteed.Payment;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
-import com.payline.payment.samsung.pay.utils.PaymentStatus;
+import com.payline.payment.samsung.pay.utils.type.PaymentStatusEnum;
 import com.payline.pmapi.bean.payment.request.NotifyTransactionStatusRequest;
 
 /**
  * Created by Thales on 16/08/2018.
  */
-public class NotificationRequest extends AbstractJsonRequest {
+public class NotificationPostRequest extends AbstractJsonRequest {
 
     @SerializedName("payment")
     private Payment payment;
@@ -20,23 +20,26 @@ public class NotificationRequest extends AbstractJsonRequest {
     @SerializedName("timestamp")
     private Long timestamp;
 
-    protected NotificationRequest(Payment payment,
-                                  Long timestamp) {
+    /**
+     * Constructor
+     */
+    protected NotificationPostRequest(Payment payment,
+                                      Long timestamp) {
 
         this.payment    = payment;
         this.timestamp  = timestamp;
 
     }
 
-    public static class Builder {
+    public static final class Builder {
 
-        public NotificationRequest fromNotifyTransactionStatusRequest(NotifyTransactionStatusRequest paylineRequest) throws InvalidRequestException {
+        public NotificationPostRequest fromNotifyTransactionStatusRequest(NotifyTransactionStatusRequest paylineRequest) throws InvalidRequestException {
 
             // Check the input request for NPEs and mandatory fields
             this.checkInputRequest(paylineRequest);
 
-            // Instantiate the CreateTransactionRequest from input request
-            NotificationRequest request = new NotificationRequest(
+            // Instantiate the CreateTransactionPostRequest from input request
+            NotificationPostRequest request = new NotificationPostRequest(
                     this.getPaymentFromPaymentRequest(paylineRequest),
                     System.currentTimeMillis()
             );
@@ -102,10 +105,10 @@ public class NotificationRequest extends AbstractJsonRequest {
         private String convertTransactionStatusToPaymentStatus(NotifyTransactionStatusRequest.TransactionStatus status) {
             String paymentStatus = "";
             if (NotifyTransactionStatusRequest.TransactionStatus.SUCCESS.equals(status)) {
-                paymentStatus = PaymentStatus.CHARGED.name();
+                paymentStatus = PaymentStatusEnum.CHARGED.name();
             }
             if (NotifyTransactionStatusRequest.TransactionStatus.FAIL.equals(status)) {
-                paymentStatus = PaymentStatus.ERRED.name();
+                paymentStatus = PaymentStatusEnum.ERRED.name();
             }
             return paymentStatus;
         }

@@ -10,7 +10,7 @@ import com.payline.payment.samsung.pay.bean.rest.response.nesteed.Data3DS;
 /**
  * Created by Thales on 20/08/2018.
  */
-public class PaymentCredentialResponse extends AbstractJsonResponse {
+public class PaymentCredentialGetResponse extends AbstractJsonResponse {
 
     @SerializedName("method")
     private String method;
@@ -30,7 +30,7 @@ public class PaymentCredentialResponse extends AbstractJsonResponse {
     /**
      * Constructor
      */
-    protected PaymentCredentialResponse() {
+    protected PaymentCredentialGetResponse() {
         super();
     }
 
@@ -54,10 +54,10 @@ public class PaymentCredentialResponse extends AbstractJsonResponse {
         return this.certificates;
     }
 
-    public static class Builder {
-        public PaymentCredentialResponse fromJson( String jsonContent ) {
+    public static final class Builder {
+        public PaymentCredentialGetResponse fromJson(String jsonContent ) {
             Gson gson = new Gson();
-            return gson.fromJson( jsonContent, PaymentCredentialResponse.class );
+            return gson.fromJson( jsonContent, PaymentCredentialGetResponse.class );
         }
     }
 

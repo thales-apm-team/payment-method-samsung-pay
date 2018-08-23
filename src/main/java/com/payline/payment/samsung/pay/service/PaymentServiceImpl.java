@@ -3,12 +3,17 @@ package com.payline.payment.samsung.pay.service;
 import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
 
 import java.io.IOException;
+import java.net.URL;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
 
+import com.payline.payment.samsung.pay.bean.rest.request.CreateTransactionPostRequest;
+import com.payline.payment.samsung.pay.bean.rest.response.CreateTransactionPostResponse;
+import com.payline.pmapi.bean.payment.response.PaymentResponseRedirect;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.payline.payment.samsung.pay.bean.rest.request.CreateTransactionRequest;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.payment.samsung.pay.utils.config.ConfigEnvironment;
 import com.payline.payment.samsung.pay.utils.config.ConfigProperties;
@@ -18,6 +23,8 @@ import com.payline.pmapi.service.PaymentService;
 
 import okhttp3.Response;
 
+import static com.payline.pmapi.bean.payment.response.PaymentResponseRedirect.RedirectionRequest;
+
 /**
  * Created by Thales on 16/08/2018.
  */
@@ -25,44 +32,80 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
 
     private static final Logger logger = LogManager.getLogger( PaymentServiceImpl.class );
 
-    private CreateTransactionRequest.Builder requestBuilder;
+    private CreateTransactionPostRequest.Builder requestBuilder;
 
+    private PaymentRequest paymentRequest;
+
+    /**
+     * Default public constructor
+     */
     public PaymentServiceImpl() {
         super();
-        this.requestBuilder = new CreateTransactionRequest.Builder();
+        this.requestBuilder = new CreateTransactionPostRequest.Builder();
     }
 
     @Override
     public PaymentResponse paymentRequest(PaymentRequest paymentRequest) {
-        return processRequest(paymentRequest);
+        this.paymentRequest = paymentRequest;
+        return this.processRequest(paymentRequest);
     }
 
     @Override
-    public Response createSendRequest(PaymentRequest paymentRequest) throws IOException, InvalidRequestException, NoSuchAlgorithmException {
+    public Response createSendRequest(PaymentRequest paymentRequest) throws IOException, InvalidRequestException {
 
         // Create CreateTransaction request from Payline request
-        CreateTransactionRequest createTransactionRequest = this.requestBuilder.fromPaymentRequest(paymentRequest);
+        CreateTransactionPostRequest createTransactionPostRequest = this.requestBuilder.fromPaymentRequest(paymentRequest);
 
         // Send CreateTransaction request
         ConfigEnvironment environment = Boolean.FALSE.equals( paymentRequest.getPaylineEnvironment().isSandbox() ) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
 
         String scheme   = ConfigProperties.get(CONFIG__SHEME, environment);
         String host     = ConfigProperties.get(CONFIG__HOST, environment);
-        String path     = ConfigProperties.get(CONFIG__PATH_TRANSACTION, environment);
+        String path     = ConfigProperties.get(CONFIG__PATH_TRANSACTION);
 
-        return httpClient.doPost(
+        return this.httpClient.doPost(
                 scheme,
                 host,
                 path,
-                createTransactionRequest.buildBody()
+                createTransactionPostRequest.buildBody()
         );
 
     }
 
     @Override
     public PaymentResponse processResponse(Response response) throws IOException {
-        // TODO
-        return null;
+
+        // Parse response
+        CreateTransactionPostResponse createTransactionPostResponse = new CreateTransactionPostResponse.Builder().fromJson(response.body().toString());
+
+        if (createTransactionPostResponse.isResultOk()) {
+
+            // FIXME : Cf. Confluence Q5
+            URL url = new URL(null);
+
+            // FIXME : Cf. Confluence Q5
+            Map<String, String> postFormData = new HashMap<>();
+
+            if (createTransactionPostResponse.getEncryptionInfo() != null) {
+                postFormData.put(MOD, createTransactionPostResponse.getEncryptionInfo().getMod());
+                postFormData.put(EXP, createTransactionPostResponse.getEncryptionInfo().getExp());
+                postFormData.put(KEY_ID, createTransactionPostResponse.getEncryptionInfo().getKeyId());
+            }
+
+            RedirectionRequest redirectionRequest = new RedirectionRequest( url, postFormData );
+
+            return PaymentResponseRedirect.PaymentResponseRedirectBuilder.aPaymentResponseRedirect()
+                    // RedirectionRequest param mandatory for builder checkIntegrity test
+                    .withRedirectionRequest(redirectionRequest)
+                    .withTransactionIdentifier(createTransactionPostResponse.getId())
+                    .build();
+
+        } else {
+
+            return this.processGenericErrorResponse(createTransactionPostResponse);
+
+        }
+
     }
 
 }

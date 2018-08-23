@@ -15,7 +15,7 @@ import com.payline.pmapi.bean.payment.request.PaymentRequest;
 /**
  * Created by Thales on 16/08/2018.
  */
-public class CreateTransactionRequest extends AbstractJsonRequest {
+public class CreateTransactionPostRequest extends AbstractJsonRequest {
 
     @SerializedName("callback")
     private String callback;
@@ -26,23 +26,23 @@ public class CreateTransactionRequest extends AbstractJsonRequest {
     /**
      * Constructor
      */
-    protected CreateTransactionRequest(String callback,
-                                       PaymentDetails paymentDetails) {
+    protected CreateTransactionPostRequest(String callback,
+                                           PaymentDetails paymentDetails) {
 
         this.callback           = callback;
         this.paymentDetails     = paymentDetails;
 
     }
 
-    public static class Builder {
+    public static final class Builder {
 
-        public CreateTransactionRequest fromPaymentRequest(PaymentRequest paylineRequest) throws InvalidRequestException {
+        public CreateTransactionPostRequest fromPaymentRequest(PaymentRequest paylineRequest) throws InvalidRequestException {
 
             // Check the input request for NPEs and mandatory fields
             this.checkInputRequest(paylineRequest);
 
-            // Instantiate the CreateTransactionRequest from input request
-            CreateTransactionRequest request = new CreateTransactionRequest(
+            // Instantiate the CreateTransactionPostRequest from input request
+            CreateTransactionPostRequest request = new CreateTransactionPostRequest(
                     paylineRequest.getPaylineEnvironment().getRedirectionReturnURL(),
                     this.getPaymentDetailsFromPaymentRequest(paylineRequest)
             );
