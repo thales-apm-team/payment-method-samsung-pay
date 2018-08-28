@@ -86,6 +86,7 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
             // FIXME : Cf. Confluence Q5
             Map<String, String> postFormData = new HashMap<>();
 
+            postFormData.put(HREF, createTransactionPostResponse.getHref());
             if (createTransactionPostResponse.getEncryptionInfo() != null) {
                 postFormData.put(MOD, createTransactionPostResponse.getEncryptionInfo().getMod());
                 postFormData.put(EXP, createTransactionPostResponse.getEncryptionInfo().getExp());

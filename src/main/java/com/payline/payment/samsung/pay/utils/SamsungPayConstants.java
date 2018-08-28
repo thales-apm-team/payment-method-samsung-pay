@@ -7,7 +7,8 @@ public class SamsungPayConstants {
 
     public static final String DEFAULT_ERROR_CODE = "no code transmitted";
 
-    // Request attributes
+    public static final String RES_LOGO_NAME = "samsung-pay-logo.jpg";
+
     public static final String ID               = "id";
     public static final String SERVICE          = "service";
     public static final String SERVICE_ID       = "serviceId";
@@ -25,6 +26,7 @@ public class SamsungPayConstants {
     public static final String URL              = "url";
     public static final String NAME             = "name";
     public static final String ALLOWED_BRANDS   = "allowedBrands";
+    public static final String HREF             = "href";
     public static final String MOD              = "mod";
     public static final String EXP              = "exp";
     public static final String KEY_ID           = "keyId";
@@ -34,6 +36,9 @@ public class SamsungPayConstants {
 
     public static final String CONTRACT_CONFIG__MERCHANT_NAME_PROPERTY_LABEL        = "contractConfiguration.merchantName.label";
     public static final String CONTRACT_CONFIG__MERCHANT_NAME_PROPERTY_DESCRIPTION  = "contractConfiguration.merchantName.description";
+
+    public static final String FORM_CONFIG__LOGO_ALT    = "formConfiguration.logo.alt";
+    public static final String FORM_CONFIG__LOGO_TITLE  = "formConfiguration.logo.title";
 
     public static final String PARTNER_CONFIG__SERVICE_ID = "serviceId";
 
@@ -82,6 +87,5 @@ public class SamsungPayConstants {
     public static final String SAMSUNG_PAY_CODE_OPM3N1002_DESCRIPTION = "Data encryption error";
     public static final String SAMSUNG_PAY_CODE_OPM3N1003_DESCRIPTION = "Internal server processing error";
     public static final String SAMSUNG_PAY_CODE_OPM5N9001_DESCRIPTION = "DB data processing error";
-
 
 }
