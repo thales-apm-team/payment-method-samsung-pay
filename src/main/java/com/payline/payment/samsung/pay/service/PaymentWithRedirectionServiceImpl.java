@@ -88,7 +88,7 @@ public class PaymentWithRedirectionServiceImpl extends AbstractPaymentHttpServic
     public PaymentResponse processResponse(Response response) throws IOException {
 
         // Parse response
-        PaymentCredentialGetResponse paymentCredentialGetResponse = new PaymentCredentialGetResponse.Builder().fromJson(response.body().toString());
+        PaymentCredentialGetResponse paymentCredentialGetResponse = new PaymentCredentialGetResponse.Builder().fromJson(response.body().string());
 
         if (paymentCredentialGetResponse.isResultOk()) {
 

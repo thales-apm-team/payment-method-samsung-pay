@@ -42,6 +42,11 @@ public class SamsungPayConstants {
 
     public static final String PARTNER_CONFIG__SERVICE_ID = "serviceId";
 
+    public static final String CONTENT_TYPE = "Content-Type";
+    public static final String X_REQUEST_ID = "X-Request-Id";
+
+    public static final String APPLICATION_JSON = "application/json";
+
     public static final String CONFIG__HTTP_CONNECT_TIMEOUT                 = "http.connectTimeout";
     public static final String CONFIG__HTTP_WRITE_TIMEOUT                   = "http.writeTimeout";
     public static final String CONFIG__HTTP_READ_TIMEOUT                    = "http.readTimeout";
@@ -49,7 +54,7 @@ public class SamsungPayConstants {
     public static final String CONFIG__HOST                                 = "samsungpay.host";
     public static final String CONFIG__PATH_TRANSACTION                     = "samsungpay.transaction.path";
     public static final String CONFIG__PATH_TRANSACTION_PAYMENT_CREDENTIAL  = "samsungpay.transaction.paymentCredential.path";
-    public static final String CONFIG__PATH_NOTIFICATION                    = "samsungpay.notification.pat";
+    public static final String CONFIG__PATH_NOTIFICATION                    = "samsungpay.notification.path";
 
     public static final String PAYMENT_DETAILS__PROTOCOL_TYPE       = "3DS";
     public static final String PAYMENT_DETAILS__PROTOCOL_VERSION    = "80";

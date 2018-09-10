@@ -76,7 +76,7 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
     public PaymentResponse processResponse(Response response) throws IOException {
 
         // Parse response
-        CreateTransactionPostResponse createTransactionPostResponse = new CreateTransactionPostResponse.Builder().fromJson(response.body().toString());
+        CreateTransactionPostResponse createTransactionPostResponse = new CreateTransactionPostResponse.Builder().fromJson(response.body().string());
 
         if (createTransactionPostResponse.isResultOk()) {
 

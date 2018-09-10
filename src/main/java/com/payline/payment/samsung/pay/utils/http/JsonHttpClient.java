@@ -7,9 +7,9 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class JsonHttpClient extends HttpClient {
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
 
-    private static final String CONTENT_TYPE = "application/json";
+public class JsonHttpClient extends HttpClient {
 
     /**
      * Instantiate a HTTP client.
@@ -35,8 +35,8 @@ public class JsonHttpClient extends HttpClient {
     public Response doPost(String scheme, String host, String path, String jsonContent ) throws IOException {
         // FIXME : Cf. Confluence Q4 - Use the right X-Request-Id
         String requestId = "0123456789";
-        RequestBody body = RequestBody.create( MediaType.parse( CONTENT_TYPE ), jsonContent );
-        return super.doPost( scheme, host, path, body, CONTENT_TYPE, requestId );
+        RequestBody body = RequestBody.create( MediaType.parse( APPLICATION_JSON ), jsonContent );
+        return super.doPost( scheme, host, path, body, APPLICATION_JSON, requestId );
     }
 
     /**

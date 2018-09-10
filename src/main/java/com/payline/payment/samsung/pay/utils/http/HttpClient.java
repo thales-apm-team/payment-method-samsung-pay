@@ -6,6 +6,8 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.*;
 
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
+
 /**
  * This utility class provides a basic HTTP client to send requests, using OkHttp library.
  * It must be extended to match each payment method needs.
@@ -55,8 +57,8 @@ public abstract class HttpClient {
 
         // create request
         Request request = new Request.Builder()
-                .addHeader( "Content-Type", contentType )
-                .addHeader( "X-Request-Id", requestId )
+                .addHeader( CONTENT_TYPE, contentType )
+                .addHeader( X_REQUEST_ID, requestId )
                 .url( url )
                 .post( body )
                 .build();
@@ -97,8 +99,8 @@ public abstract class HttpClient {
 
         // create request
         Request request = new Request.Builder()
-                .addHeader( "Content-Type", contentType )
-                .addHeader( "X-Request-Id", requestId )
+                .addHeader( CONTENT_TYPE, contentType )
+                .addHeader( X_REQUEST_ID, requestId )
                 .url( url )
                 .get()
                 .build();

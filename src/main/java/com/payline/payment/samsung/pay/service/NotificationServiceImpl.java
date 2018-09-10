@@ -112,7 +112,7 @@ public class NotificationServiceImpl implements NotificationService {
     private void processResponse(Response response) throws IOException {
 
         // Parse response
-        NotificationPostResponse notificationPostResponse = new NotificationPostResponse.Builder().fromJson(response.body().toString());
+        NotificationPostResponse notificationPostResponse = new NotificationPostResponse.Builder().fromJson(response.body().string());
 
         if (notificationPostResponse.isResultOk()) {
             this.logger.error( "Samsung Pay notification OK: " + notificationPostResponse.getResultMessage() );
