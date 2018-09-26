@@ -48,21 +48,23 @@ public class JweDecrypt {
         Path path = Paths.get(keyFile.getPath());
         byte[] privKeyBytes = Files.readAllBytes(path);
 
-
 //        byte[] privKeyBytes = new byte[(int) keyFile.length()];
 //            dis.read(privKeyBytes);
 //            dis.close();
             // Set private key spec
             PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(privKeyBytes);
             KeyFactory keyFactory = KeyFactory.getInstance(RSA);
-            Cipher decryptCipher = Cipher.getInstance(RSA_ECB_PKCS_1_PADDING);
             PrivateKey privKey = keyFactory.generatePrivate(spec);
+
+            Cipher decryptCipher = Cipher.getInstance(RSA_ECB_PKCS_1_PADDING);
             decryptCipher.init(Cipher.DECRYPT_MODE, privKey);
             byte[] plainEncKey = decryptCipher.doFinal(encKey);
+
             final Cipher aes128Cipher = Cipher.getInstance(AES_GCM_NO_PADDING);
             final GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(16 * Byte.SIZE, iv);
             final SecretKeySpec keySpec = new SecretKeySpec(plainEncKey, AES);
             aes128Cipher.init(Cipher.DECRYPT_MODE, keySpec, gcmParameterSpec);
+
             int offset = aes128Cipher.update(cipherText, 0, cipherText.length, plainText, 0);
             aes128Cipher.update(tag, 0, tag.length, plainText, offset);
             aes128Cipher.doFinal(plainText, offset);

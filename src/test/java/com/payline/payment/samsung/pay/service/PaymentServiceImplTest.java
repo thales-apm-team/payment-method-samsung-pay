@@ -7,7 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.payline.payment.samsung.pay.utils.http.JsonHttpClient;
+import com.payline.payment.samsung.pay.utils.http.SamsungPayHttpClient;
 
 /**
  * Created by Thales on 27/08/2018.
@@ -16,7 +16,7 @@ import com.payline.payment.samsung.pay.utils.http.JsonHttpClient;
 public class PaymentServiceImplTest {
 
     @Mock
-    private JsonHttpClient httpClient;
+    private SamsungPayHttpClient httpClient;
 
     @InjectMocks
     private PaymentServiceImpl service;

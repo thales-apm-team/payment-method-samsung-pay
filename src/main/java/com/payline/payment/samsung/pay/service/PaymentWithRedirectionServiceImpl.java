@@ -1,31 +1,30 @@
 package com.payline.payment.samsung.pay.service;
 
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
+
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
+import java.net.URISyntaxException;
 import java.time.YearMonth;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.payline.payment.samsung.pay.bean.rest.request.PaymentCredentialGetRequest;
-import com.payline.payment.samsung.pay.bean.rest.response.PaymentCredentialGetResponse;
-import com.payline.payment.samsung.pay.utils.config.ConfigEnvironment;
-import com.payline.payment.samsung.pay.utils.config.ConfigProperties;
-import com.payline.pmapi.bean.common.FailureCause;
-import com.payline.pmapi.bean.payment.response.PaymentModeCard;
-import com.payline.pmapi.bean.payment.response.PaymentResponseDoPayment;
-import com.payline.pmapi.bean.payment.response.buyerpaymentidentifier.Card;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.payline.payment.samsung.pay.bean.rest.request.PaymentCredentialGetRequest;
+import com.payline.payment.samsung.pay.bean.rest.response.PaymentCredentialGetResponse;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
+import com.payline.payment.samsung.pay.utils.config.ConfigEnvironment;
+import com.payline.payment.samsung.pay.utils.config.ConfigProperties;
+import com.payline.payment.samsung.pay.utils.http.StringResponse;
+import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
 import com.payline.pmapi.bean.payment.request.TransactionStatusRequest;
+import com.payline.pmapi.bean.payment.response.PaymentModeCard;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
+import com.payline.pmapi.bean.payment.response.PaymentResponseDoPayment;
+import com.payline.pmapi.bean.payment.response.buyerpaymentidentifier.Card;
 import com.payline.pmapi.service.PaymentWithRedirectionService;
-
-import okhttp3.Response;
-
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
 
 /**
  * Created by Thales on 16/08/2018.
@@ -58,7 +57,7 @@ public class PaymentWithRedirectionServiceImpl extends AbstractPaymentHttpServic
     }
 
     @Override
-    public Response createSendRequest(RedirectionPaymentRequest paymentRequest) throws IOException, InvalidRequestException {
+    public StringResponse createSendRequest(RedirectionPaymentRequest paymentRequest) throws IOException, InvalidRequestException, URISyntaxException {
 
         // Create PaymentCredential request form Payline request
         PaymentCredentialGetRequest paymentCredentialGetRequest = this.requestBuilder.fromRedirectionPaymentRequest(paymentRequest);
@@ -85,10 +84,10 @@ public class PaymentWithRedirectionServiceImpl extends AbstractPaymentHttpServic
     }
 
     @Override
-    public PaymentResponse processResponse(Response response) throws IOException {
+    public PaymentResponse processResponse(StringResponse response) throws IOException {
 
         // Parse response
-        PaymentCredentialGetResponse paymentCredentialGetResponse = new PaymentCredentialGetResponse.Builder().fromJson(response.body().string());
+        PaymentCredentialGetResponse paymentCredentialGetResponse = new PaymentCredentialGetResponse.Builder().fromJson(response.getContent());
 
         if (paymentCredentialGetResponse.isResultOk()) {
 

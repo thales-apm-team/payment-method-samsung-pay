@@ -3,23 +3,23 @@ package com.payline.payment.samsung.pay.service;
 import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
-import com.payline.payment.samsung.pay.bean.rest.response.NotificationPostResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.payline.payment.samsung.pay.bean.rest.request.NotificationPostRequest;
+import com.payline.payment.samsung.pay.bean.rest.response.NotificationPostResponse;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.payment.samsung.pay.utils.config.ConfigEnvironment;
 import com.payline.payment.samsung.pay.utils.config.ConfigProperties;
-import com.payline.payment.samsung.pay.utils.http.JsonHttpClient;
+import com.payline.payment.samsung.pay.utils.http.SamsungPayHttpClient;
+import com.payline.payment.samsung.pay.utils.http.StringResponse;
 import com.payline.pmapi.bean.notification.request.NotificationRequest;
 import com.payline.pmapi.bean.notification.response.NotificationResponse;
 import com.payline.pmapi.bean.notification.response.impl.IgnoreNotificationResponse;
 import com.payline.pmapi.bean.payment.request.NotifyTransactionStatusRequest;
 import com.payline.pmapi.service.NotificationService;
-
-import okhttp3.Response;
 
 /**
  * Created by Thales on 16/08/2018.
@@ -28,7 +28,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     private static final Logger logger = LogManager.getLogger( PaymentServiceImpl.class );
 
-    private JsonHttpClient httpClient;
+    private SamsungPayHttpClient httpClient;
 
     private NotificationPostRequest.Builder requestBuilder;
 
@@ -39,7 +39,7 @@ public class NotificationServiceImpl implements NotificationService {
      */
     public NotificationServiceImpl() {
 
-        this.httpClient = new JsonHttpClient(
+        this.httpClient = new SamsungPayHttpClient(
                 Integer.parseInt( ConfigProperties.get(CONFIG__HTTP_CONNECT_TIMEOUT) ),
                 Integer.parseInt( ConfigProperties.get(CONFIG__HTTP_WRITE_TIMEOUT) ),
                 Integer.parseInt( ConfigProperties.get(CONFIG__HTTP_READ_TIMEOUT) )
@@ -61,12 +61,12 @@ public class NotificationServiceImpl implements NotificationService {
         try {
 
             // Mandate the child class to create and send the request (which is specific to each implementation)
-            Response response = this.createSendRequest( notifyTransactionStatusRequest );
+            StringResponse response = this.createSendRequest( notifyTransactionStatusRequest );
 
-            if ( response != null && response.code() == HTTP_OK && response.body() != null ) {
+            if ( response != null && response.getCode() == HTTP_OK && response.getContent() != null ) {
                 this.processResponse( response );
-            } else if ( response != null && response.code() != HTTP_OK ) {
-                this.logger.error( "An HTTP error occurred while sending the request: " + response.message() );
+            } else if ( response != null && response.getCode() != HTTP_OK ) {
+                this.logger.error( "An HTTP error occurred while sending the request: " + response.getContent() );
                 // Nothing to do, no response to return
             } else {
                 this.logger.error( "The HTTP response or its body is null and should not be" );
@@ -86,7 +86,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     }
 
-    private Response createSendRequest(NotifyTransactionStatusRequest notificationRequest) throws IOException, InvalidRequestException {
+    private StringResponse createSendRequest(NotifyTransactionStatusRequest notificationRequest) throws IOException, InvalidRequestException, URISyntaxException {
 
         // Create Notification request from Payline request
         NotificationPostRequest notificationPostRequest = this.requestBuilder.fromNotifyTransactionStatusRequest(notificationRequest);
@@ -109,10 +109,10 @@ public class NotificationServiceImpl implements NotificationService {
 
     }
 
-    private void processResponse(Response response) throws IOException {
+    private void processResponse(StringResponse response) throws IOException {
 
         // Parse response
-        NotificationPostResponse notificationPostResponse = new NotificationPostResponse.Builder().fromJson(response.body().string());
+        NotificationPostResponse notificationPostResponse = new NotificationPostResponse.Builder().fromJson(response.getContent());
 
         if (notificationPostResponse.isResultOk()) {
             this.logger.error( "Samsung Pay notification OK: " + notificationPostResponse.getResultMessage() );

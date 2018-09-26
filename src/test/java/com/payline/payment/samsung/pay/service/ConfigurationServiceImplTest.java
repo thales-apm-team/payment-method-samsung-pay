@@ -1,6 +1,6 @@
 package com.payline.payment.samsung.pay.service;
 
-import com.payline.payment.samsung.pay.utils.http.JsonHttpClient;
+import com.payline.payment.samsung.pay.utils.http.SamsungPayHttpClient;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +15,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class ConfigurationServiceImplTest {
 
     @Mock
-    private JsonHttpClient httpClient;
+    private SamsungPayHttpClient httpClient;
 
     @InjectMocks
     private ConfigurationServiceImpl service;

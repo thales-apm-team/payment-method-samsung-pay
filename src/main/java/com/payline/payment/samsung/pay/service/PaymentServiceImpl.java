@@ -1,29 +1,27 @@
 package com.payline.payment.samsung.pay.service;
 
 import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
+import static com.payline.pmapi.bean.payment.response.PaymentResponseRedirect.RedirectionRequest;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.payline.payment.samsung.pay.bean.rest.request.CreateTransactionPostRequest;
-import com.payline.payment.samsung.pay.bean.rest.response.CreateTransactionPostResponse;
-import com.payline.pmapi.bean.payment.response.PaymentResponseRedirect;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.payline.payment.samsung.pay.bean.rest.request.CreateTransactionPostRequest;
+import com.payline.payment.samsung.pay.bean.rest.response.CreateTransactionPostResponse;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.payment.samsung.pay.utils.config.ConfigEnvironment;
 import com.payline.payment.samsung.pay.utils.config.ConfigProperties;
+import com.payline.payment.samsung.pay.utils.http.StringResponse;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
+import com.payline.pmapi.bean.payment.response.PaymentResponseRedirect;
 import com.payline.pmapi.service.PaymentService;
-
-import okhttp3.Response;
-
-import static com.payline.pmapi.bean.payment.response.PaymentResponseRedirect.RedirectionRequest;
 
 /**
  * Created by Thales on 16/08/2018.
@@ -51,7 +49,7 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
     }
 
     @Override
-    public Response createSendRequest(PaymentRequest paymentRequest) throws IOException, InvalidRequestException {
+    public StringResponse createSendRequest(PaymentRequest paymentRequest) throws IOException, InvalidRequestException, URISyntaxException {
 
         // Create CreateTransaction request from Payline request
         CreateTransactionPostRequest createTransactionPostRequest = this.requestBuilder.fromPaymentRequest(paymentRequest);
@@ -73,10 +71,10 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
     }
 
     @Override
-    public PaymentResponse processResponse(Response response) throws IOException {
+    public PaymentResponse processResponse(StringResponse response) throws IOException {
 
         // Parse response
-        CreateTransactionPostResponse createTransactionPostResponse = new CreateTransactionPostResponse.Builder().fromJson(response.body().string());
+        CreateTransactionPostResponse createTransactionPostResponse = new CreateTransactionPostResponse.Builder().fromJson(response.getContent());
 
         if (createTransactionPostResponse.isResultOk()) {
 
