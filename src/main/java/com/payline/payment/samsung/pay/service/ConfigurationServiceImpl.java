@@ -1,10 +1,10 @@
 package com.payline.payment.samsung.pay.service;
 
 import com.payline.payment.samsung.pay.utils.i18n.I18nService;
-import com.payline.pmapi.bean.configuration.AbstractParameter;
-import com.payline.pmapi.bean.configuration.ContractParametersCheckRequest;
-import com.payline.pmapi.bean.configuration.InputParameter;
 import com.payline.pmapi.bean.configuration.ReleaseInformation;
+import com.payline.pmapi.bean.configuration.parameter.AbstractParameter;
+import com.payline.pmapi.bean.configuration.parameter.impl.InputParameter;
+import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import com.payline.pmapi.service.ConfigurationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -1,9 +1,9 @@
 package com.payline.payment.samsung.pay;
 
 import com.payline.pmapi.bean.payment.ContractProperty;
+import com.payline.pmapi.bean.payment.PaymentFormContext;
 import com.payline.pmapi.integration.AbstractPaymentIntegration;
 
-import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -17,7 +17,7 @@ public class SamsungPayIT extends AbstractPaymentIntegration {
     }
 
     @Override
-    protected Map<String, Serializable> generatePaymentFormData() {
+    protected PaymentFormContext generatePaymentFormContext() {
         return null;
     }
 

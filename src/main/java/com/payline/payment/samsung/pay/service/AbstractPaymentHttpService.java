@@ -1,14 +1,5 @@
 package com.payline.payment.samsung.pay.service;
 
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.security.NoSuchAlgorithmException;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.payline.payment.samsung.pay.bean.rest.response.AbstractJsonResponse;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.payment.samsung.pay.utils.config.ConfigProperties;
@@ -18,7 +9,15 @@ import com.payline.payment.samsung.pay.utils.type.WSRequestResultEnum;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
-import com.payline.pmapi.bean.payment.response.PaymentResponseFailure;
+import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFailure;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.security.NoSuchAlgorithmException;
+
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
 
 /**
  * This abstract service handles the common issues encountered when sending, receiving and processing a {@link PaymentRequest} (or subclass)
@@ -120,7 +119,7 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
      * @param failureCause The failure cause
      * @return The instantiated object
      */
-    protected PaymentResponseFailure buildPaymentResponseFailure( String errorCode, FailureCause failureCause ) {
+    protected PaymentResponseFailure buildPaymentResponseFailure(String errorCode, FailureCause failureCause ) {
 
         return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
                 .withFailureCause( failureCause )

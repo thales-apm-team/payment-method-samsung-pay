@@ -1,17 +1,5 @@
 package com.payline.payment.samsung.pay.service;
 
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
-import static com.payline.pmapi.bean.payment.response.PaymentResponseRedirect.RedirectionRequest;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.payline.payment.samsung.pay.bean.rest.request.CreateTransactionPostRequest;
 import com.payline.payment.samsung.pay.bean.rest.response.CreateTransactionPostResponse;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
@@ -20,8 +8,19 @@ import com.payline.payment.samsung.pay.utils.config.ConfigProperties;
 import com.payline.payment.samsung.pay.utils.http.StringResponse;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
-import com.payline.pmapi.bean.payment.response.PaymentResponseRedirect;
+import com.payline.pmapi.bean.payment.response.impl.PaymentResponseRedirect;
+import com.payline.pmapi.bean.payment.response.impl.PaymentResponseRedirect.RedirectionRequest;
 import com.payline.pmapi.service.PaymentService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
 
 /**
  * Created by Thales on 16/08/2018.
@@ -91,7 +90,11 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
                 postFormData.put(KEY_ID, createTransactionPostResponse.getEncryptionInfo().getKeyId());
             }
 
-            RedirectionRequest redirectionRequest = new RedirectionRequest( url, postFormData );
+            RedirectionRequest redirectionRequest = RedirectionRequest.RedirectionRequestBuilder.aRedirectionRequest()
+                    .withUrl(url)
+                    .withRequestType(RedirectionRequest.RequestType.GET)
+                    .withPostFormData(postFormData)
+                    .build();
 
             return PaymentResponseRedirect.PaymentResponseRedirectBuilder.aPaymentResponseRedirect()
                     // RedirectionRequest param mandatory for builder checkIntegrity test

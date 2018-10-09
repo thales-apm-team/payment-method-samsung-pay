@@ -27,8 +27,8 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 ext {
-    paymentMethodApiVersion = '0.11-SNAPSHOT-20180816'
-    paymentMethodIntegrationVersion = '0.11-SNAPSHOT-20180823'
+    paymentMethodApiVersion = '1.0-SNAPSHOT'
+    paymentMethodIntegrationVersion = '1.0-SNAPSHOT'
     releaseDirectoryPath = 'D:/build'
 }
 

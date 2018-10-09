@@ -1,16 +1,5 @@
 package com.payline.payment.samsung.pay.service;
 
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.time.YearMonth;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.payline.payment.samsung.pay.bean.rest.request.PaymentCredentialGetRequest;
 import com.payline.payment.samsung.pay.bean.rest.response.PaymentCredentialGetResponse;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
@@ -22,9 +11,19 @@ import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
 import com.payline.pmapi.bean.payment.request.TransactionStatusRequest;
 import com.payline.pmapi.bean.payment.response.PaymentModeCard;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
-import com.payline.pmapi.bean.payment.response.PaymentResponseDoPayment;
 import com.payline.pmapi.bean.payment.response.buyerpaymentidentifier.Card;
+import com.payline.pmapi.bean.payment.response.impl.PaymentResponseDoPayment;
 import com.payline.pmapi.service.PaymentWithRedirectionService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.time.YearMonth;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
 
 /**
  * Created by Thales on 16/08/2018.
