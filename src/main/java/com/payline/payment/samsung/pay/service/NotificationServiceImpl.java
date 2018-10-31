@@ -1,13 +1,5 @@
 package com.payline.payment.samsung.pay.service;
 
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.payline.payment.samsung.pay.bean.rest.request.NotificationPostRequest;
 import com.payline.payment.samsung.pay.bean.rest.response.NotificationPostResponse;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
@@ -20,6 +12,13 @@ import com.payline.pmapi.bean.notification.response.NotificationResponse;
 import com.payline.pmapi.bean.notification.response.impl.IgnoreNotificationResponse;
 import com.payline.pmapi.bean.payment.request.NotifyTransactionStatusRequest;
 import com.payline.pmapi.service.NotificationService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
 
 /**
  * Created by Thales on 16/08/2018.
@@ -92,10 +91,7 @@ public class NotificationServiceImpl implements NotificationService {
         NotificationPostRequest notificationPostRequest = this.requestBuilder.fromNotifyTransactionStatusRequest(notificationRequest);
 
         // Send Notification request
-        // FIXME : NotifyTransactionStatusRequest does not have PaylineEnvironment information
-        //ConfigEnvironment environment = Boolean.FALSE.equals( notificationRequest.getPaylineEnvironment().isSandbox() ) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
-        ConfigEnvironment environment = ConfigEnvironment.DEV;
-
+        ConfigEnvironment environment = Boolean.FALSE.equals( notificationRequest.getEnvironment().isSandbox() ) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
         String scheme   = ConfigProperties.get(CONFIG__SHEME, environment);
         String host     = ConfigProperties.get(CONFIG__HOST, environment);
         String path     = ConfigProperties.get(CONFIG__PATH_NOTIFICATION);

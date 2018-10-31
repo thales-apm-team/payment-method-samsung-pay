@@ -2,10 +2,12 @@ package com.payline.payment.samsung.pay.service;
 
 import com.payline.payment.samsung.pay.utils.i18n.I18nService;
 import com.payline.pmapi.bean.paymentform.bean.PaymentFormLogo;
+import com.payline.pmapi.bean.paymentform.bean.form.PartnerWidgetForm;
+import com.payline.pmapi.bean.paymentform.bean.form.partnerwidget.*;
 import com.payline.pmapi.bean.paymentform.request.PaymentFormConfigurationRequest;
 import com.payline.pmapi.bean.paymentform.request.PaymentFormLogoRequest;
 import com.payline.pmapi.bean.paymentform.response.configuration.PaymentFormConfigurationResponse;
-import com.payline.pmapi.bean.paymentform.response.configuration.impl.PaymentFormConfigurationResponseProvided;
+import com.payline.pmapi.bean.paymentform.response.configuration.impl.PaymentFormConfigurationResponseSpecific;
 import com.payline.pmapi.bean.paymentform.response.logo.PaymentFormLogoResponse;
 import com.payline.pmapi.bean.paymentform.response.logo.impl.PaymentFormLogoResponseFile;
 import com.payline.pmapi.service.PaymentFormConfigurationService;
@@ -17,7 +19,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Locale;
 
 import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
@@ -34,9 +35,43 @@ public class PaymentFormConfigurationServiceImpl implements PaymentFormConfigura
 
     @Override
     public PaymentFormConfigurationResponse getPaymentFormConfiguration(PaymentFormConfigurationRequest paymentFormConfigurationRequest) {
-        return PaymentFormConfigurationResponseProvided.PaymentFormConfigurationResponseBuilder.aPaymentFormConfigurationResponse()
-                .withContextPaymentForm(new HashMap<>())
+
+
+        PartnerWidgetScriptImport scriptImport = PartnerWidgetScriptImport.WidgetPartnerScriptImportBuilder.aWidgetPartnerScriptImport()
+            //    .withUrl()  // URL du script?
+                .withCache(true)
+                .withAsync(true)
                 .build();
+
+        PartnerWidgetContainer container = PartnerWidgetContainerTargetDivId.WidgetPartnerContainerTargetDivIdBuilder.aWidgetPartnerContainerTargetDivId()
+                //.withId()
+                .build();
+
+        PartnerWidgetOnPay onPay = PartnerWidgetOnPayFunction.OnPayFunctionBuilder.anOnPayFunction()
+                .withName("connect")
+             //   .withScriptContent()
+               // .withCallBackName()   // la fonction connect n'a pas de callback
+                .build();
+
+        PartnerWidgetForm paymentForm = PartnerWidgetForm.WidgetPartnerFormBuilder.aWidgetPartnerForm()
+                .withDisplayButton(true)
+                .withDescription("description du boutton")
+                .withButtonText("texte du boutton")
+                .withScriptImport(scriptImport)
+                .withContainer(container)    // script a faire tourner
+                .withOnPay(onPay)
+                .build();
+
+
+        return PaymentFormConfigurationResponseSpecific.PaymentFormConfigurationResponseSpecificBuilder.aPaymentFormConfigurationResponseSpecific()
+                .withPaymentForm(paymentForm)
+                .build();
+
+
+
+
+
+
     }
 
     @Override

@@ -62,7 +62,7 @@ public class PaymentWithRedirectionServiceImpl extends AbstractPaymentHttpServic
         PaymentCredentialGetRequest paymentCredentialGetRequest = this.requestBuilder.fromRedirectionPaymentRequest(paymentRequest);
 
         // Send PaymentCredential request
-        ConfigEnvironment environment = Boolean.FALSE.equals( paymentRequest.getPaylineEnvironment().isSandbox() ) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
+        ConfigEnvironment environment = Boolean.FALSE.equals( paymentRequest.getEnvironment().isSandbox() ) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
 
         String scheme   = ConfigProperties.get(CONFIG__SHEME, environment);
         String host     = ConfigProperties.get(CONFIG__HOST, environment);
@@ -109,7 +109,7 @@ public class PaymentWithRedirectionServiceImpl extends AbstractPaymentHttpServic
                     // PaymentMode param mandatory for builder checkIntegrity test
                     .withPaymentMode(paymentModeCard)
                     // TransactionIdentifier param mandatory for builder checkIntegrity test
-                    .withTransactionIdentifier(this.redirectionPaymentRequest.getTransactionId())
+                    .withPartnerTransactionId(this.redirectionPaymentRequest.getTransactionId())
                     .build();
 
         } else {

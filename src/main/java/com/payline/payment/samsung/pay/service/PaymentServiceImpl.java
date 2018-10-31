@@ -54,7 +54,7 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
         CreateTransactionPostRequest createTransactionPostRequest = this.requestBuilder.fromPaymentRequest(paymentRequest);
 
         // Send CreateTransaction request
-        ConfigEnvironment environment = Boolean.FALSE.equals( paymentRequest.getPaylineEnvironment().isSandbox() ) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
+        ConfigEnvironment environment = Boolean.FALSE.equals( paymentRequest.getEnvironment().isSandbox() ) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
 
         String scheme   = ConfigProperties.get(CONFIG__SHEME, environment);
         String host     = ConfigProperties.get(CONFIG__HOST, environment);
@@ -99,7 +99,7 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
             return PaymentResponseRedirect.PaymentResponseRedirectBuilder.aPaymentResponseRedirect()
                     // RedirectionRequest param mandatory for builder checkIntegrity test
                     .withRedirectionRequest(redirectionRequest)
-                    .withTransactionIdentifier(createTransactionPostResponse.getId())
+                    .withPartnerTransactionId(createTransactionPostResponse.getId())
                     .build();
 
         } else {

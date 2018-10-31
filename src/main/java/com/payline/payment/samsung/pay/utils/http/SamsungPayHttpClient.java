@@ -1,13 +1,17 @@
 package com.payline.payment.samsung.pay.utils.http;
 
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Map;
 
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-
 public class SamsungPayHttpClient extends AbstractHttpClient {
+
+    public SamsungPayHttpClient() {
+        super( 10, 10, 15 );
+    }
 
     /**
      * Instantiate a HTTP client.
