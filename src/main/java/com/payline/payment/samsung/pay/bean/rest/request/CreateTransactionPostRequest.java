@@ -35,8 +35,6 @@ public class CreateTransactionPostRequest extends AbstractJsonRequest {
     }
 
 
-
-
     public static final class Builder {
 
         public CreateTransactionPostRequest fromPaymentRequest(PaymentRequest paylineRequest) throws InvalidRequestException {

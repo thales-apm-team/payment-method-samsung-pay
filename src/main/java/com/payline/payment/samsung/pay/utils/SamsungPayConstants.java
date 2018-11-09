@@ -62,6 +62,7 @@ public class SamsungPayConstants {
     public static final String PAYMENT__PROVIDER = "PAYLINE";
 
     public static final int HTTP_OK = 200;
+    public static final int HTTP_CREATED = 201;
 
     public static final String HTTP_CODE_200 = "200";
     public static final String HTTP_CODE_400 = "400";

@@ -21,8 +21,8 @@ public class Utils {
     public static final String NOTIFICATION_URL = "http://notificationurl.com/";
     public static final String AUTH_URL = "http://authenticationurl.com/";
 
-    public static final String MERCHANT_ID = "thisisanid";   //todo trouver la bonne valeur
-    public static final String SERVICE_ID = "thisIsAServiceId"; // todo trouver la bonne valeur
+    public static final String MERCHANT_ID = "virtual shop";   //todo trouver la bonne valeur
+    public static final String SERVICE_ID = "db1294c3c8bc42fe9ce762"; // todo trouver la bonne valeur
 
     public static ContractParametersCheckRequest createContractParametersCheckRequest(String merchantName) {
         return createContractParametersCheckRequestBuilder(merchantName).build();
