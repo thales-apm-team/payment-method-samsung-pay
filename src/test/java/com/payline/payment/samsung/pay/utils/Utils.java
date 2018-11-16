@@ -55,7 +55,7 @@ public class Utils {
         final Buyer buyer = createDefaultBuyer();
 
         Map<String, String> configMap = new HashMap();
-        configMap.put(PARTNER_CONFIG__SERVICE_ID, "serviceId");
+        configMap.put(PARTNER_CONFIG__SERVICE_ID, SERVICE_ID);
         final PartnerConfiguration configuration = new PartnerConfiguration(configMap, new HashMap<>());
 
         return PaymentRequest.builder()
@@ -115,6 +115,13 @@ public class Utils {
         final ContractConfiguration contractConfiguration = new ContractConfiguration("", new HashMap<>());
         contractConfiguration.getContractProperties().put(CONTRACT_CONFIG__MERCHANT_NAME, new ContractProperty(merchantName));
 
+        return contractConfiguration;
+    }
+
+
+    public static ContractConfiguration createDefaultContractConfiguration() {
+        final ContractConfiguration contractConfiguration = new ContractConfiguration("", new HashMap<>());
+        contractConfiguration.getContractProperties().put(CONTRACT_CONFIG__MERCHANT_NAME, new ContractProperty(MERCHANT_ID));
         return contractConfiguration;
     }
 

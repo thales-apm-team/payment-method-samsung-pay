@@ -4,10 +4,8 @@ package com.payline.payment.samsung.pay.utils;
  * Created by Thales on 16/08/2018.
  */
 public class SamsungPayConstants {
-
+// todo faire du nettoyage dans toutes ces constantes
     public static final String DEFAULT_ERROR_CODE = "no code transmitted";
-
-    public static final String RES_LOGO_NAME = "samsung-pay-logo.jpg";
 
     public static final String ID               = "id";
     public static final String SERVICE          = "service";
@@ -37,8 +35,19 @@ public class SamsungPayConstants {
     public static final String CONTRACT_CONFIG__MERCHANT_NAME_PROPERTY_LABEL        = "contractConfiguration.merchantName.label";
     public static final String CONTRACT_CONFIG__MERCHANT_NAME_PROPERTY_DESCRIPTION  = "contractConfiguration.merchantName.description";
 
+    // Data used in PaymentFormConfigurationServiceImpl
+    public static final boolean NOFIELDFORM_DISPLAY_PAYMENT_BUTTON = true;
+    public static final String RES_LOGO_NAME = "samsung-pay-logo.jpg";
+    public static final String LOGO_CONTENT_TYPE = "image/jpeg";
+    public static final int LOGO_HEIGHT = 305;  // todo changer le logo et ajuster cette valeur
+    public static final int LOGO_WIDTH = 600;// todo changer le logo et ajuster cette valeur
+    public static final String NOFIELDFORM_BUTTON_TEXT = "form.button.samsungPay.text";
+    public static final String NOFIELDFORM_BUTTON_DESCRIPTION = "form.button.samsungPay.description";
+
     public static final String FORM_CONFIG__LOGO_ALT    = "formConfiguration.logo.alt";
     public static final String FORM_CONFIG__LOGO_TITLE  = "formConfiguration.logo.title";
+
+
 
     public static final String PARTNER_CONFIG__SERVICE_ID = "serviceId";
 

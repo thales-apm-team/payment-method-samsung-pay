@@ -2,8 +2,7 @@ package com.payline.payment.samsung.pay.service;
 
 import com.payline.payment.samsung.pay.utils.i18n.I18nService;
 import com.payline.pmapi.bean.paymentform.bean.PaymentFormLogo;
-import com.payline.pmapi.bean.paymentform.bean.form.PartnerWidgetForm;
-import com.payline.pmapi.bean.paymentform.bean.form.partnerwidget.*;
+import com.payline.pmapi.bean.paymentform.bean.form.NoFieldForm;
 import com.payline.pmapi.bean.paymentform.request.PaymentFormConfigurationRequest;
 import com.payline.pmapi.bean.paymentform.request.PaymentFormLogoRequest;
 import com.payline.pmapi.bean.paymentform.response.configuration.PaymentFormConfigurationResponse;
@@ -29,56 +28,29 @@ import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
 public class PaymentFormConfigurationServiceImpl implements PaymentFormConfigurationService {
     private static final Logger logger = LogManager.getLogger("PaymentFormConfigurationService");
 
-    private static final String LOGO_CONTENT_TYPE = "image/jpeg";
-    private static final int LOGO_HEIGHT = 92;
-    private static final int LOGO_WIDTH = 390;
+    private I18nService i18n;
+    public PaymentFormConfigurationServiceImpl() {
+        i18n = I18nService.getInstance();
+    }
+
 
     @Override
-    public PaymentFormConfigurationResponse getPaymentFormConfiguration(PaymentFormConfigurationRequest paymentFormConfigurationRequest) {
-
-
-        PartnerWidgetScriptImport scriptImport = PartnerWidgetScriptImport.WidgetPartnerScriptImportBuilder.aWidgetPartnerScriptImport()
-            //    .withUrl()  // URL du script?
-                .withCache(true)
-                .withAsync(true)
+    public PaymentFormConfigurationResponse getPaymentFormConfiguration(PaymentFormConfigurationRequest request) {
+        NoFieldForm noFieldForm = NoFieldForm.NoFieldFormBuilder
+                .aNoFieldForm()
+                .withDisplayButton(NOFIELDFORM_DISPLAY_PAYMENT_BUTTON)
+                .withButtonText(i18n.getMessage(NOFIELDFORM_BUTTON_TEXT, request.getLocale()))
+                .withDescription(i18n.getMessage(NOFIELDFORM_BUTTON_DESCRIPTION, request.getLocale()))
                 .build();
 
-        PartnerWidgetContainer container = PartnerWidgetContainerTargetDivId.WidgetPartnerContainerTargetDivIdBuilder.aWidgetPartnerContainerTargetDivId()
-                //.withId()
+        return PaymentFormConfigurationResponseSpecific.PaymentFormConfigurationResponseSpecificBuilder
+                .aPaymentFormConfigurationResponseSpecific()
+                .withPaymentForm(noFieldForm)
                 .build();
-
-        PartnerWidgetOnPay onPay = PartnerWidgetOnPayFunction.OnPayFunctionBuilder.anOnPayFunction()
-                .withName("connect")
-             //   .withScriptContent()
-               // .withCallBackName()   // la fonction connect n'a pas de callback
-                .build();
-
-        PartnerWidgetForm paymentForm = PartnerWidgetForm.WidgetPartnerFormBuilder.aWidgetPartnerForm()
-                .withDisplayButton(true)
-                .withDescription("description du boutton")
-                .withButtonText("texte du boutton")
-                .withScriptImport(scriptImport)
-                .withContainer(container)    // script a faire tourner
-                .withOnPay(onPay)
-                .build();
-
-
-        return PaymentFormConfigurationResponseSpecific.PaymentFormConfigurationResponseSpecificBuilder.aPaymentFormConfigurationResponseSpecific()
-                .withPaymentForm(paymentForm)
-                .build();
-
-
-
-
-
-
     }
 
     @Override
     public PaymentFormLogoResponse getPaymentFormLogo(PaymentFormLogoRequest paymentFormLogoRequest) {
-
-        I18nService i18n = I18nService.getInstance();
-
         return PaymentFormLogoResponseFile.PaymentFormLogoResponseFileBuilder.aPaymentFormLogoResponseFile()
                 .withHeight(LOGO_HEIGHT)
                 .withWidth(LOGO_WIDTH)

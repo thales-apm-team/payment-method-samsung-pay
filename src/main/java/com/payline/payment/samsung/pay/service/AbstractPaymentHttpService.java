@@ -74,7 +74,7 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
             // Mandate the child class to create and send the request (which is specific to each implementation)
             StringResponse response = this.createSendRequest( paymentRequest );
 
-            if ( response != null && response.getCode() == HTTP_OK && response.getContent() != null ) {
+            if ( response != null && response.getCode() == HTTP_CREATED && response.getContent() != null ) {
                 // Mandate the child class to process the request when it's OK (which is specific to each implementation)
                 return this.processResponse( response );
             } else if ( response != null && response.getCode() != HTTP_OK ) {
