@@ -51,7 +51,7 @@ public class Utils {
         final String transactionID = createTransactionId();
         final Order order = createOrder(transactionID);
         final String softDescriptor = "softDescriptor";
-        final Locale locale = new Locale("FR");
+        final Locale locale = Locale.FRANCE;
         final Buyer buyer = createDefaultBuyer();
 
         Map<String, String> configMap = new HashMap();

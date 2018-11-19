@@ -20,6 +20,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.CONTRACT_CONFIG__MERCHANT_NAME;
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.HTTP_CREATED;
 import static com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest.GENERIC_ERROR;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -67,9 +68,8 @@ public class ConfigurationServiceImplTest {
                 "}";
         StringResponse mockedResponse = new StringResponse();
         mockedResponse.setContent(goodResponse);
-        mockedResponse.setCode(200);
+        mockedResponse.setCode(HTTP_CREATED);
         when(httpClient.doPost(anyString(), anyString(), anyString(), anyString())).thenReturn(mockedResponse);
-
 
         ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest(Utils.MERCHANT_ID);
         Map<String, String> errors = service.check(request);

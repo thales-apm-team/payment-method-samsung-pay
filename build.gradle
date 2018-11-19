@@ -17,7 +17,7 @@ plugins {
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'java-library'
-apply plugin: 'org.junit.platform.gradle.plugin'
+//apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'jacoco'
 
 description = 'payment-method-samsung-pay'
