@@ -25,7 +25,7 @@ import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
  */
 public class NotificationServiceImpl implements NotificationService {
 
-    private static final Logger logger = LogManager.getLogger( PaymentServiceImpl.class );
+    private Logger logger = LogManager.getLogger( PaymentServiceImpl.class );
 
     private SamsungPayHttpClient httpClient;
 
@@ -37,15 +37,8 @@ public class NotificationServiceImpl implements NotificationService {
      * Default public constructor
      */
     public NotificationServiceImpl() {
-
-        this.httpClient = new SamsungPayHttpClient(
-                Integer.parseInt( ConfigProperties.get(CONFIG__HTTP_CONNECT_TIMEOUT) ),
-                Integer.parseInt( ConfigProperties.get(CONFIG__HTTP_WRITE_TIMEOUT) ),
-                Integer.parseInt( ConfigProperties.get(CONFIG__HTTP_READ_TIMEOUT) )
-        );
-
+        this.httpClient = SamsungPayHttpClient.getInstance();
         this.requestBuilder = new NotificationPostRequest.Builder();
-
     }
 
     @Override
@@ -60,11 +53,11 @@ public class NotificationServiceImpl implements NotificationService {
         try {
 
             // Mandate the child class to create and send the request (which is specific to each implementation)
-            StringResponse response = this.createSendRequest( notifyTransactionStatusRequest );
+            StringResponse response = this.createRequest( notifyTransactionStatusRequest );
 
-            if ( response != null && response.getCode() == HTTP_OK && response.getContent() != null ) {
+            if ( response != null && response.getCode() == HTTP_CREATED && response.getContent() != null ) {
                 this.processResponse( response );
-            } else if ( response != null && response.getCode() != HTTP_OK ) {
+            } else if ( response != null && response.getCode() != HTTP_CREATED ) {
                 this.logger.error( "An HTTP error occurred while sending the request: " + response.getContent() );
                 // Nothing to do, no response to return
             } else {
@@ -82,10 +75,9 @@ public class NotificationServiceImpl implements NotificationService {
             this.logger.error( "An unexpected error occurred: ", e );
             // Nothing to do, no response to return
         }
-
     }
 
-    private StringResponse createSendRequest(NotifyTransactionStatusRequest notificationRequest) throws IOException, InvalidRequestException, URISyntaxException {
+    public StringResponse createRequest(NotifyTransactionStatusRequest notificationRequest) throws IOException, InvalidRequestException, URISyntaxException {
 
         // Create Notification request from Payline request
         NotificationPostRequest notificationPostRequest = this.requestBuilder.fromNotifyTransactionStatusRequest(notificationRequest);
@@ -105,15 +97,14 @@ public class NotificationServiceImpl implements NotificationService {
 
     }
 
-    private void processResponse(StringResponse response) throws IOException {
-
+    public void processResponse(StringResponse response) {
         // Parse response
         NotificationPostResponse notificationPostResponse = new NotificationPostResponse.Builder().fromJson(response.getContent());
 
         if (notificationPostResponse.isResultOk()) {
-            this.logger.error( "Samsung Pay notification OK: " + notificationPostResponse.getResultMessage() );
+            this.logger.info( "Samsung Pay notification OK: " + notificationPostResponse.getResultMessage() );
         } else {
-            this.logger.error( "Samsung Pay notification KO: " + notificationPostResponse.getResultMessage() );
+            logger.error( "Samsung Pay notification KO: " + notificationPostResponse.getResultMessage() );
         }
 
     }

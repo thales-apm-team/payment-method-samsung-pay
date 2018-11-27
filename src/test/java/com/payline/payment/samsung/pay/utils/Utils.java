@@ -6,6 +6,7 @@ import com.payline.pmapi.bean.common.Buyer;
 import com.payline.pmapi.bean.configuration.PartnerConfiguration;
 import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import com.payline.pmapi.bean.payment.*;
+import com.payline.pmapi.bean.payment.request.NotifyTransactionStatusRequest;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
 import com.payline.pmapi.bean.paymentform.request.PaymentFormConfigurationRequest;
@@ -212,6 +213,17 @@ public class Utils {
                 .withSoftDescriptor(softDescriptor)
                 .withBuyer(buyer)
                 .withPartnerConfiguration(configuration)
+                .build();
+    }
+
+    public static NotifyTransactionStatusRequest createNotifyTransactionRequest(){
+        return NotifyTransactionStatusRequest.NotifyTransactionStatusRequestBuilder.aNotifyTransactionStatusRequest()
+                .withPartnerTransactionId("1")
+                .withTransactionSatus(NotifyTransactionStatusRequest.TransactionStatus.SUCCESS)
+                .withAmount(createAmount("EUR"))
+                .withContractConfiguration(createContractConfiguration(MERCHANT_ID))
+                .withEnvironment(createDefaultPaylineEnvironment())
+                .withPartnerConfiguration(createDefaultPartnerConfiguration())
                 .build();
     }
 }
