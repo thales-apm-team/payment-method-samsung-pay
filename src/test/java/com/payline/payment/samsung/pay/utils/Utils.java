@@ -1,18 +1,19 @@
 package com.payline.payment.samsung.pay.utils;
 
+import com.payline.payment.samsung.pay.utils.http.StringResponse;
 import com.payline.pmapi.bean.common.Amount;
 import com.payline.pmapi.bean.common.Buyer;
 import com.payline.pmapi.bean.configuration.PartnerConfiguration;
 import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import com.payline.pmapi.bean.payment.*;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
+import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
 import com.payline.pmapi.bean.paymentform.request.PaymentFormConfigurationRequest;
 
 import java.math.BigInteger;
 import java.util.*;
 
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.CONTRACT_CONFIG__MERCHANT_NAME;
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PARTNER_CONFIG__SERVICE_ID;
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
 
 public class Utils {
     private static Locale locale = Locale.FRENCH;
@@ -21,8 +22,8 @@ public class Utils {
     public static final String NOTIFICATION_URL = "http://notificationurl.com/";
     public static final String AUTH_URL = "http://authenticationurl.com/";
 
-    public static final String MERCHANT_ID = "virtual shop";   //todo trouver la bonne valeur
-    public static final String SERVICE_ID = "db1294c3c8bc42fe9ce762"; // todo trouver la bonne valeur
+    public static final String MERCHANT_ID = "virtual shop";
+    public static final String SERVICE_ID = "db1294c3c8bc42fe9ce762";
 
     public static ContractParametersCheckRequest createContractParametersCheckRequest(String merchantName) {
         return createContractParametersCheckRequestBuilder(merchantName).build();
@@ -171,6 +172,46 @@ public class Utils {
                 .withOrder(createOrder("007"))
                 .withEnvironment(createDefaultPaylineEnvironment())
                 .withPartnerConfiguration(createDefaultPartnerConfiguration())
+                .build();
+    }
+
+    public static StringResponse createStringResponse(String body, int code) {
+        StringResponse response = new StringResponse();
+        response.setCode(code);
+        response.setContent(body);
+        return response;
+    }
+
+    public static RedirectionPaymentRequest createRedirectionPaymentRequest() {
+        final Amount amount = createAmount("EUR");
+        final ContractConfiguration contractConfiguration = createContractConfiguration(MERCHANT_ID);
+        final Environment paylineEnvironment = new Environment(NOTIFICATION_URL, SUCCESS_URL, FAILURE_URL, true);
+        final String transactionID = createTransactionId();
+        final Order order = createOrder(transactionID);
+        final String softDescriptor = "softDescriptor";
+        final Locale locale = Locale.FRANCE;
+        final Buyer buyer = createDefaultBuyer();
+
+        Map<String, String> configMap = new HashMap();
+        configMap.put(PARTNER_CONFIG__SERVICE_ID, SERVICE_ID);
+        final PartnerConfiguration configuration = new PartnerConfiguration(configMap, new HashMap<>());
+        final String[] parameterValue = new String[1];
+        parameterValue[0] = "thisIsAnId";
+        final Map<String, String[]> parameterMap = new HashMap<>();
+        parameterMap.put(REF_ID, parameterValue);
+
+        return RedirectionPaymentRequest.builder()
+                .withHttpRequestParametersMap(parameterMap)
+                .withAmount(amount)
+                .withBrowser(new Browser("", Locale.FRANCE))
+                .withContractConfiguration(contractConfiguration)
+                .withEnvironment(paylineEnvironment)
+                .withOrder(order)
+                .withLocale(locale)
+                .withTransactionId(transactionID)
+                .withSoftDescriptor(softDescriptor)
+                .withBuyer(buyer)
+                .withPartnerConfiguration(configuration)
                 .build();
     }
 }

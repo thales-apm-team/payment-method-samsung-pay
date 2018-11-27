@@ -1,7 +1,6 @@
 package com.payline.payment.samsung.pay.service;
 
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
-import com.payline.payment.samsung.pay.utils.config.ConfigProperties;
 import com.payline.payment.samsung.pay.utils.http.SamsungPayHttpClient;
 import com.payline.payment.samsung.pay.utils.http.StringResponse;
 import com.payline.payment.samsung.pay.utils.i18n.I18nService;
@@ -17,7 +16,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.HTTP_CREATED;
 import static com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest.GENERIC_ERROR;
 
 /**
@@ -33,16 +32,8 @@ public abstract class AbstractConfigurationHttpService {
     protected I18nService i18n;
 
     protected AbstractConfigurationHttpService() {
-
-        this.httpClient = new SamsungPayHttpClient(
-                Integer.parseInt(ConfigProperties.get(CONFIG__HTTP_CONNECT_TIMEOUT)),
-                Integer.parseInt(ConfigProperties.get(CONFIG__HTTP_WRITE_TIMEOUT)),
-                Integer.parseInt(ConfigProperties.get(CONFIG__HTTP_READ_TIMEOUT))
-        );
-
+        this.httpClient = SamsungPayHttpClient.getInstance();
         i18n = I18nService.getInstance();
-
-
     }
 
     /**

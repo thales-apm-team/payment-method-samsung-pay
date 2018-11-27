@@ -2,7 +2,6 @@ package com.payline.payment.samsung.pay.service;
 
 import com.payline.payment.samsung.pay.bean.rest.response.AbstractJsonResponse;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
-import com.payline.payment.samsung.pay.utils.config.ConfigProperties;
 import com.payline.payment.samsung.pay.utils.http.SamsungPayHttpClient;
 import com.payline.payment.samsung.pay.utils.http.StringResponse;
 import com.payline.payment.samsung.pay.utils.type.WSRequestResultEnum;
@@ -31,13 +30,7 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
     protected SamsungPayHttpClient httpClient;
 
     protected AbstractPaymentHttpService() {
-
-        this.httpClient = new SamsungPayHttpClient(
-                Integer.parseInt( ConfigProperties.get(CONFIG__HTTP_CONNECT_TIMEOUT) ),
-                Integer.parseInt( ConfigProperties.get(CONFIG__HTTP_WRITE_TIMEOUT) ),
-                Integer.parseInt( ConfigProperties.get(CONFIG__HTTP_READ_TIMEOUT) )
-        );
-
+        this.httpClient = SamsungPayHttpClient.getInstance();
     }
 
     /**

@@ -45,10 +45,10 @@ public class PaymentServiceImplTest {
         StringResponse response = new StringResponse();
         response.setCode(200);
         response.setContent(content);
-        Mockito.when(httpClient.doPost(anyString(),anyString(), anyString(),anyString())).thenReturn(response);
+        Mockito.when(httpClient.doPost(anyString(), anyString(), anyString(), anyString())).thenReturn(response);
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
-        StringResponse HttpResponse = service.createSendRequest(request);
-        Assert.assertEquals(content, HttpResponse.getContent());
+        StringResponse httpResponse = service.createSendRequest(request);
+        Assert.assertEquals(content, httpResponse.getContent());
     }
 
     @Test
@@ -73,7 +73,7 @@ public class PaymentServiceImplTest {
     @Test
     public void createConnectCall() {
         String goodConnectCall = "(function(){\n" +
-                "    SamsungPay.connect(000 ,http://a.simple.url ,"+Utils.SERVICE_ID+" ,"+Utils.SUCCESS_URL+" ,"+Utils.FAILURE_URL+" ,FR ,111 ,222 ,333 );\n" +
+                "    SamsungPay.connect(000 ,http://a.simple.url ," + Utils.SERVICE_ID + " ," + Utils.SUCCESS_URL + " ," + Utils.FAILURE_URL + " ,FR ,111 ,222 ,333 );\n" +
                 "})()";
 
         String jsonResponse = "{" +
@@ -87,7 +87,7 @@ public class PaymentServiceImplTest {
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
 
         String connectCall = service.createConnectCall(request, response);
-        Assert.assertEquals(goodConnectCall,connectCall);
+        Assert.assertEquals(goodConnectCall, connectCall);
     }
 
 }

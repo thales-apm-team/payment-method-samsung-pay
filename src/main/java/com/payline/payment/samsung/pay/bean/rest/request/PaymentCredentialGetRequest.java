@@ -1,9 +1,10 @@
 package com.payline.payment.samsung.pay.bean.rest.request;
 
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PARTNER_CONFIG__SERVICE_ID;
-
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
+
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PARTNER_CONFIG__SERVICE_ID;
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.REF_ID;
 
 /**
  * Created by Thales on 16/08/2018.
@@ -17,12 +18,9 @@ public class PaymentCredentialGetRequest {
     /**
      * Constructor
      */
-    protected PaymentCredentialGetRequest(String id,
-                                          String serviceId) {
-
-        this.id         = id;
-        this.serviceId  = serviceId;
-
+    private PaymentCredentialGetRequest(String id, String serviceId) {
+        this.id = id;
+        this.serviceId = serviceId;
     }
 
     public String getId() {
@@ -41,13 +39,10 @@ public class PaymentCredentialGetRequest {
             this.checkInputRequest(paylineRequest);
 
             // Instantiate the PaymentCredentialGetRequest from input request
-            PaymentCredentialGetRequest request = new PaymentCredentialGetRequest(
-                    paylineRequest.getTransactionId(),
+            return new PaymentCredentialGetRequest(
+                    paylineRequest.getHttpRequestParametersMap().get(REF_ID)[0],
                     paylineRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG__SERVICE_ID)
             );
-
-            return request;
-
         }
 
         /**
@@ -57,25 +52,35 @@ public class PaymentCredentialGetRequest {
          * @throws InvalidRequestException If recovering the field value would result in a NPE or if the value is null or empty.
          */
         private void checkInputRequest(RedirectionPaymentRequest paymentRequest) throws InvalidRequestException {
-            if ( paymentRequest == null ) {
-                throw new InvalidRequestException( "Request must not be null" );
+            if (paymentRequest == null) {
+                throw new InvalidRequestException("Request must not be null");
             }
 
             // Check attributes from PaymentRequest
-            if ( paymentRequest.getTransactionId() == null ) {
-                throw new InvalidRequestException( "Missing PaymentRequest property: transaction id" );
+            if (paymentRequest.getTransactionId() == null) {
+                throw new InvalidRequestException("Missing PaymentRequest property: transaction id");
             }
 
             // Check attributes from PaymentRequest.PartnerConfiguration
-            if ( paymentRequest.getPartnerConfiguration() == null ) {
-                throw new InvalidRequestException( "PartnerConfiguration properties object must not be null" );
+            if (paymentRequest.getPartnerConfiguration() == null) {
+                throw new InvalidRequestException("PartnerConfiguration properties object must not be null");
             }
-            if ( paymentRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG__SERVICE_ID) == null ) {
-                throw new InvalidRequestException( "Missing PartnerConfiguration property: service id" );
+            if (paymentRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG__SERVICE_ID) == null) {
+                throw new InvalidRequestException("Missing PartnerConfiguration property: service id");
             }
 
+            if(paymentRequest.getHttpRequestParametersMap() == null){
+                throw new InvalidRequestException("Missing HttpRequestParameters");
+            }
+
+            if(paymentRequest.getHttpRequestParametersMap().get(REF_ID) == null){
+                throw new InvalidRequestException("Missing HttpRequestParameters property: ref_id");
+            }
+
+            if(paymentRequest.getHttpRequestParametersMap().get(REF_ID)[0] == null){
+                throw new InvalidRequestException("Missing HttpRequestParameters property: ref_id");
+            }
         }
-
     }
 
 }

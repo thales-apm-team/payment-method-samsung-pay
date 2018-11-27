@@ -51,10 +51,12 @@ public class SamsungPayConstants {
 
     public static final String PARTNER_CONFIG__SERVICE_ID = "serviceId";
 
+    // Data used in https calls
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String X_REQUEST_ID = "X-Request-Id";
 
     public static final String APPLICATION_JSON = "application/json";
+    public static final String REF_ID = "ref_id";
 
     public static final String CONFIG__HTTP_CONNECT_TIMEOUT                 = "http.connectTimeout";
     public static final String CONFIG__HTTP_WRITE_TIMEOUT                   = "http.writeTimeout";
@@ -102,5 +104,14 @@ public class SamsungPayConstants {
     public static final String SAMSUNG_PAY_CODE_OPM3N1002_DESCRIPTION = "Data encryption error";
     public static final String SAMSUNG_PAY_CODE_OPM3N1003_DESCRIPTION = "Internal server processing error";
     public static final String SAMSUNG_PAY_CODE_OPM5N9001_DESCRIPTION = "DB data processing error";
+
+    // data used in JWEDecrypt
+    public static final String PRIVATE_KEY_FILE_PATH = "keystore/rsapriv.der";
+    public static final String RSA = "RSA";
+    public static final String AES = "AES";
+    public static final String AES_GCM_NO_PADDING = "AES/GCM/NoPadding";
+    public static final String RSA_ECB_PKCS_1_PADDING = "RSA/ECB/PKCS1Padding";
+    public static final String DELIMS = "[.]";
+
 
 }

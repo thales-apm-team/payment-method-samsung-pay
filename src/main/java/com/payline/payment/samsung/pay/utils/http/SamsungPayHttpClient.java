@@ -8,8 +8,9 @@ import java.net.URISyntaxException;
 import java.util.Map;
 
 public class SamsungPayHttpClient extends AbstractHttpClient {
+    private static final SamsungPayHttpClient instance = new SamsungPayHttpClient();
 
-    public SamsungPayHttpClient() {
+    private SamsungPayHttpClient() {
         super( 10, 10, 15 );
     }
 
@@ -20,8 +21,12 @@ public class SamsungPayHttpClient extends AbstractHttpClient {
      * @param writeTimeout   Default write timeout (in seconds) for new connections. A value of 0 means no timeout.
      * @param readTimeout    Default read timeout (in seconds) for new connections. A value of 0 means no timeout.
      */
-    public SamsungPayHttpClient(int connectTimeout, int writeTimeout, int readTimeout ) {
+    private SamsungPayHttpClient(int connectTimeout, int writeTimeout, int readTimeout ) {
         super( connectTimeout, writeTimeout, readTimeout );
+    }
+
+    public static SamsungPayHttpClient getInstance(){
+        return instance;
     }
 
     /**
