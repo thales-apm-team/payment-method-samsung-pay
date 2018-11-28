@@ -45,13 +45,27 @@ public class ConfigurationServiceImpl extends AbstractConfigurationHttpService i
         // Merchant name
         final InputParameter merchantName = new InputParameter();
         merchantName.setKey(CONTRACT_CONFIG__MERCHANT_NAME);
-        merchantName.setLabel(CONTRACT_CONFIG__MERCHANT_NAME_PROPERTY_LABEL);
-        merchantName.setDescription(CONTRACT_CONFIG__MERCHANT_NAME_PROPERTY_DESCRIPTION);
+        merchantName.setLabel(i18n.getMessage(CONTRACT_CONFIG__MERCHANT_NAME_PROPERTY_LABEL, locale));
+        merchantName.setDescription(i18n.getMessage(CONTRACT_CONFIG__MERCHANT_NAME_PROPERTY_DESCRIPTION, locale));
         merchantName.setRequired(true);
 
         parameters.add(merchantName);
 
-        // todo ajouter le merchant reference et le merchant url
+        final InputParameter merchantUrl = new InputParameter();
+        merchantUrl.setKey(CONTRACT_CONFIG__MERCHANT_URL);
+        merchantUrl.setLabel(i18n.getMessage(CONTRACT_CONFIG__MERCHANT_URL_PROPERTY_LABEL, locale));
+        merchantUrl.setDescription(i18n.getMessage(CONTRACT_CONFIG__MERCHANT_URL_PROPERTY_DESCRIPTION, locale));
+        merchantUrl.setRequired(false);
+
+        parameters.add(merchantUrl);
+
+        final InputParameter merchantReference = new InputParameter();
+        merchantReference.setKey(CONTRACT_CONFIG__MERCHANT_REFERENCE);
+        merchantReference.setLabel(i18n.getMessage(CONTRACT_CONFIG__MERCHANT_REFERENCE_PROPERTY_LABEL, locale));
+        merchantReference.setDescription(i18n.getMessage(CONTRACT_CONFIG__MERCHANT_REFERENCE_PROPERTY_DESCRIPTION, locale));
+        merchantReference.setRequired(false);
+
+        parameters.add(merchantReference);
 
         return parameters;
     }

@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
 
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.RES_LOGO_NAME;
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.LOGO_NAME;
 import static com.payline.payment.samsung.pay.utils.Utils.*;
 
 /**
@@ -52,7 +52,7 @@ public class PaymentFormConfigurationServiceImplTest {
     @Test
     public void testGetPaymentFormLogo() throws IOException {
         // given: the logo image read from resources
-        InputStream input = PaymentFormConfigurationServiceImpl.class.getClassLoader().getResourceAsStream(RES_LOGO_NAME);
+        InputStream input = PaymentFormConfigurationServiceImpl.class.getClassLoader().getResourceAsStream(LOGO_NAME);
         BufferedImage image = ImageIO.read(input);
 
         // when: getPaymentFormLogo is called

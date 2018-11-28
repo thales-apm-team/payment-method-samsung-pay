@@ -29,6 +29,7 @@ public class PaymentFormConfigurationServiceImpl implements PaymentFormConfigura
     private static final Logger logger = LogManager.getLogger("PaymentFormConfigurationService");
 
     private I18nService i18n;
+
     public PaymentFormConfigurationServiceImpl() {
         i18n = I18nService.getInstance();
     }
@@ -63,12 +64,12 @@ public class PaymentFormConfigurationServiceImpl implements PaymentFormConfigura
     public PaymentFormLogo getLogo(String var1, Locale locale) {
         try {
             // Read logo file
-            InputStream input = PaymentFormConfigurationServiceImpl.class.getClassLoader().getResourceAsStream(RES_LOGO_NAME);
+            InputStream input = PaymentFormConfigurationServiceImpl.class.getClassLoader().getResourceAsStream(LOGO_NAME);
             BufferedImage logo = ImageIO.read(input);
 
             // Recover byte array from image
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(logo, "jpg", baos);
+            ImageIO.write(logo, LOGO_TYPE, baos);
 
             return PaymentFormLogo.PaymentFormLogoBuilder.aPaymentFormLogo()
                     .withFile(baos.toByteArray())

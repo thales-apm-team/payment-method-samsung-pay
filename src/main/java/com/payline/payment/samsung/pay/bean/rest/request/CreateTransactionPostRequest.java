@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import com.payline.payment.samsung.pay.bean.rest.request.nesteed.*;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
+import com.payline.pmapi.bean.payment.ContractProperty;
 import com.payline.pmapi.bean.payment.Environment;
 import com.payline.pmapi.bean.payment.Order;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
@@ -118,7 +119,7 @@ public class CreateTransactionPostRequest extends AbstractJsonRequest {
 
         }
 
-        private void checkInputRequest(ContractParametersCheckRequest paylineRequest) throws InvalidRequestException{
+        private void checkInputRequest(ContractParametersCheckRequest paylineRequest) throws InvalidRequestException {
             if (paylineRequest == null) {
                 throw new InvalidRequestException("Request must not be null");
             }
@@ -182,23 +183,28 @@ public class CreateTransactionPostRequest extends AbstractJsonRequest {
                     )
                     .merchant(
                             new Merchant()
-                                    .name(
-                                            paylineRequest
-                                                    .getContractConfiguration()
-                                                    .getContractProperties()
-                                                    .get(CONTRACT_CONFIG__MERCHANT_NAME)
-                                                    .getValue()
-                                    )
+                                    .name(getValue(paylineRequest, CONTRACT_CONFIG__MERCHANT_NAME))
+                                    .url(getValue(paylineRequest, CONTRACT_CONFIG__MERCHANT_URL))
+                                    .reference(getValue(paylineRequest, CONTRACT_CONFIG__MERCHANT_REFERENCE))
                     );
         }
 
-        private PaymentDetails getPaymentDetailsFromPaymentRequest(ContractParametersCheckRequest paylineRequest){
+        private String getValue(PaymentRequest request, String key) {
+            ContractProperty property = request.getContractConfiguration().getProperty(key);
+            if (property == null) {
+                return null;
+            } else {
+                return property.getValue();
+            }
+        }
+
+        private PaymentDetails getPaymentDetailsFromPaymentRequest(ContractParametersCheckRequest paylineRequest) {
             return new PaymentDetails()
                     .amount(new Amount().currency("USD").total(BigInteger.valueOf(1)))
                     .merchant(new Merchant()
-                            .name(paylineRequest.getContractConfiguration()
-                            .getProperty(CONTRACT_CONFIG__MERCHANT_NAME)
-                            .getValue()))
+                            .name( paylineRequest.getContractConfiguration()
+                                    .getProperty(CONTRACT_CONFIG__MERCHANT_NAME)
+                                    .getValue()))
                     .orderNumber("0001")
                     .protocol(new Protocol()
                             .type(PAYMENT_DETAILS__PROTOCOL_TYPE)

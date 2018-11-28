@@ -3,6 +3,7 @@ package com.payline.payment.samsung.pay.service;
 import com.payline.payment.samsung.pay.bean.rest.request.CreateTransactionPostRequest;
 import com.payline.payment.samsung.pay.bean.rest.response.CreateTransactionPostResponse;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
+import com.payline.payment.samsung.pay.utils.SamsungPayConstants;
 import com.payline.payment.samsung.pay.utils.config.ConfigEnvironment;
 import com.payline.payment.samsung.pay.utils.config.ConfigProperties;
 import com.payline.payment.samsung.pay.utils.http.StringResponse;
@@ -82,7 +83,7 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
 
             PartnerWidgetScriptImport scriptImport = PartnerWidgetScriptImport.WidgetPartnerScriptImportBuilder
                     .aWidgetPartnerScriptImport()
-                    .withUrl(new URL("http://this.is.an.url.info")) // todo héberger le SamsungPay.js pour le mettre dans cette URL
+                    .withUrl(new URL(SamsungPayConstants.JAVASCRIPT_URL))
                     .withCache(true)
                     .withAsync(true)
                     .build();
