@@ -1,5 +1,6 @@
 package com.payline.payment.samsung.pay.service;
 
+import com.payline.payment.samsung.pay.exception.ExternalCommunicationException;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.payment.samsung.pay.utils.http.SamsungPayHttpClient;
 import com.payline.payment.samsung.pay.utils.http.StringResponse;
@@ -45,7 +46,7 @@ public abstract class AbstractConfigurationHttpService {
      * @throws InvalidRequestException  Thrown if the input request in not valid
      * @throws NoSuchAlgorithmException Thrown if the HMAC algorithm is not available
      */
-    public abstract StringResponse createSendRequest(ContractParametersCheckRequest configRequest) throws IOException, InvalidRequestException, URISyntaxException;
+    public abstract StringResponse createSendRequest(ContractParametersCheckRequest configRequest) throws IOException, InvalidRequestException, URISyntaxException, ExternalCommunicationException;
 
     /**
      * Process the response from the HTTP call.
@@ -81,7 +82,7 @@ public abstract class AbstractConfigurationHttpService {
         } catch (InvalidRequestException e) {
             logger.error("Unable to create the SamsungPay request: {}", e.getMessage(), e);
             errors.put(GENERIC_ERROR, e.getMessage());
-        } catch (IOException | URISyntaxException e) {
+        } catch (IOException | URISyntaxException | ExternalCommunicationException e) {
             logger.error("An error occurred sending the validation request to the SamsungPay server: {}", e.getMessage(), e);
             errors.put(ContractParametersCheckRequest.GENERIC_ERROR, e.getMessage());
         }

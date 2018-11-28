@@ -1,5 +1,6 @@
 package com.payline.payment.samsung.pay.utils.http;
 
+import com.payline.payment.samsung.pay.exception.ExternalCommunicationException;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 
@@ -39,7 +40,7 @@ public class SamsungPayHttpClient extends AbstractHttpClient {
      * @return The response returned from the HTTP call
      * @throws IOException
      */
-    public StringResponse doPost(String scheme, String host, String path, String jsonContent ) throws IOException, URISyntaxException {
+    public StringResponse doPost(String scheme, String host, String path, String jsonContent ) throws IOException, URISyntaxException, ExternalCommunicationException {
 
         // FIXME : Cf. Confluence Q4 - Use the right X-Request-Id
         String requestId = "0123456789";
@@ -47,7 +48,6 @@ public class SamsungPayHttpClient extends AbstractHttpClient {
         StringEntity entity = new StringEntity(jsonContent);
 
         return super.doPost( scheme, host, path, entity, ContentType.APPLICATION_JSON.toString(), requestId );
-
     }
 
     /**
@@ -59,13 +59,12 @@ public class SamsungPayHttpClient extends AbstractHttpClient {
      * @return The response returned from the HTTP call
      * @throws IOException
      */
-    public StringResponse doGet(String scheme, String host, String path, Map<String, String> queryAttributes ) throws IOException, URISyntaxException {
+    public StringResponse doGet(String scheme, String host, String path, Map<String, String> queryAttributes ) throws URISyntaxException, ExternalCommunicationException {
 
         // FIXME : Cf. Confluence Q4 - Use the right X-Request-Id
         String requestId = "0123456789";
 
         return super.doGet( scheme, host, path, queryAttributes, ContentType.APPLICATION_JSON.toString(), requestId );
-
     }
 
 }

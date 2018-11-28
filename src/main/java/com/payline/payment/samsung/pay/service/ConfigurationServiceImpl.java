@@ -2,6 +2,7 @@ package com.payline.payment.samsung.pay.service;
 
 import com.payline.payment.samsung.pay.bean.rest.request.CreateTransactionPostRequest;
 import com.payline.payment.samsung.pay.bean.rest.response.CreateTransactionPostResponse;
+import com.payline.payment.samsung.pay.exception.ExternalCommunicationException;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.payment.samsung.pay.utils.SamsungPayConstants;
 import com.payline.payment.samsung.pay.utils.config.ConfigEnvironment;
@@ -111,7 +112,7 @@ public class ConfigurationServiceImpl extends AbstractConfigurationHttpService i
     }
 
     @Override
-    public StringResponse createSendRequest(ContractParametersCheckRequest configRequest) throws IOException, InvalidRequestException, URISyntaxException {
+    public StringResponse createSendRequest(ContractParametersCheckRequest configRequest) throws IOException, InvalidRequestException, URISyntaxException, ExternalCommunicationException {
 
         // create Samsung request Object from Payline request Object
         CreateTransactionPostRequest samsungRequest = new CreateTransactionPostRequest.Builder().fromCheckRequest(configRequest);

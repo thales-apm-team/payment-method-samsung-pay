@@ -1,5 +1,6 @@
 package com.payline.payment.samsung.pay.utils.http;
 
+import com.payline.payment.samsung.pay.exception.ExternalCommunicationException;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
@@ -13,6 +14,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
@@ -28,6 +31,7 @@ import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.X_REQUES
  * It must be extended to match each payment method needs.
  */
 public abstract class AbstractHttpClient {
+    private static final Logger LOGGER = LogManager.getLogger(AbstractHttpClient.class);
 
     private CloseableHttpClient client;
 
@@ -66,7 +70,7 @@ public abstract class AbstractHttpClient {
      * @return The response returned from the HTTP call
      * @throws IOException
      */
-    protected StringResponse doPost(String scheme, String host, String path, HttpEntity body, String contentType, String requestId) throws IOException, URISyntaxException {
+    protected StringResponse doPost(String scheme, String host, String path, HttpEntity body, String contentType, String requestId) throws URISyntaxException, ExternalCommunicationException {
 
         final URI uri = new URIBuilder()
                 .setScheme(scheme)
@@ -82,20 +86,36 @@ public abstract class AbstractHttpClient {
         httpPostRequest.setHeaders(headers);
         httpPostRequest.setEntity(body);
 
-        try (CloseableHttpResponse httpResponse = this.client.execute(httpPostRequest)) {
+        final long start = System.currentTimeMillis();
+        int count = 0;
+        StringResponse strResponse = null;
 
-            final StringResponse strResponse = new StringResponse();
-            strResponse.setCode(httpResponse.getStatusLine().getStatusCode());
-            strResponse.setMessage(httpResponse.getStatusLine().getReasonPhrase());
+        while (count < 3 && strResponse == null){
+            try (CloseableHttpResponse httpResponse = this.client.execute(httpPostRequest)) {
 
-            if (httpResponse.getEntity() != null) {
-                final String responseAsString = EntityUtils.toString(httpResponse.getEntity());
-                strResponse.setContent(responseAsString);
+                strResponse = new StringResponse();
+                strResponse.setCode(httpResponse.getStatusLine().getStatusCode());
+                strResponse.setMessage(httpResponse.getStatusLine().getReasonPhrase());
+
+                if (httpResponse.getEntity() != null) {
+                    final String responseAsString = EntityUtils.toString(httpResponse.getEntity());
+                    strResponse.setContent(responseAsString);
+                }
+
+            }catch (final IOException e) {
+                LOGGER.error("Error while partner call [T: {}ms]", System.currentTimeMillis() - start, e);
+                strResponse = null;
+            } finally {
+                count++;
             }
-
-            return strResponse;
-
         }
+
+        if (strResponse == null) {
+            throw new ExternalCommunicationException("Partner response empty");
+        }
+
+        return strResponse;
+
 
     }
 
@@ -111,7 +131,7 @@ public abstract class AbstractHttpClient {
      * @return The response returned from the HTTP call
      * @throws IOException
      */
-    protected StringResponse doGet(String scheme, String host, String path, Map<String, String> queryAttributes, String contentType, String requestId) throws IOException, URISyntaxException {
+    protected StringResponse doGet(String scheme, String host, String path, Map<String, String> queryAttributes, String contentType, String requestId) throws URISyntaxException, ExternalCommunicationException {
 
         final URIBuilder builder = new URIBuilder();
         builder.setScheme(scheme)
@@ -133,21 +153,35 @@ public abstract class AbstractHttpClient {
         final HttpGet httpGetRequest = new HttpGet(uri);
         httpGetRequest.setHeaders(headers);
 
-        try (CloseableHttpResponse httpResponse = this.client.execute(httpGetRequest)) {
+        final long start = System.currentTimeMillis();
+        int count = 0;
+        StringResponse strResponse = null;
 
-            final StringResponse strResponse = new StringResponse();
-            strResponse.setCode(httpResponse.getStatusLine().getStatusCode());
-            strResponse.setMessage(httpResponse.getStatusLine().getReasonPhrase());
+        while (count < 3 && strResponse == null){
+            try (CloseableHttpResponse httpResponse = this.client.execute(httpGetRequest)) {
 
-            if (httpResponse.getEntity() != null) {
-                final String responseAsString = EntityUtils.toString(httpResponse.getEntity());
-                strResponse.setContent(responseAsString);
+                strResponse = new StringResponse();
+                strResponse.setCode(httpResponse.getStatusLine().getStatusCode());
+                strResponse.setMessage(httpResponse.getStatusLine().getReasonPhrase());
+
+                if (httpResponse.getEntity() != null) {
+                    final String responseAsString = EntityUtils.toString(httpResponse.getEntity());
+                    strResponse.setContent(responseAsString);
+                }
+
+            }catch (final IOException e) {
+                LOGGER.error("Error while partner call [T: {}ms]", System.currentTimeMillis() - start, e);
+                strResponse = null;
+            } finally {
+                count++;
             }
-
-            return strResponse;
-
         }
 
+        if (strResponse == null) {
+            throw new ExternalCommunicationException("Partner response empty");
+        }
+
+        return strResponse;
     }
 
 }

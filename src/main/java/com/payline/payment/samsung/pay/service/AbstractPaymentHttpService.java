@@ -1,6 +1,7 @@
 package com.payline.payment.samsung.pay.service;
 
 import com.payline.payment.samsung.pay.bean.rest.response.AbstractJsonResponse;
+import com.payline.payment.samsung.pay.exception.ExternalCommunicationException;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.payment.samsung.pay.utils.http.SamsungPayHttpClient;
 import com.payline.payment.samsung.pay.utils.http.StringResponse;
@@ -42,7 +43,7 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
      * @throws InvalidRequestException Thrown if the input request in not valid
      * @throws NoSuchAlgorithmException Thrown if the HMAC algorithm is not available
      */
-    public abstract StringResponse createSendRequest(T paymentRequest ) throws IOException, InvalidRequestException, URISyntaxException;
+    public abstract StringResponse createSendRequest(T paymentRequest ) throws IOException, InvalidRequestException, URISyntaxException, ExternalCommunicationException;
 
     /**
      * Process the response from the HTTP call.

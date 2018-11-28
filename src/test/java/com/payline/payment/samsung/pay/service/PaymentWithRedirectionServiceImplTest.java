@@ -1,6 +1,7 @@
 package com.payline.payment.samsung.pay.service;
 
 import com.payline.payment.samsung.pay.exception.DecryptException;
+import com.payline.payment.samsung.pay.exception.ExternalCommunicationException;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.payment.samsung.pay.utils.JweDecrypt;
 import com.payline.payment.samsung.pay.utils.Utils;
@@ -43,7 +44,7 @@ public class PaymentWithRedirectionServiceImplTest {
     private PaymentWithRedirectionServiceImpl service = spy(new PaymentWithRedirectionServiceImpl());
 
     @Test
-    public void createSendRequest() throws URISyntaxException, IOException, InvalidRequestException {
+    public void createSendRequest() throws URISyntaxException, IOException, InvalidRequestException, ExternalCommunicationException {
         RedirectionPaymentRequest request = Utils.createRedirectionPaymentRequest();
         String content = "thisIsAResponse";
         StringResponse response = Utils.createStringResponse(content, 200);

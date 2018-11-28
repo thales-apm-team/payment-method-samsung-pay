@@ -2,6 +2,7 @@ package com.payline.payment.samsung.pay.service;
 
 import com.payline.payment.samsung.pay.bean.rest.request.CreateTransactionPostRequest;
 import com.payline.payment.samsung.pay.bean.rest.response.CreateTransactionPostResponse;
+import com.payline.payment.samsung.pay.exception.ExternalCommunicationException;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.payment.samsung.pay.utils.SamsungPayConstants;
 import com.payline.payment.samsung.pay.utils.config.ConfigEnvironment;
@@ -51,7 +52,7 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
     }
 
     @Override
-    public StringResponse createSendRequest(PaymentRequest paymentRequest) throws IOException, InvalidRequestException, URISyntaxException {
+    public StringResponse createSendRequest(PaymentRequest paymentRequest) throws IOException, InvalidRequestException, URISyntaxException, ExternalCommunicationException {
 
         // Create CreateTransaction request from Payline request
         CreateTransactionPostRequest createTransactionPostRequest = this.requestBuilder.fromPaymentRequest(paymentRequest);

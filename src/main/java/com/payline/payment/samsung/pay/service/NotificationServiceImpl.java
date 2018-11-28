@@ -2,6 +2,7 @@ package com.payline.payment.samsung.pay.service;
 
 import com.payline.payment.samsung.pay.bean.rest.request.NotificationPostRequest;
 import com.payline.payment.samsung.pay.bean.rest.response.NotificationPostResponse;
+import com.payline.payment.samsung.pay.exception.ExternalCommunicationException;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.payment.samsung.pay.utils.config.ConfigEnvironment;
 import com.payline.payment.samsung.pay.utils.config.ConfigProperties;
@@ -77,7 +78,7 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-    public StringResponse createRequest(NotifyTransactionStatusRequest notificationRequest) throws IOException, InvalidRequestException, URISyntaxException {
+    public StringResponse createRequest(NotifyTransactionStatusRequest notificationRequest) throws IOException, InvalidRequestException, URISyntaxException, ExternalCommunicationException {
 
         // Create Notification request from Payline request
         NotificationPostRequest notificationPostRequest = this.requestBuilder.fromNotifyTransactionStatusRequest(notificationRequest);

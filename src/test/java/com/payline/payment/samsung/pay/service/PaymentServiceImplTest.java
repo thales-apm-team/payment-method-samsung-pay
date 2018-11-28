@@ -1,6 +1,7 @@
 package com.payline.payment.samsung.pay.service;
 
 import com.payline.payment.samsung.pay.bean.rest.response.CreateTransactionPostResponse;
+import com.payline.payment.samsung.pay.exception.ExternalCommunicationException;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.payment.samsung.pay.utils.Utils;
 import com.payline.payment.samsung.pay.utils.http.SamsungPayHttpClient;
@@ -40,7 +41,7 @@ public class PaymentServiceImplTest {
     }
 
     @Test
-    public void createSendRequest() throws URISyntaxException, IOException, InvalidRequestException {
+    public void createSendRequest() throws URISyntaxException, IOException, InvalidRequestException, ExternalCommunicationException {
         String content = "thisIsAResponse";
         StringResponse response = new StringResponse();
         response.setCode(200);

@@ -1,5 +1,6 @@
 package com.payline.payment.samsung.pay.service;
 
+import com.payline.payment.samsung.pay.exception.ExternalCommunicationException;
 import com.payline.payment.samsung.pay.utils.Utils;
 import com.payline.payment.samsung.pay.utils.http.SamsungPayHttpClient;
 import com.payline.payment.samsung.pay.utils.http.StringResponse;
@@ -58,7 +59,7 @@ public class ConfigurationServiceImplTest {
     }
 
     @Test
-    public void checkOK() throws IOException, URISyntaxException {
+    public void checkOK() throws IOException, URISyntaxException, ExternalCommunicationException {
         String goodResponse = "{" +
                 "   resultCode: 0," +
                 "   resultMessage: SUCCESS," +
@@ -77,7 +78,7 @@ public class ConfigurationServiceImplTest {
     }
 
     @Test
-    public void checkEmptyResponse() throws IOException, URISyntaxException {
+    public void checkEmptyResponse() throws IOException, URISyntaxException, ExternalCommunicationException {
         StringResponse mockedResponse = new StringResponse();
         mockedResponse.setContent(null);
         mockedResponse.setCode(400);
@@ -98,7 +99,7 @@ public class ConfigurationServiceImplTest {
     }
 
     @Test
-    public void checkIOExceptionResponse() throws IOException, URISyntaxException {
+    public void checkIOExceptionResponse() throws IOException, URISyntaxException, ExternalCommunicationException {
         when(httpClient.doPost(anyString(), anyString(), anyString(), anyString())).thenThrow(IOException.class);
 
         ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest(Utils.MERCHANT_ID);

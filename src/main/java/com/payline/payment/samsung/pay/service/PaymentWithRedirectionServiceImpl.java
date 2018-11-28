@@ -4,6 +4,7 @@ import com.payline.payment.samsung.pay.bean.rest.request.PaymentCredentialGetReq
 import com.payline.payment.samsung.pay.bean.rest.response.PaymentCredentialGetResponse;
 import com.payline.payment.samsung.pay.bean.rest.response.nesteed.DecryptedCard;
 import com.payline.payment.samsung.pay.exception.DecryptException;
+import com.payline.payment.samsung.pay.exception.ExternalCommunicationException;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.payment.samsung.pay.utils.JweDecrypt;
 import com.payline.payment.samsung.pay.utils.config.ConfigEnvironment;
@@ -62,7 +63,7 @@ public class PaymentWithRedirectionServiceImpl extends AbstractPaymentHttpServic
     }
 
     @Override
-    public StringResponse createSendRequest(RedirectionPaymentRequest paymentRequest) throws IOException, InvalidRequestException, URISyntaxException {
+    public StringResponse createSendRequest(RedirectionPaymentRequest paymentRequest) throws IOException, InvalidRequestException, URISyntaxException, ExternalCommunicationException {
 
         // Create PaymentCredential request form Payline request
         PaymentCredentialGetRequest paymentCredentialGetRequest = this.requestBuilder.fromRedirectionPaymentRequest(paymentRequest);
