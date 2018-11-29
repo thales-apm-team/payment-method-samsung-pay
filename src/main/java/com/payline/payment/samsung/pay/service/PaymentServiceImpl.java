@@ -23,6 +23,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
 
@@ -105,6 +110,7 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
                     .withDisplayButton(false)    // the "pay" button is embedded in SamsungPay.js
                     .withDescription("")
                     .withScriptImport(scriptImport)
+                    .withLoadingScriptBeforeImport(loadFile())
                     .withLoadingScriptAfterImport(createConnectCall(paymentRequest, createTransactionPostResponse))
                     .withContainer(container)
                     .withOnPay(onPay)
@@ -146,4 +152,19 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
                 .replace("keyId", response.getEncryptionInfo().getKeyId());
     }
 
+
+    public String loadFile() {
+        String file = "";
+        try {
+            Path path = Paths.get(getClass().getClassLoader().getResource("samsung.js").toURI());
+
+            Stream<String> lines = Files.lines(path);
+            file = lines.collect(Collectors.joining("\n"));
+            lines.close();
+        }catch (IOException | URISyntaxException e){
+            logger.error("Unable to load the script: {}", e.getMessage());
+        }
+
+        return file;
+    }
 }

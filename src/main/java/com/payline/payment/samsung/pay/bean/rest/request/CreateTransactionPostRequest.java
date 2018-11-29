@@ -95,7 +95,7 @@ public class CreateTransactionPostRequest extends AbstractJsonRequest {
                     || paylineRequest.getContractConfiguration().getContractProperties() == null) {
                 throw new InvalidRequestException("ContractConfiguration properties object must not be null");
             }
-            if (paylineRequest.getContractConfiguration().getProperty(CONTRACT_CONFIG__MERCHANT_NAME) == null) {
+            if (paylineRequest.getContractConfiguration().getProperty(CONTRACT_CONFIG_MERCHANT_NAME) == null) {
                 throw new InvalidRequestException("Missing ContractConfiguration property: merchant name");
             }
 
@@ -129,7 +129,7 @@ public class CreateTransactionPostRequest extends AbstractJsonRequest {
                     || paylineRequest.getContractConfiguration().getContractProperties() == null) {
                 throw new InvalidRequestException("ContractConfiguration properties object must not be null");
             }
-            if (paylineRequest.getContractConfiguration().getProperty(CONTRACT_CONFIG__MERCHANT_NAME) == null) {
+            if (paylineRequest.getContractConfiguration().getProperty(CONTRACT_CONFIG_MERCHANT_NAME) == null) {
                 throw new InvalidRequestException("Missing ContractConfiguration property: merchant name");
             }
 
@@ -183,9 +183,9 @@ public class CreateTransactionPostRequest extends AbstractJsonRequest {
                     )
                     .merchant(
                             new Merchant()
-                                    .name(getValue(paylineRequest, CONTRACT_CONFIG__MERCHANT_NAME))
-                                    .url(getValue(paylineRequest, CONTRACT_CONFIG__MERCHANT_URL))
-                                    .reference(getValue(paylineRequest, CONTRACT_CONFIG__MERCHANT_REFERENCE))
+                                    .name(getValue(paylineRequest, CONTRACT_CONFIG_MERCHANT_NAME))
+                                    .url(getValue(paylineRequest, CONTRACT_CONFIG_MERCHANT_URL))
+                                    .reference(getValue(paylineRequest, CONTRACT_CONFIG_MERCHANT_REFERENCE))
                     );
         }
 
@@ -203,7 +203,7 @@ public class CreateTransactionPostRequest extends AbstractJsonRequest {
                     .amount(new Amount().currency("USD").total(BigInteger.valueOf(1)))
                     .merchant(new Merchant()
                             .name( paylineRequest.getContractConfiguration()
-                                    .getProperty(CONTRACT_CONFIG__MERCHANT_NAME)
+                                    .getProperty(CONTRACT_CONFIG_MERCHANT_NAME)
                                     .getValue()))
                     .orderNumber("0001")
                     .protocol(new Protocol()

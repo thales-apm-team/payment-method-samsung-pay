@@ -91,4 +91,11 @@ public class PaymentServiceImplTest {
         Assert.assertEquals(goodConnectCall, connectCall);
     }
 
+
+    @Test
+    public void loadFile() throws IOException, URISyntaxException {
+        String loaded = service.loadFile();
+        Assert.assertNotNull(loaded);
+        Assert.assertTrue(loaded.length() > 0);
+    }
 }

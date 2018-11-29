@@ -31,17 +31,24 @@ public class SamsungPayConstants {
     public static final String TIMEOUT = "timeout";
 
     // Data used in ConfigurationServiceImpl
-    public static final String CONTRACT_CONFIG__MERCHANT_NAME = "merchantName";
-    public static final String CONTRACT_CONFIG__MERCHANT_NAME_PROPERTY_LABEL = "contractConfiguration.merchantName.label";
-    public static final String CONTRACT_CONFIG__MERCHANT_NAME_PROPERTY_DESCRIPTION = "contractConfiguration.merchantName.description";
+    public static final String CONTRACT_CONFIG_MERCHANT_NAME = "merchantName";
+    public static final String CONTRACT_CONFIG_MERCHANT_NAME_PROPERTY_LABEL = "contractConfiguration.merchantName.label";
+    public static final String CONTRACT_CONFIG_MERCHANT_NAME_PROPERTY_DESCRIPTION = "contractConfiguration.merchantName.description";
 
-    public static final String CONTRACT_CONFIG__MERCHANT_URL = "merchantUrl";
-    public static final String CONTRACT_CONFIG__MERCHANT_URL_PROPERTY_LABEL = "contractConfiguration.merchantUrl.label";
-    public static final String CONTRACT_CONFIG__MERCHANT_URL_PROPERTY_DESCRIPTION = "contractConfiguration.merchantUrl.description";
+    public static final String CONTRACT_CONFIG_MERCHANT_URL = "merchantUrl";
+    public static final String CONTRACT_CONFIG_MERCHANT_URL_PROPERTY_LABEL = "contractConfiguration.merchantUrl.label";
+    public static final String CONTRACT_CONFIG_MERCHANT_URL_PROPERTY_DESCRIPTION = "contractConfiguration.merchantUrl.description";
 
-    public static final String CONTRACT_CONFIG__MERCHANT_REFERENCE = "merchantReference";
-    public static final String CONTRACT_CONFIG__MERCHANT_REFERENCE_PROPERTY_LABEL = "contractConfiguration.merchantReference.label";
-    public static final String CONTRACT_CONFIG__MERCHANT_REFERENCE_PROPERTY_DESCRIPTION = "contractConfiguration.merchantReference.description";
+    public static final String CONTRACT_CONFIG_MERCHANT_REFERENCE = "merchantReference";
+    public static final String CONTRACT_CONFIG_MERCHANT_REFERENCE_PROPERTY_LABEL = "contractConfiguration.merchantReference.label";
+    public static final String CONTRACT_CONFIG_MERCHANT_REFERENCE_PROPERTY_DESCRIPTION = "contractConfiguration.merchantReference.description";
+
+    public static final String CONTRACT_CONFIG_CB_PROPERTY_LABEL = "contractConfiguration.cb.label";
+    public static final String CONTRACT_CONFIG_CB_PROPERTY_DESCRIPTION = "contractConfiguration.cb.description";
+    public static final String CONTRACT_CONFIG_VISA_PROPERTY_LABEL = "contractConfiguration.visa.label";
+    public static final String CONTRACT_CONFIG_VISA_PROPERTY_DESCRIPTION = "contractConfiguration.visa.description";
+    public static final String CONTRACT_CONFIG_MASTERCARD_PROPERTY_LABEL = "contractConfiguration.mastercard.label";
+    public static final String CONTRACT_CONFIG_MASTERCARD_PROPERTY_DESCRIPTION = "contractConfiguration.mastercard.description";
 
     // Data used in PaymentFormConfigurationServiceImpl
     public static final boolean NOFIELDFORM_DISPLAY_PAYMENT_BUTTON = true;
@@ -53,8 +60,8 @@ public class SamsungPayConstants {
     public static final String NOFIELDFORM_BUTTON_TEXT = "form.button.samsungPay.text";
     public static final String NOFIELDFORM_BUTTON_DESCRIPTION = "form.button.samsungPay.description";
 
-    public static final String FORM_CONFIG__LOGO_ALT = "formConfiguration.logo.alt";
-    public static final String FORM_CONFIG__LOGO_TITLE = "formConfiguration.logo.title";
+    public static final String FORM_CONFIG_LOGO_ALT = "formConfiguration.logo.alt";
+    public static final String FORM_CONFIG_LOGO_TITLE = "formConfiguration.logo.title";
 
     // Data used in PaymentServiceImpl
     public static final String JAVASCRIPT_URL = "http://this.is.an.url.info";  // todo héberger le SamsungPay.js pour le mettre dans cette URL

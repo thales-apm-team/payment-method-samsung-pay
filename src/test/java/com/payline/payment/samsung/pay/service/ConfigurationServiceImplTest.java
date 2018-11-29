@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.CONTRACT_CONFIG__MERCHANT_NAME;
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.CONTRACT_CONFIG_MERCHANT_NAME;
 import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.HTTP_CREATED;
 import static com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest.GENERIC_ERROR;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -48,7 +48,7 @@ public class ConfigurationServiceImplTest {
     @Test
     public void getParameters() {
         List<AbstractParameter> parameters = service.getParameters(locale);
-        Assert.assertEquals(3, parameters.size());
+        Assert.assertEquals(6, parameters.size());
     }
 
     @Test
@@ -95,7 +95,7 @@ public class ConfigurationServiceImplTest {
         Map<String, String> errors = service.check(request);
 
         Assert.assertEquals(1, errors.size());
-        Assert.assertTrue(errors.containsKey(CONTRACT_CONFIG__MERCHANT_NAME));
+        Assert.assertTrue(errors.containsKey(CONTRACT_CONFIG_MERCHANT_NAME));
     }
 
     @Test
