@@ -2,6 +2,7 @@ package com.payline.payment.samsung.pay.service;
 
 import com.payline.payment.samsung.pay.bean.rest.request.NotificationPostRequest;
 import com.payline.payment.samsung.pay.bean.rest.response.NotificationPostResponse;
+import com.payline.payment.samsung.pay.exception.ExternalCommunicationException;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.payment.samsung.pay.utils.config.ConfigEnvironment;
 import com.payline.payment.samsung.pay.utils.config.ConfigProperties;
@@ -25,7 +26,7 @@ import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
  */
 public class NotificationServiceImpl implements NotificationService {
 
-    private Logger logger = LogManager.getLogger( PaymentServiceImpl.class );
+    private Logger logger = LogManager.getLogger(PaymentServiceImpl.class);
 
     private SamsungPayHttpClient httpClient;
 
@@ -53,40 +54,40 @@ public class NotificationServiceImpl implements NotificationService {
         try {
 
             // Mandate the child class to create and send the request (which is specific to each implementation)
-            StringResponse response = this.createRequest( notifyTransactionStatusRequest );
+            StringResponse response = this.createRequest(notifyTransactionStatusRequest);
 
-            if ( response != null && response.getCode() == HTTP_CREATED && response.getContent() != null ) {
-                this.processResponse( response );
-            } else if ( response != null && response.getCode() != HTTP_CREATED ) {
-                this.logger.error( "An HTTP error occurred while sending the request: " + response.getContent() );
+            if (response != null && response.getCode() == HTTP_CREATED && response.getContent() != null) {
+                this.processResponse(response);
+            } else if (response != null && response.getCode() != HTTP_CREATED) {
+                this.logger.error("An HTTP error occurred while sending the request: " + response.getContent());
                 // Nothing to do, no response to return
             } else {
-                this.logger.error( "The HTTP response or its body is null and should not be" );
+                this.logger.error("The HTTP response or its body is null and should not be");
                 // Nothing to do, no response to return
             }
 
-        } catch ( InvalidRequestException e ) {
-            this.logger.error( "The input payment request is invalid: " + e.getMessage() );
+        } catch (InvalidRequestException e) {
+            this.logger.error("The input payment request is invalid: {}", e.getMessage(), e);
             // Nothing to do, no response to return
-        } catch ( IOException e ) {
-            this.logger.error( "An IOException occurred while sending the HTTP request or receiving the response: " + e.getMessage() );
+        } catch (IOException e) {
+            this.logger.error("An IOException occurred while sending the HTTP request or receiving the response: {}", e.getMessage(), e);
             // Nothing to do, no response to return
-        } catch ( Exception e ) {
-            this.logger.error( "An unexpected error occurred: ", e );
+        } catch (Exception e) {
+            this.logger.error("An unexpected error occurred: {}", e.getMessage(), e);
             // Nothing to do, no response to return
         }
     }
 
-    public StringResponse createRequest(NotifyTransactionStatusRequest notificationRequest) throws IOException, InvalidRequestException, URISyntaxException {
+    public StringResponse createRequest(NotifyTransactionStatusRequest notificationRequest) throws IOException, InvalidRequestException, URISyntaxException, ExternalCommunicationException {
 
         // Create Notification request from Payline request
         NotificationPostRequest notificationPostRequest = this.requestBuilder.fromNotifyTransactionStatusRequest(notificationRequest);
 
         // Send Notification request
-        ConfigEnvironment environment = Boolean.FALSE.equals( notificationRequest.getEnvironment().isSandbox() ) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
-        String scheme   = ConfigProperties.get(CONFIG__SHEME, environment);
-        String host     = ConfigProperties.get(CONFIG__HOST, environment);
-        String path     = ConfigProperties.get(CONFIG__PATH_NOTIFICATION);
+        ConfigEnvironment environment = Boolean.FALSE.equals(notificationRequest.getEnvironment().isSandbox()) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
+        String scheme = ConfigProperties.get(CONFIG__SHEME, environment);
+        String host = ConfigProperties.get(CONFIG__HOST, environment);
+        String path = ConfigProperties.get(CONFIG__PATH_NOTIFICATION);
 
         return this.httpClient.doPost(
                 scheme,
@@ -102,9 +103,9 @@ public class NotificationServiceImpl implements NotificationService {
         NotificationPostResponse notificationPostResponse = new NotificationPostResponse.Builder().fromJson(response.getContent());
 
         if (notificationPostResponse.isResultOk()) {
-            this.logger.info( "Samsung Pay notification OK: " + notificationPostResponse.getResultMessage() );
+            this.logger.info("Samsung Pay notification OK: " + notificationPostResponse.getResultMessage());
         } else {
-            logger.error( "Samsung Pay notification KO: " + notificationPostResponse.getResultMessage() );
+            logger.error("Samsung Pay notification KO: " + notificationPostResponse.getResultMessage());
         }
 
     }

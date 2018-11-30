@@ -55,8 +55,8 @@ public class PaymentFormConfigurationServiceImpl implements PaymentFormConfigura
         return PaymentFormLogoResponseFile.PaymentFormLogoResponseFileBuilder.aPaymentFormLogoResponseFile()
                 .withHeight(LOGO_HEIGHT)
                 .withWidth(LOGO_WIDTH)
-                .withTitle(i18n.getMessage(FORM_CONFIG__LOGO_TITLE, paymentFormLogoRequest.getLocale()))
-                .withAlt(i18n.getMessage(FORM_CONFIG__LOGO_ALT, paymentFormLogoRequest.getLocale()))
+                .withTitle(i18n.getMessage(FORM_CONFIG_LOGO_TITLE, paymentFormLogoRequest.getLocale()))
+                .withAlt(i18n.getMessage(FORM_CONFIG_LOGO_ALT, paymentFormLogoRequest.getLocale()))
                 .build();
     }
 
@@ -76,7 +76,7 @@ public class PaymentFormConfigurationServiceImpl implements PaymentFormConfigura
                     .withContentType(LOGO_CONTENT_TYPE)
                     .build();
         } catch (IOException e) {
-            logger.error("Unable to load the logo", e.getMessage());
+            logger.error("Unable to load the logo {}", e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }

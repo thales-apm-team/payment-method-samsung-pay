@@ -32,7 +32,7 @@ public class Utils {
 
     public static ContractParametersCheckRequest.CheckRequestBuilder createContractParametersCheckRequestBuilder(String merchantName) {
         Map<String, String> accountInfo = new HashMap<>();
-//        accountInfo.put(CONTRACT_CONFIG__MERCHANT_NAME, merchantName);
+//        accountInfo.put(CONTRACT_CONFIG_MERCHANT_NAME, merchantName);
 
         ContractConfiguration configuration = createContractConfiguration(merchantName);
         Environment environment = createDefaultPaylineEnvironment();
@@ -115,7 +115,7 @@ public class Utils {
 
     public static ContractConfiguration createContractConfiguration(String merchantName) {
         final ContractConfiguration contractConfiguration = new ContractConfiguration("", new HashMap<>());
-        contractConfiguration.getContractProperties().put(CONTRACT_CONFIG__MERCHANT_NAME, new ContractProperty(merchantName));
+        contractConfiguration.getContractProperties().put(CONTRACT_CONFIG_MERCHANT_NAME, new ContractProperty(merchantName));
 
         return contractConfiguration;
     }
@@ -123,7 +123,7 @@ public class Utils {
 
     public static ContractConfiguration createDefaultContractConfiguration() {
         final ContractConfiguration contractConfiguration = new ContractConfiguration("", new HashMap<>());
-        contractConfiguration.getContractProperties().put(CONTRACT_CONFIG__MERCHANT_NAME, new ContractProperty(MERCHANT_ID));
+        contractConfiguration.getContractProperties().put(CONTRACT_CONFIG_MERCHANT_NAME, new ContractProperty(MERCHANT_ID));
         return contractConfiguration;
     }
 

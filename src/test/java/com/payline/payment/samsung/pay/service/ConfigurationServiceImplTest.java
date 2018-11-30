@@ -1,5 +1,6 @@
 package com.payline.payment.samsung.pay.service;
 
+import com.payline.payment.samsung.pay.exception.ExternalCommunicationException;
 import com.payline.payment.samsung.pay.utils.Utils;
 import com.payline.payment.samsung.pay.utils.http.SamsungPayHttpClient;
 import com.payline.payment.samsung.pay.utils.http.StringResponse;
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.CONTRACT_CONFIG__MERCHANT_NAME;
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.CONTRACT_CONFIG_MERCHANT_NAME;
 import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.HTTP_CREATED;
 import static com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest.GENERIC_ERROR;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -47,7 +48,7 @@ public class ConfigurationServiceImplTest {
     @Test
     public void getParameters() {
         List<AbstractParameter> parameters = service.getParameters(locale);
-        Assert.assertEquals(3, parameters.size());
+        Assert.assertEquals(6, parameters.size());
     }
 
     @Test
@@ -58,7 +59,7 @@ public class ConfigurationServiceImplTest {
     }
 
     @Test
-    public void checkOK() throws IOException, URISyntaxException {
+    public void checkOK() throws IOException, URISyntaxException, ExternalCommunicationException {
         String goodResponse = "{" +
                 "   resultCode: 0," +
                 "   resultMessage: SUCCESS," +
@@ -77,7 +78,7 @@ public class ConfigurationServiceImplTest {
     }
 
     @Test
-    public void checkEmptyResponse() throws IOException, URISyntaxException {
+    public void checkEmptyResponse() throws IOException, URISyntaxException, ExternalCommunicationException {
         StringResponse mockedResponse = new StringResponse();
         mockedResponse.setContent(null);
         mockedResponse.setCode(400);
@@ -94,11 +95,11 @@ public class ConfigurationServiceImplTest {
         Map<String, String> errors = service.check(request);
 
         Assert.assertEquals(1, errors.size());
-        Assert.assertTrue(errors.containsKey(CONTRACT_CONFIG__MERCHANT_NAME));
+        Assert.assertTrue(errors.containsKey(CONTRACT_CONFIG_MERCHANT_NAME));
     }
 
     @Test
-    public void checkIOExceptionResponse() throws IOException, URISyntaxException {
+    public void checkIOExceptionResponse() throws IOException, URISyntaxException, ExternalCommunicationException {
         when(httpClient.doPost(anyString(), anyString(), anyString(), anyString())).thenThrow(IOException.class);
 
         ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest(Utils.MERCHANT_ID);

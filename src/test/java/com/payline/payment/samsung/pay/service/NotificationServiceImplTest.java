@@ -1,5 +1,6 @@
 package com.payline.payment.samsung.pay.service;
 
+import com.payline.payment.samsung.pay.exception.ExternalCommunicationException;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.payment.samsung.pay.utils.Utils;
 import com.payline.payment.samsung.pay.utils.http.SamsungPayHttpClient;
@@ -47,7 +48,7 @@ public class NotificationServiceImplTest {
     }
 
     @Test
-    public void createRequest() throws URISyntaxException, IOException, InvalidRequestException {
+    public void createRequest() throws URISyntaxException, IOException, InvalidRequestException, ExternalCommunicationException {
         String content = "thisIsAContent";
         StringResponse response = Utils.createStringResponse(content, 200);
         Mockito.when(httpClient.doPost(anyString(), anyString(), anyString(), anyString())).thenReturn(response);
@@ -58,7 +59,7 @@ public class NotificationServiceImplTest {
     }
 
     @Test
-    public void notifyTransactionStatusOK() throws URISyntaxException, IOException, InvalidRequestException {
+    public void notifyTransactionStatusOK() throws URISyntaxException, IOException, InvalidRequestException, ExternalCommunicationException {
         NotifyTransactionStatusRequest request = mock(NotifyTransactionStatusRequest.class);
         String jsonContent = "{" +
                 "   'resultCode': '0'," +
@@ -71,7 +72,7 @@ public class NotificationServiceImplTest {
     }
 
     @Test
-    public void notifyTransactionStatusEmptyResponse() throws URISyntaxException, IOException, InvalidRequestException {
+    public void notifyTransactionStatusEmptyResponse() throws URISyntaxException, IOException, InvalidRequestException, ExternalCommunicationException {
         NotifyTransactionStatusRequest request = mock(NotifyTransactionStatusRequest.class);
         StringResponse response = Utils.createStringResponse(null, 201);
         doReturn(response).when(service).createRequest(any(NotifyTransactionStatusRequest.class));
@@ -80,7 +81,7 @@ public class NotificationServiceImplTest {
     }
 
     @Test
-    public void notifyTransactionStatusBadResponse() throws URISyntaxException, IOException, InvalidRequestException {
+    public void notifyTransactionStatusBadResponse() throws URISyntaxException, IOException, InvalidRequestException, ExternalCommunicationException {
         NotifyTransactionStatusRequest request = mock(NotifyTransactionStatusRequest.class);
         String jsonContent = "{" +
                 "   'resultCode': 'ERROR'," +
@@ -93,7 +94,7 @@ public class NotificationServiceImplTest {
     }
 
     @Test
-    public void notifyTransactionStatusIOExceptionResponse() throws URISyntaxException, IOException, InvalidRequestException {
+    public void notifyTransactionStatusIOExceptionResponse() throws URISyntaxException, IOException, InvalidRequestException, ExternalCommunicationException {
         NotifyTransactionStatusRequest request = mock(NotifyTransactionStatusRequest.class);
         doThrow(IOException.class).when(service).createRequest(any(NotifyTransactionStatusRequest.class));
 

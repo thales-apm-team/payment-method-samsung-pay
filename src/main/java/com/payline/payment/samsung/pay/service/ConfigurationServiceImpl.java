@@ -2,14 +2,17 @@ package com.payline.payment.samsung.pay.service;
 
 import com.payline.payment.samsung.pay.bean.rest.request.CreateTransactionPostRequest;
 import com.payline.payment.samsung.pay.bean.rest.response.CreateTransactionPostResponse;
+import com.payline.payment.samsung.pay.exception.ExternalCommunicationException;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.payment.samsung.pay.utils.SamsungPayConstants;
 import com.payline.payment.samsung.pay.utils.config.ConfigEnvironment;
 import com.payline.payment.samsung.pay.utils.config.ConfigProperties;
 import com.payline.payment.samsung.pay.utils.http.StringResponse;
+import com.payline.pmapi.bean.configuration.AvailableNetwork;
 import com.payline.pmapi.bean.configuration.ReleaseInformation;
 import com.payline.pmapi.bean.configuration.parameter.AbstractParameter;
 import com.payline.pmapi.bean.configuration.parameter.impl.InputParameter;
+import com.payline.pmapi.bean.configuration.parameter.impl.NetworkListBoxParameter;
 import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import com.payline.pmapi.service.ConfigurationService;
 import org.apache.logging.log4j.LogManager;
@@ -44,28 +47,54 @@ public class ConfigurationServiceImpl extends AbstractConfigurationHttpService i
 
         // Merchant name
         final InputParameter merchantName = new InputParameter();
-        merchantName.setKey(CONTRACT_CONFIG__MERCHANT_NAME);
-        merchantName.setLabel(i18n.getMessage(CONTRACT_CONFIG__MERCHANT_NAME_PROPERTY_LABEL, locale));
-        merchantName.setDescription(i18n.getMessage(CONTRACT_CONFIG__MERCHANT_NAME_PROPERTY_DESCRIPTION, locale));
+        merchantName.setKey(CONTRACT_CONFIG_MERCHANT_NAME);
+        merchantName.setLabel(i18n.getMessage(CONTRACT_CONFIG_MERCHANT_NAME_PROPERTY_LABEL, locale));
+        merchantName.setDescription(i18n.getMessage(CONTRACT_CONFIG_MERCHANT_NAME_PROPERTY_DESCRIPTION, locale));
         merchantName.setRequired(true);
 
         parameters.add(merchantName);
 
+        // merchant url
         final InputParameter merchantUrl = new InputParameter();
-        merchantUrl.setKey(CONTRACT_CONFIG__MERCHANT_URL);
-        merchantUrl.setLabel(i18n.getMessage(CONTRACT_CONFIG__MERCHANT_URL_PROPERTY_LABEL, locale));
-        merchantUrl.setDescription(i18n.getMessage(CONTRACT_CONFIG__MERCHANT_URL_PROPERTY_DESCRIPTION, locale));
+        merchantUrl.setKey(CONTRACT_CONFIG_MERCHANT_URL);
+        merchantUrl.setLabel(i18n.getMessage(CONTRACT_CONFIG_MERCHANT_URL_PROPERTY_LABEL, locale));
+        merchantUrl.setDescription(i18n.getMessage(CONTRACT_CONFIG_MERCHANT_URL_PROPERTY_DESCRIPTION, locale));
         merchantUrl.setRequired(false);
 
         parameters.add(merchantUrl);
 
+        // merchant reference
         final InputParameter merchantReference = new InputParameter();
-        merchantReference.setKey(CONTRACT_CONFIG__MERCHANT_REFERENCE);
-        merchantReference.setLabel(i18n.getMessage(CONTRACT_CONFIG__MERCHANT_REFERENCE_PROPERTY_LABEL, locale));
-        merchantReference.setDescription(i18n.getMessage(CONTRACT_CONFIG__MERCHANT_REFERENCE_PROPERTY_DESCRIPTION, locale));
+        merchantReference.setKey(CONTRACT_CONFIG_MERCHANT_REFERENCE);
+        merchantReference.setLabel(i18n.getMessage(CONTRACT_CONFIG_MERCHANT_REFERENCE_PROPERTY_LABEL, locale));
+        merchantReference.setDescription(i18n.getMessage(CONTRACT_CONFIG_MERCHANT_REFERENCE_PROPERTY_DESCRIPTION, locale));
         merchantReference.setRequired(false);
 
         parameters.add(merchantReference);
+
+        final NetworkListBoxParameter networkCb = new NetworkListBoxParameter();
+        networkCb.setKey(AvailableNetwork.CB.getKey());
+        networkCb.setLabel(i18n.getMessage(CONTRACT_CONFIG_CB_PROPERTY_LABEL, locale));
+        networkCb.setDescription(i18n.getMessage(CONTRACT_CONFIG_CB_PROPERTY_DESCRIPTION, locale));
+        networkCb.setNetwork(AvailableNetwork.CB);
+
+        parameters.add(networkCb);
+
+        final NetworkListBoxParameter networkVisa = new NetworkListBoxParameter();
+        networkVisa.setKey(AvailableNetwork.VISA.getKey());
+        networkVisa.setLabel(i18n.getMessage(CONTRACT_CONFIG_VISA_PROPERTY_LABEL, locale));
+        networkVisa.setDescription(i18n.getMessage(CONTRACT_CONFIG_VISA_PROPERTY_DESCRIPTION, locale));
+        networkVisa.setNetwork(AvailableNetwork.VISA);
+
+        parameters.add(networkVisa);
+
+        final NetworkListBoxParameter networkMastercard = new NetworkListBoxParameter();
+        networkMastercard.setKey(AvailableNetwork.MASTERCARD.getKey());
+        networkMastercard.setLabel(i18n.getMessage(CONTRACT_CONFIG_MASTERCARD_PROPERTY_LABEL, locale));
+        networkMastercard.setDescription(i18n.getMessage(CONTRACT_CONFIG_MASTERCARD_PROPERTY_DESCRIPTION, locale));
+        networkMastercard.setNetwork(AvailableNetwork.MASTERCARD);
+
+        parameters.add(networkMastercard);
 
         return parameters;
     }
@@ -75,8 +104,8 @@ public class ConfigurationServiceImpl extends AbstractConfigurationHttpService i
         Map<String, String> errors = new HashMap<>();
 
         // check input fields
-        if (contractParametersCheckRequest.getContractConfiguration().getProperty(CONTRACT_CONFIG__MERCHANT_NAME).getValue() == null) {
-            errors.put(CONTRACT_CONFIG__MERCHANT_NAME, i18n.getMessage("error.noMerchantName", contractParametersCheckRequest.getLocale()));
+        if (contractParametersCheckRequest.getContractConfiguration().getProperty(CONTRACT_CONFIG_MERCHANT_NAME).getValue() == null) {
+            errors.put(CONTRACT_CONFIG_MERCHANT_NAME, i18n.getMessage("error.noMerchantName", contractParametersCheckRequest.getLocale()));
         }
 
         // stop the process if error exists
@@ -111,7 +140,7 @@ public class ConfigurationServiceImpl extends AbstractConfigurationHttpService i
     }
 
     @Override
-    public StringResponse createSendRequest(ContractParametersCheckRequest configRequest) throws IOException, InvalidRequestException, URISyntaxException {
+    public StringResponse createSendRequest(ContractParametersCheckRequest configRequest) throws IOException, InvalidRequestException, URISyntaxException, ExternalCommunicationException {
 
         // create Samsung request Object from Payline request Object
         CreateTransactionPostRequest samsungRequest = new CreateTransactionPostRequest.Builder().fromCheckRequest(configRequest);
