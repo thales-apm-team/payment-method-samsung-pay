@@ -26,7 +26,7 @@ import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
  */
 public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
 
-    private static final Logger logger = LogManager.getLogger( AbstractPaymentHttpService.class );
+    private static final Logger logger = LogManager.getLogger(AbstractPaymentHttpService.class);
 
     protected SamsungPayHttpClient httpClient;
 
@@ -39,11 +39,11 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
      *
      * @param paymentRequest The input request provided by Payline
      * @return The {@link StringResponse} from the HTTP call
-     * @throws IOException Can be thrown while sending the HTTP request
-     * @throws InvalidRequestException Thrown if the input request in not valid
+     * @throws IOException              Can be thrown while sending the HTTP request
+     * @throws InvalidRequestException  Thrown if the input request in not valid
      * @throws NoSuchAlgorithmException Thrown if the HMAC algorithm is not available
      */
-    public abstract StringResponse createSendRequest(T paymentRequest ) throws IOException, InvalidRequestException, URISyntaxException, ExternalCommunicationException;
+    public abstract StringResponse createSendRequest(T paymentRequest) throws IOException, InvalidRequestException, URISyntaxException, ExternalCommunicationException;
 
     /**
      * Process the response from the HTTP call.
@@ -53,7 +53,7 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
      * @return The {@link PaymentResponse}
      * @throws IOException Can be thrown while reading the response body
      */
-    public abstract PaymentResponse processResponse( StringResponse response ) throws IOException;
+    public abstract PaymentResponse processResponse(StringResponse response) throws IOException;
 
     /**
      * Process a {@link PaymentRequest} (or subclass), handling all the generic error cases
@@ -61,63 +61,62 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
      * @param paymentRequest The input request from Payline
      * @return The corresponding {@link PaymentResponse}
      */
-    protected PaymentResponse processRequest( T paymentRequest ) {
+    protected PaymentResponse processRequest(T paymentRequest) {
 
         try {
 
             // Mandate the child class to create and send the request (which is specific to each implementation)
-            StringResponse response = this.createSendRequest( paymentRequest );
+            StringResponse response = this.createSendRequest(paymentRequest);
 
-            if ( response != null && response.getCode() == HTTP_CREATED && response.getContent() != null ) {
+            if (response != null && response.getCode() == HTTP_CREATED && response.getContent() != null) {
                 // Mandate the child class to process the request when it's OK (which is specific to each implementation)
-                return this.processResponse( response );
-            } else if ( response != null && response.getCode() != HTTP_OK ) {
-                this.logger.error( "An HTTP error occurred while sending the request: " + response.getContent() );
-                return buildPaymentResponseFailure( Integer.toString( response.getCode() ), FailureCause.COMMUNICATION_ERROR );
+                return this.processResponse(response);
+            } else if (response != null && response.getCode() != HTTP_OK) {
+                this.logger.error("An HTTP error occurred while sending the request: " + response.getContent());
+                return buildPaymentResponseFailure(Integer.toString(response.getCode()), FailureCause.COMMUNICATION_ERROR);
             } else {
-                this.logger.error( "The HTTP response or its body is null and should not be" );
-                return buildPaymentResponseFailure( DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR );
+                this.logger.error("The HTTP response or its body is null and should not be");
+                return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
             }
 
-        } catch ( InvalidRequestException e ) {
-            this.logger.error( "The input payment request is invalid: " + e.getMessage() );
-            return buildPaymentResponseFailure( DEFAULT_ERROR_CODE, FailureCause.INVALID_DATA );
-        } catch ( IOException e ) {
-            this.logger.error( "An IOException occurred while sending the HTTP request or receiving the response: " + e.getMessage() );
-            return buildPaymentResponseFailure( DEFAULT_ERROR_CODE, FailureCause.COMMUNICATION_ERROR );
-        } catch ( Exception e ) {
-            this.logger.error( "An unexpected error occurred: ", e );
-            return buildPaymentResponseFailure( DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR );
+        } catch (InvalidRequestException e) {
+            this.logger.error("The input payment request is invalid: {}", e.getMessage(), e);
+            return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INVALID_DATA);
+        } catch (IOException e) {
+            this.logger.error("An IOException occurred while sending the HTTP request or receiving the response: {}", e.getMessage(), e);
+            return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.COMMUNICATION_ERROR);
+        } catch (Exception e) {
+            this.logger.error("An unexpected error occurred: {}", e.getMessage(), e);
+            return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
         }
 
     }
 
     /**
-     *
      * @param response
      * @return
      */
     protected PaymentResponse processGenericErrorResponse(AbstractJsonResponse response) {
         WSRequestResultEnum resultEnum = WSRequestResultEnum.fromResultCodeValue(response.getResultCode());
         if (resultEnum != null) {
-            return buildPaymentResponseFailure( response.getResultMessage(), resultEnum.getPaylineResult() );
+            return buildPaymentResponseFailure(response.getResultMessage(), resultEnum.getPaylineResult());
         } else {
-            return buildPaymentResponseFailure( response.getResultMessage(), FailureCause.INVALID_DATA );
+            return buildPaymentResponseFailure(response.getResultMessage(), FailureCause.INVALID_DATA);
         }
     }
 
     /**
      * Utility method to instantiate {@link PaymentResponseFailure} objects, using the class' builder.
      *
-     * @param errorCode The error code
+     * @param errorCode    The error code
      * @param failureCause The failure cause
      * @return The instantiated object
      */
-    protected PaymentResponseFailure buildPaymentResponseFailure(String errorCode, FailureCause failureCause ) {
+    protected PaymentResponseFailure buildPaymentResponseFailure(String errorCode, FailureCause failureCause) {
 
         return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
-                .withFailureCause( failureCause )
-                .withErrorCode( errorCode )
+                .withFailureCause(failureCause)
+                .withErrorCode(errorCode)
                 .build();
 
     }
