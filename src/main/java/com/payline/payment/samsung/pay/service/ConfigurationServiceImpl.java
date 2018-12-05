@@ -32,7 +32,7 @@ import static com.payline.pmapi.bean.configuration.request.ContractParametersChe
  */
 public class ConfigurationServiceImpl extends AbstractConfigurationHttpService implements ConfigurationService {
 
-    private static final Logger logger = LogManager.getLogger(ConfigurationServiceImpl.class);
+    private static final Logger LOGGER = LogManager.getLogger(ConfigurationServiceImpl.class);
     private static final String RELEASE_DATE_FORMAT = "dd/MM/yyyy";
 
     /**
@@ -122,7 +122,7 @@ public class ConfigurationServiceImpl extends AbstractConfigurationHttpService i
         try {
             props.load(ConfigurationServiceImpl.class.getClassLoader().getResourceAsStream("release.properties"));
         } catch (IOException e) {
-            logger.error("An error occurred reading the file: release.properties");
+            LOGGER.error("An error occurred reading the file: release.properties");
             props.setProperty("release.version", "unknown");
             props.setProperty("release.date", "01/01/1900");
         }
@@ -151,7 +151,7 @@ public class ConfigurationServiceImpl extends AbstractConfigurationHttpService i
         String host = ConfigProperties.get(SamsungPayConstants.CONFIG__HOST, environment);
         String path = ConfigProperties.get(SamsungPayConstants.CONFIG__PATH_TRANSACTION);
 
-        return httpClient.doPost(scheme, host, path, samsungRequest.buildBody());
+        return httpClient.doPost(scheme, host, path, samsungRequest.buildBody(), DEFAULT_XREQUESTID);
     }
 
     @Override

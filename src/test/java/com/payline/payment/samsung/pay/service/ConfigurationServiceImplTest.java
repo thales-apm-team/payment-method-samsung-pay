@@ -52,9 +52,9 @@ public class ConfigurationServiceImplTest {
     }
 
     @Test
-    public void getReleaseInformation(){
+    public void getReleaseInformation() {
         ReleaseInformation information = service.getReleaseInformation();
-        Assert.assertFalse("01/01/1900".equals( information.getDate()));
+        Assert.assertFalse("01/01/1900".equals(information.getDate()));
         Assert.assertFalse("unknown".equals(information.getVersion()));
     }
 
@@ -70,7 +70,7 @@ public class ConfigurationServiceImplTest {
         StringResponse mockedResponse = new StringResponse();
         mockedResponse.setContent(goodResponse);
         mockedResponse.setCode(HTTP_CREATED);
-        when(httpClient.doPost(anyString(), anyString(), anyString(), anyString())).thenReturn(mockedResponse);
+        when(httpClient.doPost(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(mockedResponse);
 
         ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest(Utils.MERCHANT_ID);
         Map<String, String> errors = service.check(request);
@@ -82,7 +82,7 @@ public class ConfigurationServiceImplTest {
         StringResponse mockedResponse = new StringResponse();
         mockedResponse.setContent(null);
         mockedResponse.setCode(400);
-        when(httpClient.doPost(anyString(), anyString(), anyString(), anyString())).thenReturn(mockedResponse);
+        when(httpClient.doPost(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(mockedResponse);
 
         ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest(Utils.MERCHANT_ID);
         Map<String, String> errors = service.check(request);
@@ -100,14 +100,11 @@ public class ConfigurationServiceImplTest {
 
     @Test
     public void checkIOExceptionResponse() throws IOException, URISyntaxException, ExternalCommunicationException {
-        when(httpClient.doPost(anyString(), anyString(), anyString(), anyString())).thenThrow(IOException.class);
+        when(httpClient.doPost(anyString(), anyString(), anyString(), anyString(), anyString())).thenThrow(IOException.class);
 
         ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest(Utils.MERCHANT_ID);
         Map<String, String> errors = service.check(request);
         Assert.assertEquals(1, errors.size());
         Assert.assertTrue(errors.containsKey(GENERIC_ERROR));
     }
-
-    // todo ajouter les checks avec les mauvaises réponses
-
 }

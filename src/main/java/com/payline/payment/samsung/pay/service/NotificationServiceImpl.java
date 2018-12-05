@@ -26,7 +26,7 @@ import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
  */
 public class NotificationServiceImpl implements NotificationService {
 
-    private Logger logger = LogManager.getLogger(PaymentServiceImpl.class);
+    private final static Logger LOGGER = LogManager.getLogger(PaymentServiceImpl.class);
 
     private SamsungPayHttpClient httpClient;
 
@@ -59,21 +59,21 @@ public class NotificationServiceImpl implements NotificationService {
             if (response != null && response.getCode() == HTTP_CREATED && response.getContent() != null) {
                 this.processResponse(response);
             } else if (response != null && response.getCode() != HTTP_CREATED) {
-                this.logger.error("An HTTP error occurred while sending the request: " + response.getContent());
+                LOGGER.error("An HTTP error occurred while sending the request: " + response.getContent());
                 // Nothing to do, no response to return
             } else {
-                this.logger.error("The HTTP response or its body is null and should not be");
+                LOGGER.error("The HTTP response or its body is null and should not be");
                 // Nothing to do, no response to return
             }
 
         } catch (InvalidRequestException e) {
-            this.logger.error("The input payment request is invalid: {}", e.getMessage(), e);
+            LOGGER.error("The input payment request is invalid: {}", e.getMessage(), e);
             // Nothing to do, no response to return
         } catch (IOException e) {
-            this.logger.error("An IOException occurred while sending the HTTP request or receiving the response: {}", e.getMessage(), e);
+            LOGGER.error("An IOException occurred while sending the HTTP request or receiving the response: {}", e.getMessage(), e);
             // Nothing to do, no response to return
         } catch (Exception e) {
-            this.logger.error("An unexpected error occurred: {}", e.getMessage(), e);
+            LOGGER.error("An unexpected error occurred: {}", e.getMessage(), e);
             // Nothing to do, no response to return
         }
     }
@@ -89,12 +89,7 @@ public class NotificationServiceImpl implements NotificationService {
         String host = ConfigProperties.get(CONFIG__HOST, environment);
         String path = ConfigProperties.get(CONFIG__PATH_NOTIFICATION);
 
-        return this.httpClient.doPost(
-                scheme,
-                host,
-                path,
-                notificationPostRequest.buildBody()
-        );
+        return this.httpClient.doPost(scheme, host, path, notificationPostRequest.buildBody(), notificationRequest.getPartnerTransactionId());
 
     }
 
@@ -103,9 +98,9 @@ public class NotificationServiceImpl implements NotificationService {
         NotificationPostResponse notificationPostResponse = new NotificationPostResponse.Builder().fromJson(response.getContent());
 
         if (notificationPostResponse.isResultOk()) {
-            this.logger.info("Samsung Pay notification OK: " + notificationPostResponse.getResultMessage());
+            LOGGER.info("Samsung Pay notification OK: " + notificationPostResponse.getResultMessage());
         } else {
-            logger.error("Samsung Pay notification KO: " + notificationPostResponse.getResultMessage());
+            LOGGER.error("Samsung Pay notification KO: " + notificationPostResponse.getResultMessage());
         }
 
     }

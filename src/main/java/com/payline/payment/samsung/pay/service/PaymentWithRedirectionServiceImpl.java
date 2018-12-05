@@ -35,7 +35,7 @@ import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
  */
 public class PaymentWithRedirectionServiceImpl extends AbstractPaymentHttpService<RedirectionPaymentRequest> implements PaymentWithRedirectionService {
 
-    private static final Logger logger = LogManager.getLogger(PaymentWithRedirectionServiceImpl.class);
+    private static final Logger LOGGER = LogManager.getLogger(PaymentWithRedirectionServiceImpl.class);
 
     private PaymentCredentialGetRequest.Builder requestBuilder;
 
@@ -59,11 +59,11 @@ public class PaymentWithRedirectionServiceImpl extends AbstractPaymentHttpServic
 
     @Override
     public PaymentResponse handleSessionExpired(TransactionStatusRequest transactionStatusRequest) {
-        return buildPaymentResponseFailure(TIMEOUT, FailureCause.SESSION_EXPIRED); // todo il faut faire un appel vers SPay pour voir dans quel etat est la transaction(CANCELLED, SUCCESS etc...)
+        return buildPaymentResponseFailure(TIMEOUT, FailureCause.SESSION_EXPIRED);
     }
 
     @Override
-    public StringResponse createSendRequest(RedirectionPaymentRequest paymentRequest) throws IOException, InvalidRequestException, URISyntaxException, ExternalCommunicationException {
+    public StringResponse createSendRequest(RedirectionPaymentRequest paymentRequest) throws InvalidRequestException, URISyntaxException, ExternalCommunicationException {
 
         // Create PaymentCredential request form Payline request
         PaymentCredentialGetRequest paymentCredentialGetRequest = this.requestBuilder.fromRedirectionPaymentRequest(paymentRequest);
@@ -80,12 +80,7 @@ public class PaymentWithRedirectionServiceImpl extends AbstractPaymentHttpServic
         Map<String, String> queryAttributes = new HashMap<>();
         queryAttributes.put(SERVICE_ID, paymentCredentialGetRequest.getServiceId());
 
-        return this.httpClient.doGet(
-                scheme,
-                host,
-                path,
-                queryAttributes
-        );
+        return this.httpClient.doGet(scheme, host, path, queryAttributes, redirectionPaymentRequest.getTransactionId());
 
     }
 
@@ -116,7 +111,7 @@ public class PaymentWithRedirectionServiceImpl extends AbstractPaymentHttpServic
                         .withPartnerTransactionId(getPartnerTransactionId())
                         .build();
             } catch (DecryptException e) {
-                logger.error("Unable to decrypt data: {}", e.getMessage(), e);
+                LOGGER.error("Unable to decrypt data: {}", e.getMessage(), e);
                 return PaymentResponseFailure.PaymentResponseFailureBuilder
                         .aPaymentResponseFailure()
                         .withFailureCause(FailureCause.INVALID_FIELD_FORMAT)
@@ -130,8 +125,11 @@ public class PaymentWithRedirectionServiceImpl extends AbstractPaymentHttpServic
 
     }
 
-    public String getPartnerTransactionId(){
+    public String getPartnerTransactionId() {
         return this.redirectionPaymentRequest.getTransactionId();
     }
 
+    public void setRedirectionPaymentRequest(RedirectionPaymentRequest redirectionPaymentRequest){
+        this.redirectionPaymentRequest = redirectionPaymentRequest;
+    }
 }

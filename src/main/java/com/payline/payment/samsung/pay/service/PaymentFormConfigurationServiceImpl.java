@@ -26,7 +26,7 @@ import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
  * Created by Thales on 27/08/2018.
  */
 public class PaymentFormConfigurationServiceImpl implements PaymentFormConfigurationService {
-    private static final Logger logger = LogManager.getLogger("PaymentFormConfigurationService");
+    private static final Logger LOGGER = LogManager.getLogger("PaymentFormConfigurationService");
 
     private I18nService i18n;
 
@@ -76,7 +76,7 @@ public class PaymentFormConfigurationServiceImpl implements PaymentFormConfigura
                     .withContentType(LOGO_CONTENT_TYPE)
                     .build();
         } catch (IOException e) {
-            logger.error("Unable to load the logo {}", e.getMessage(), e);
+            LOGGER.error("Unable to load the logo {}", e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }

@@ -4,7 +4,6 @@ package com.payline.payment.samsung.pay.utils;
  * Created by Thales on 16/08/2018.
  */
 public class SamsungPayConstants {
-    // todo faire du nettoyage dans toutes ces constantes
     public static final String DEFAULT_ERROR_CODE = "no code transmitted";
 
     public static final String ID = "id";
@@ -49,6 +48,8 @@ public class SamsungPayConstants {
     public static final String CONTRACT_CONFIG_VISA_PROPERTY_DESCRIPTION = "contractConfiguration.visa.description";
     public static final String CONTRACT_CONFIG_MASTERCARD_PROPERTY_LABEL = "contractConfiguration.mastercard.label";
     public static final String CONTRACT_CONFIG_MASTERCARD_PROPERTY_DESCRIPTION = "contractConfiguration.mastercard.description";
+
+    public static final String DEFAULT_XREQUESTID = "123456789";
 
     // Data used in PaymentFormConfigurationServiceImpl
     public static final boolean NOFIELDFORM_DISPLAY_PAYMENT_BUTTON = true;

@@ -36,7 +36,7 @@ import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
  */
 public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentRequest> implements PaymentService {
 
-    private static final Logger logger = LogManager.getLogger(PaymentServiceImpl.class);
+    private static final Logger LOGGER = LogManager.getLogger(PaymentServiceImpl.class);
 
     private CreateTransactionPostRequest.Builder requestBuilder;
 
@@ -69,12 +69,7 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
         String host = ConfigProperties.get(CONFIG__HOST, environment);
         String path = ConfigProperties.get(CONFIG__PATH_TRANSACTION);
 
-        return this.httpClient.doPost(
-                scheme,
-                host,
-                path,
-                createTransactionPostRequest.buildBody()
-        );
+        return this.httpClient.doPost(scheme, host, path, createTransactionPostRequest.buildBody(), paymentRequest.getTransactionId());
 
     }
 
@@ -103,7 +98,7 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
             // this object is not used because the SansungPay widget does automatically the redirect when transaction is done
             PartnerWidgetOnPay onPay = PartnerWidgetOnPayCallBack.WidgetContainerOnPayCallBackBuilder
                     .aWidgetContainerOnPayCallBack()
-                   .withName("notUsedButMandatory")
+                    .withName("notUsedButMandatory")
                     .build();
 
             PartnerWidgetForm paymentForm = PartnerWidgetForm.WidgetPartnerFormBuilder.aWidgetPartnerForm()
@@ -136,12 +131,12 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
         this.paymentRequest = paymentRequest;
     }
 
-    public String createConnectCall(PaymentRequest request, CreateTransactionPostResponse response){
+    public String createConnectCall(PaymentRequest request, CreateTransactionPostResponse response) {
         String functionToCall = "(function(){\n" +
                 "    SamsungPay.connect(transactionId ,href ,serviceId ,callbackUrl ,cancelUrl ,countryCode ,mod ,exp ,keyId );\n" +
                 "})()";
 
-        return functionToCall.replace("transactionId",response.getId())
+        return functionToCall.replace("transactionId", response.getId())
                 .replace("href", response.getHref())
                 .replace("serviceId", request.getPartnerConfiguration().getProperty(PARTNER_CONFIG__SERVICE_ID))
                 .replace("callbackUrl", request.getEnvironment().getRedirectionReturnURL())
@@ -161,8 +156,8 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
             Stream<String> lines = Files.lines(path);
             file = lines.collect(Collectors.joining("\n"));
             lines.close();
-        }catch (IOException | URISyntaxException e){
-            logger.error("Unable to load the script: {}", e.getMessage());
+        } catch (IOException | URISyntaxException e) {
+            LOGGER.error("Unable to load the script: {}", e.getMessage());
         }
 
         return file;

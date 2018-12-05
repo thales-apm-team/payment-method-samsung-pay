@@ -9,6 +9,7 @@ import com.payline.pmapi.bean.payment.*;
 import com.payline.pmapi.bean.payment.request.NotifyTransactionStatusRequest;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
+import com.payline.pmapi.bean.payment.request.TransactionStatusRequest;
 import com.payline.pmapi.bean.paymentform.request.PaymentFormConfigurationRequest;
 
 import java.math.BigInteger;
@@ -17,7 +18,8 @@ import java.util.*;
 import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
 
 public class Utils {
-    private static Locale locale = Locale.FRENCH;
+    private static final Locale FRENCH = Locale.FRENCH;
+    private static final String EUR = "EUR";
     public static final String SUCCESS_URL = "https://succesurl.com/";
     public static final String FAILURE_URL = "http://cancelurl.com/";
     public static final String NOTIFICATION_URL = "http://notificationurl.com/";
@@ -39,7 +41,7 @@ public class Utils {
 
         return ContractParametersCheckRequest.CheckRequestBuilder.aCheckRequest()
                 .withAccountInfo(accountInfo)
-                .withLocale(locale)
+                .withLocale(FRENCH)
                 .withContractConfiguration(configuration)
                 .withEnvironment(environment)
                 .withPartnerConfiguration(createDefaultPartnerConfiguration());
@@ -47,7 +49,7 @@ public class Utils {
     }
 
     public static PaymentRequest.Builder createCompletePaymentBuilder() {
-        final Amount amount = createAmount("EUR");
+        final Amount amount = createAmount(EUR);
         final ContractConfiguration contractConfiguration = createContractConfiguration(MERCHANT_ID);
         final Environment paylineEnvironment = new Environment(NOTIFICATION_URL, SUCCESS_URL, FAILURE_URL, true);
         final String transactionID = createTransactionId();
@@ -120,7 +122,6 @@ public class Utils {
         return contractConfiguration;
     }
 
-
     public static ContractConfiguration createDefaultContractConfiguration() {
         final ContractConfiguration contractConfiguration = new ContractConfiguration("", new HashMap<>());
         contractConfiguration.getContractProperties().put(CONTRACT_CONFIG_MERCHANT_NAME, new ContractProperty(MERCHANT_ID));
@@ -168,7 +169,7 @@ public class Utils {
         return PaymentFormConfigurationRequest.PaymentFormConfigurationRequestBuilder.aPaymentFormConfigurationRequest()
                 .withLocale(Locale.FRANCE)
                 .withBuyer(createDefaultBuyer())
-                .withAmount(new Amount(null, Currency.getInstance("EUR")))
+                .withAmount(new Amount(null, Currency.getInstance(EUR)))
                 .withContractConfiguration(createContractConfiguration(MERCHANT_ID))
                 .withOrder(createOrder("007"))
                 .withEnvironment(createDefaultPaylineEnvironment())
@@ -184,7 +185,11 @@ public class Utils {
     }
 
     public static RedirectionPaymentRequest createRedirectionPaymentRequest() {
-        final Amount amount = createAmount("EUR");
+        return createRedirectionPaymentRequestBuilder().build();
+    }
+
+    public static RedirectionPaymentRequest.Builder<RedirectionPaymentRequest> createRedirectionPaymentRequestBuilder() {
+        final Amount amount = createAmount(EUR);
         final ContractConfiguration contractConfiguration = createContractConfiguration(MERCHANT_ID);
         final Environment paylineEnvironment = new Environment(NOTIFICATION_URL, SUCCESS_URL, FAILURE_URL, true);
         final String transactionID = createTransactionId();
@@ -201,7 +206,7 @@ public class Utils {
         final Map<String, String[]> parameterMap = new HashMap<>();
         parameterMap.put(REF_ID, parameterValue);
 
-        return RedirectionPaymentRequest.builder()
+        return (RedirectionPaymentRequest.Builder<RedirectionPaymentRequest>) RedirectionPaymentRequest.builder()
                 .withHttpRequestParametersMap(parameterMap)
                 .withAmount(amount)
                 .withBrowser(new Browser("", Locale.FRANCE))
@@ -212,18 +217,33 @@ public class Utils {
                 .withTransactionId(transactionID)
                 .withSoftDescriptor(softDescriptor)
                 .withBuyer(buyer)
-                .withPartnerConfiguration(configuration)
-                .build();
+                .withPartnerConfiguration(configuration);
     }
 
-    public static NotifyTransactionStatusRequest createNotifyTransactionRequest(){
+    public static NotifyTransactionStatusRequest createNotifyTransactionRequest() {
+        return createNotifyTransactionRequestBuilder().build();
+    }
+
+    public static NotifyTransactionStatusRequest.NotifyTransactionStatusRequestBuilder createNotifyTransactionRequestBuilder() {
         return NotifyTransactionStatusRequest.NotifyTransactionStatusRequestBuilder.aNotifyTransactionStatusRequest()
                 .withPartnerTransactionId("1")
                 .withTransactionSatus(NotifyTransactionStatusRequest.TransactionStatus.SUCCESS)
-                .withAmount(createAmount("EUR"))
+                .withAmount(createAmount(EUR))
                 .withContractConfiguration(createContractConfiguration(MERCHANT_ID))
                 .withEnvironment(createDefaultPaylineEnvironment())
+                .withPartnerConfiguration(createDefaultPartnerConfiguration());
+    }
+
+    public static TransactionStatusRequest createTransactionStatusRequest() {
+        String transactionId = createTransactionId();
+        return TransactionStatusRequest.TransactionStatusRequestBuilder.aNotificationRequest()
+                .withAmount(createAmount(EUR))
+                .withOrder(createOrder(transactionId))
+                .withBuyer(createDefaultBuyer())
+                .withEnvironment(createDefaultPaylineEnvironment())
                 .withPartnerConfiguration(createDefaultPartnerConfiguration())
+                .withContractConfiguration(createContractConfiguration(MERCHANT_ID))
+                .withTransactionId(transactionId)
                 .build();
     }
 }
