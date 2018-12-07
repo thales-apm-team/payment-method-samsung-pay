@@ -6,6 +6,7 @@ import com.payline.payment.samsung.pay.exception.ExternalCommunicationException;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.payment.samsung.pay.utils.SamsungPayConstants;
 import com.payline.payment.samsung.pay.utils.http.StringResponse;
+import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFormUpdated;
@@ -94,11 +95,20 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
                     .withName("notUsedButMandatory")
                     .build();
 
+            // temporary load the samsung.js file
+            String script = "";
+            try{
+                script = loadFile();
+            }catch (Exception e){
+                LOGGER.error("Unable to load the script: {}", e.getMessage());
+                return buildPaymentResponseFailure("Unable to load samsungPay script",FailureCause.INTERNAL_ERROR);
+            }
+
             PartnerWidgetForm paymentForm = PartnerWidgetForm.WidgetPartnerFormBuilder.aWidgetPartnerForm()
                     .withDisplayButton(false)    // the "pay" button is embedded in SamsungPay.js
                     .withDescription("")
                     .withScriptImport(scriptImport)
-                    .withLoadingScriptBeforeImport(loadFile())
+                    .withLoadingScriptBeforeImport(script)
                     .withLoadingScriptAfterImport(createConnectCall(paymentRequest, createTransactionPostResponse))
                     .withContainer(container)
                     .withOnPay(onPay)
@@ -141,18 +151,12 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
     }
 
 
-    public String loadFile() {
+    public String loadFile() throws IOException, URISyntaxException {
         String file = "";
-        try {
-            Path path = Paths.get(getClass().getClassLoader().getResource("samsung.js").toURI());
-
-            Stream<String> lines = Files.lines(path);
-            file = lines.collect(Collectors.joining("\n"));
-            lines.close();
-        } catch (IOException | URISyntaxException e) {
-            LOGGER.error("Unable to load the script: {}", e.getMessage());
-        }
-
+        Path path = Paths.get(getClass().getClassLoader().getResource("samsung.js").toURI());
+        Stream<String> lines = Files.lines(path);
+        file = lines.collect(Collectors.joining("\n"));
+        lines.close();
         return file;
     }
 }
