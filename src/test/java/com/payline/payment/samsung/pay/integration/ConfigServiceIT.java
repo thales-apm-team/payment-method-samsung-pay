@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import java.util.Map;
 
-public class ConfigServiceIntegration {
+public class ConfigServiceIT {
     private ConfigurationServiceImpl service = new ConfigurationServiceImpl();
 
 

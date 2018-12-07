@@ -26,7 +26,7 @@ import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
  */
 public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
 
-    private static final Logger logger = LogManager.getLogger(AbstractPaymentHttpService.class);
+    private static final Logger LOGGER = LogManager.getLogger(AbstractPaymentHttpService.class);
 
     protected SamsungPayHttpClient httpClient;
 
@@ -68,25 +68,25 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
             // Mandate the child class to create and send the request (which is specific to each implementation)
             StringResponse response = this.createSendRequest(paymentRequest);
 
-            if (response != null && response.getCode() == HTTP_CREATED && response.getContent() != null) {
+            if (response != null && ( response.getCode() == HTTP_OK || response.getCode() == HTTP_CREATED)&& response.getContent() != null) {
                 // Mandate the child class to process the request when it's OK (which is specific to each implementation)
                 return this.processResponse(response);
             } else if (response != null && response.getCode() != HTTP_OK) {
-                this.logger.error("An HTTP error occurred while sending the request: " + response.getContent());
+                LOGGER.error("An HTTP error occurred while sending the request: " + response.getContent());
                 return buildPaymentResponseFailure(Integer.toString(response.getCode()), FailureCause.COMMUNICATION_ERROR);
             } else {
-                this.logger.error("The HTTP response or its body is null and should not be");
+                LOGGER.error("The HTTP response or its body is null and should not be");
                 return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
             }
 
         } catch (InvalidRequestException e) {
-            this.logger.error("The input payment request is invalid: {}", e.getMessage(), e);
+            LOGGER.error("The input payment request is invalid: {}", e.getMessage(), e);
             return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INVALID_DATA);
         } catch (IOException e) {
-            this.logger.error("An IOException occurred while sending the HTTP request or receiving the response: {}", e.getMessage(), e);
+            LOGGER.error("An IOException occurred while sending the HTTP request or receiving the response: {}", e.getMessage(), e);
             return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.COMMUNICATION_ERROR);
         } catch (Exception e) {
-            this.logger.error("An unexpected error occurred: {}", e.getMessage(), e);
+            LOGGER.error("An unexpected error occurred: {}", e.getMessage(), e);
             return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
         }
 

@@ -3,8 +3,9 @@ package com.payline.payment.samsung.pay.bean.rest.request;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
 
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PARTNER_CONFIG__SERVICE_ID;
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PARTNER_CONFIG_SERVICE_ID;
 import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.REF_ID;
+import static com.payline.payment.samsung.pay.utils.SamsungPayStringUtils.isEmpty;
 
 /**
  * Created by Thales on 16/08/2018.
@@ -41,7 +42,7 @@ public class PaymentCredentialGetRequest {
             // Instantiate the PaymentCredentialGetRequest from input request
             return new PaymentCredentialGetRequest(
                     paylineRequest.getHttpRequestParametersMap().get(REF_ID)[0],
-                    paylineRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG__SERVICE_ID)
+                    paylineRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG_SERVICE_ID)
             );
         }
 
@@ -65,7 +66,7 @@ public class PaymentCredentialGetRequest {
             if (paymentRequest.getPartnerConfiguration() == null) {
                 throw new InvalidRequestException("PartnerConfiguration properties object must not be null");
             }
-            if (paymentRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG__SERVICE_ID) == null) {
+            if ( isEmpty( paymentRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG_SERVICE_ID))) {
                 throw new InvalidRequestException("Missing PartnerConfiguration property: service id");
             }
 

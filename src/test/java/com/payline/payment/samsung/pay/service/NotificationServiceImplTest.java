@@ -8,7 +8,6 @@ import com.payline.payment.samsung.pay.utils.http.StringResponse;
 import com.payline.pmapi.bean.notification.response.NotificationResponse;
 import com.payline.pmapi.bean.notification.response.impl.IgnoreNotificationResponse;
 import com.payline.pmapi.bean.payment.request.NotifyTransactionStatusRequest;
-import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,9 +32,6 @@ public class NotificationServiceImplTest {
     @Mock
     private SamsungPayHttpClient httpClient;
 
-    @Mock
-    private Logger logger;
-
     @InjectMocks
     @Spy
     private NotificationServiceImpl service = new NotificationServiceImpl();
@@ -51,7 +47,7 @@ public class NotificationServiceImplTest {
     public void createRequest() throws URISyntaxException, IOException, InvalidRequestException, ExternalCommunicationException {
         String content = "thisIsAContent";
         StringResponse response = Utils.createStringResponse(content, 200);
-        Mockito.when(httpClient.doPost(anyString(), anyString(), anyString(), anyString())).thenReturn(response);
+        Mockito.when(httpClient.doPost(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(response);
 
         NotifyTransactionStatusRequest request = Utils.createNotifyTransactionRequest();
         StringResponse httpResponse = service.createRequest(request);
@@ -101,11 +97,6 @@ public class NotificationServiceImplTest {
         service.notifyTransactionStatus(request);
     }
 
-
-
-
-
-
     @Test
     public void processResponseOK() {
         String jsonContent = "{" +
@@ -115,7 +106,6 @@ public class NotificationServiceImplTest {
         StringResponse response = Utils.createStringResponse(jsonContent, 201);
 
         service.processResponse(response);
-        Mockito.verify(logger).info("Samsung Pay notification OK: SUCCESS");
     }
 
     @Test
@@ -129,7 +119,6 @@ public class NotificationServiceImplTest {
         response.setContent(jsonContent);
 
         service.processResponse(response);
-        Mockito.verify(logger).error("Samsung Pay notification KO: this is an error message");
     }
 
 }

@@ -27,8 +27,8 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 ext {
-    paymentMethodApiVersion = '1.0-RC1'
-    paymentMethodIntegrationVersion = '1.0-RC1'
+    paymentMethodApiVersion = '1.0-RC3'
+    paymentMethodIntegrationVersion = '1.0-RC3'
     releaseDirectoryPath = 'D:/build'
 }
 
@@ -134,10 +134,12 @@ task printVersion {
 
 /* Replace tokens in resources files after compilation */
 processResources {
-    filter ReplaceTokens, tokens: [
-            "version": project.version,
-            "date": new Date().format("dd/MM/yyyy")
-    ]
+    filesMatching('release.properties') {
+        filter( ReplaceTokens, tokens:[
+                'version': project.version.replaceFirst("-.*", ""),
+                'date': new Date().format("dd/MM/yyyy")
+        ])
+    }
 }
 
 test.exclude '**/*IT.class'

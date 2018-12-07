@@ -5,9 +5,8 @@ import com.payline.payment.samsung.pay.bean.rest.response.CreateTransactionPostR
 import com.payline.payment.samsung.pay.exception.ExternalCommunicationException;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.payment.samsung.pay.utils.SamsungPayConstants;
-import com.payline.payment.samsung.pay.utils.config.ConfigEnvironment;
-import com.payline.payment.samsung.pay.utils.config.ConfigProperties;
 import com.payline.payment.samsung.pay.utils.http.StringResponse;
+import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFormUpdated;
@@ -36,7 +35,7 @@ import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
  */
 public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentRequest> implements PaymentService {
 
-    private static final Logger logger = LogManager.getLogger(PaymentServiceImpl.class);
+    private static final Logger LOGGER = LogManager.getLogger(PaymentServiceImpl.class);
 
     private CreateTransactionPostRequest.Builder requestBuilder;
 
@@ -63,18 +62,8 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
         CreateTransactionPostRequest createTransactionPostRequest = this.requestBuilder.fromPaymentRequest(paymentRequest);
 
         // Send CreateTransaction request
-        ConfigEnvironment environment = Boolean.FALSE.equals(paymentRequest.getEnvironment().isSandbox()) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
-
-        String scheme = ConfigProperties.get(CONFIG__SHEME, environment);
-        String host = ConfigProperties.get(CONFIG__HOST, environment);
-        String path = ConfigProperties.get(CONFIG__PATH_TRANSACTION);
-
-        return this.httpClient.doPost(
-                scheme,
-                host,
-                path,
-                createTransactionPostRequest.buildBody()
-        );
+        String host = paymentRequest.getEnvironment().isSandbox() ? DEV_HOST : PROD_HOST;
+        return this.httpClient.doPost(SCHEME, host, CREATE_TRANSACTION_PATH, createTransactionPostRequest.buildBody(), paymentRequest.getTransactionId());
 
     }
 
@@ -103,14 +92,23 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
             // this object is not used because the SansungPay widget does automatically the redirect when transaction is done
             PartnerWidgetOnPay onPay = PartnerWidgetOnPayCallBack.WidgetContainerOnPayCallBackBuilder
                     .aWidgetContainerOnPayCallBack()
-                   .withName("notUsedButMandatory")
+                    .withName("notUsedButMandatory")
                     .build();
+
+            // temporary load the samsung.js file
+            String script = "";
+            try{
+                script = loadFile();
+            }catch (Exception e){
+                LOGGER.error("Unable to load the script: {}", e.getMessage());
+                return buildPaymentResponseFailure("Unable to load samsungPay script",FailureCause.INTERNAL_ERROR);
+            }
 
             PartnerWidgetForm paymentForm = PartnerWidgetForm.WidgetPartnerFormBuilder.aWidgetPartnerForm()
                     .withDisplayButton(false)    // the "pay" button is embedded in SamsungPay.js
                     .withDescription("")
                     .withScriptImport(scriptImport)
-                    .withLoadingScriptBeforeImport(loadFile())
+                    .withLoadingScriptBeforeImport(script)
                     .withLoadingScriptAfterImport(createConnectCall(paymentRequest, createTransactionPostResponse))
                     .withContainer(container)
                     .withOnPay(onPay)
@@ -136,14 +134,14 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
         this.paymentRequest = paymentRequest;
     }
 
-    public String createConnectCall(PaymentRequest request, CreateTransactionPostResponse response){
+    public String createConnectCall(PaymentRequest request, CreateTransactionPostResponse response) {
         String functionToCall = "(function(){\n" +
-                "    SamsungPay.connect(transactionId ,href ,serviceId ,callbackUrl ,cancelUrl ,countryCode ,mod ,exp ,keyId );\n" +
+                "    SamsungPay.connect('transactionId' ,'href' ,'serviceId' ,'callbackUrl' ,'cancelUrl' ,'countryCode' ,'mod' ,'exp' ,'keyId' );\n" +
                 "})()";
 
-        return functionToCall.replace("transactionId",response.getId())
+        return functionToCall.replace("transactionId", response.getId())
                 .replace("href", response.getHref())
-                .replace("serviceId", request.getPartnerConfiguration().getProperty(PARTNER_CONFIG__SERVICE_ID))
+                .replace("serviceId", request.getPartnerConfiguration().getProperty(PARTNER_CONFIG_SERVICE_ID))
                 .replace("callbackUrl", request.getEnvironment().getRedirectionReturnURL())
                 .replace("cancelUrl", request.getEnvironment().getRedirectionCancelURL())
                 .replace("countryCode", request.getLocale().getCountry())
@@ -153,18 +151,12 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
     }
 
 
-    public String loadFile() {
+    public String loadFile() throws IOException, URISyntaxException {
         String file = "";
-        try {
-            Path path = Paths.get(getClass().getClassLoader().getResource("samsung.js").toURI());
-
-            Stream<String> lines = Files.lines(path);
-            file = lines.collect(Collectors.joining("\n"));
-            lines.close();
-        }catch (IOException | URISyntaxException e){
-            logger.error("Unable to load the script: {}", e.getMessage());
-        }
-
+        Path path = Paths.get(getClass().getClassLoader().getResource("samsung.js").toURI());
+        Stream<String> lines = Files.lines(path);
+        file = lines.collect(Collectors.joining("\n"));
+        lines.close();
         return file;
     }
 }

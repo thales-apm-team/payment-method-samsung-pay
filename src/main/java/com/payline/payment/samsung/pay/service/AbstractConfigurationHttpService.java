@@ -13,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +26,7 @@ import static com.payline.pmapi.bean.configuration.request.ContractParametersChe
  */
 public abstract class AbstractConfigurationHttpService {
 
-    private static final Logger logger = LogManager.getLogger(AbstractConfigurationHttpService.class);
+    private static final Logger LOGGER = LogManager.getLogger(AbstractConfigurationHttpService.class);
 
     protected SamsungPayHttpClient httpClient;
     protected I18nService i18n;
@@ -39,12 +38,12 @@ public abstract class AbstractConfigurationHttpService {
 
     /**
      * Builds the request, sends it through HTTP using the httpClient and recovers the response.
-     *
      * @param configRequest The input request provided by Payline
      * @return The {@link StringResponse} from the HTTP call
-     * @throws IOException              Can be thrown while sending the HTTP request
-     * @throws InvalidRequestException  Thrown if the input request in not valid
-     * @throws NoSuchAlgorithmException Thrown if the HMAC algorithm is not available
+     * @throws IOException Can be thrown while sending the HTTP request
+     * @throws InvalidRequestException Thrown if the input request in not valid
+     * @throws URISyntaxException
+     * @throws ExternalCommunicationException
      */
     public abstract StringResponse createSendRequest(ContractParametersCheckRequest configRequest) throws IOException, InvalidRequestException, URISyntaxException, ExternalCommunicationException;
 
@@ -75,15 +74,15 @@ public abstract class AbstractConfigurationHttpService {
                 // Mandate the child class to process the request when it's OK (which is specific to each implementation)
                 return this.processResponse(response);
             } else {
-                logger.error("The HTTP response or its body is null and should not be");
+                LOGGER.error("The HTTP response or its body is null and should not be");
                 errors.put(GENERIC_ERROR, i18n.getMessage("error.errorSamsungServer", paymentRequest.getLocale()));
             }
 
         } catch (InvalidRequestException e) {
-            logger.error("Unable to create the SamsungPay request: {}", e.getMessage(), e);
+            LOGGER.error("Unable to create the SamsungPay request: {}", e.getMessage(), e);
             errors.put(GENERIC_ERROR, e.getMessage());
         } catch (IOException | URISyntaxException | ExternalCommunicationException e) {
-            logger.error("An error occurred sending the validation request to the SamsungPay server: {}", e.getMessage(), e);
+            LOGGER.error("An error occurred sending the validation request to the SamsungPay server: {}", e.getMessage(), e);
             errors.put(ContractParametersCheckRequest.GENERIC_ERROR, e.getMessage());
         }
         return errors;
