@@ -1,3 +1,4 @@
+import org.apache.tools.ant.filters.EscapeUnicode
 import org.apache.tools.ant.filters.ReplaceTokens
 
 buildscript {
@@ -17,7 +18,6 @@ plugins {
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'java-library'
-//apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'jacoco'
 
 description = 'payment-method-samsung-pay'
@@ -26,65 +26,20 @@ version '1.0-SNAPSHOT'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+compileJava.options.encoding = 'UTF-8'
+
+configurations {
+    fatJarTest
+}
+
 ext {
     paymentMethodApiVersion = '1.0-RC3'
     paymentMethodIntegrationVersion = '1.0-RC3'
     releaseDirectoryPath = 'D:/build'
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-//    maven {
-//        url "https://nexus.intra.monext.fr:10130/nexus/content/groups/public"
-//        credentials {
-//            username mavenUser
-//            password mavenPassword
-//        }
-//    }
-//    maven {
-//        url "https://nexus.intra.monext.fr:10130/nexus/content/repositories/jindus-repo-pay-pay-snapshot/"
-//        credentials {
-//            username mavenUser
-//            password mavenPassword
-//        }
-//    }
-
-//    maven {
-//        if (project.version.endsWith('-SNAPSHOT')  && buildConfig == 'Monext') {
-//            url nexusSnapshotUrl
-//        } else {
-//            url nexusPublicUrl
-//        }
-//        credentials {
-//            username mavenUser
-//            password mavenPassword
-//        }
-//    }
-
-}
-
-publishing {
-    publications {
-        shadow(MavenPublication) { publication ->
-            project.shadow.component(publication)
-        }
-    }
-    repositories {
-        mavenLocal()
-/**
-        if (project.version.endsWith('-SNAPSHOT')) {
-            url nexusSnapshotUrl
-        } else {
-            url nexusPublicUrl
-        }
-        credentials {
-            username mavenUser
-            password mavenPassword
-        }
-*/
-    }
-}
+apply from: "monext.gradle"
+//apply from: "external.gradle"
 
 dependencies {
     compileOnly("com.payline:payment-method-api:$paymentMethodApiVersion")
@@ -103,6 +58,14 @@ dependencies {
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.0.3'
     testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-server', version: '3.13.0'
     testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-support', version: '3.13.0'
+
+    fatJarTest "junit:junit:4.12"
+    fatJarTest "org.mockito:mockito-core:2.21.0"
+    fatJarTest group: 'org.seleniumhq.selenium', name: 'selenium-server', version: '3.13.0'
+    fatJarTest group: 'org.seleniumhq.selenium', name: 'selenium-support', version: '3.13.0'
+    fatJarTest group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.0.3'
+    fatJarTest group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.0.3'
+
 }
 
 assemble.dependsOn shadowJar
@@ -134,24 +97,15 @@ task printVersion {
 
 /* Replace tokens in resources files after compilation */
 processResources {
+    filesMatching('messages_fr.properties') {
+        filter(EscapeUnicode)
+    }
     filesMatching('release.properties') {
-        filter( ReplaceTokens, tokens:[
+        filter(ReplaceTokens, tokens: [
                 'version': project.version.replaceFirst("-.*", ""),
-                'date': new Date().format("dd/MM/yyyy")
+                'date'   : new Date().format("dd/MM/yyyy")
         ])
     }
 }
 
 test.exclude '**/*IT.class'
-
-sonarqube {
-    properties {
-        property "sonar.jacoco.reportPaths", "${project.buildDir}/jacoco/test.exec"
-        property "sonar.dependencyCheck.reportPath", "${project.buildDir}/reports/dependency-check-report.xml"
-        property 'sonar.dependencyCheck.htmlReportPath', "${project.buildDir}/reports/dependency-check-report.html"
-
-        property 'sonar.organization', 'thales-services-monext'
-        property 'sonar.host.url', 'https://sonarcloud.io'
-
-    }
-}

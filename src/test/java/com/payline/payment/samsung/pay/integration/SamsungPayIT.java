@@ -22,11 +22,18 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.logging.LogType;
+import org.openqa.selenium.logging.LoggingPreferences;
+import org.openqa.selenium.remote.CapabilityType;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 import static com.payline.payment.samsung.pay.utils.Utils.FAILURE_URL;
 import static com.payline.payment.samsung.pay.utils.Utils.SUCCESS_URL;
@@ -36,7 +43,6 @@ import static com.payline.payment.samsung.pay.utils.Utils.SUCCESS_URL;
  */
 public class SamsungPayIT {
     private static final String merchantName = "foo";
-    private static final String PARTNER_URL = "http://localhost/samsungPayIntegrationTest/html/index.html";
     private static final String EMAIL = "payline.pilote@monext.net";
 
     private PaymentServiceImpl paymentService = new PaymentServiceImpl();
@@ -63,14 +69,31 @@ public class SamsungPayIT {
     }
 
 
-    protected String payOnPartnerWebsite(String partnerUrl, String script) {
+    protected String payOnPartnerWebsite(String script) {
+
+        ChromeOptions options = new ChromeOptions();
+
+        options.addArguments("disable-web-security");
+        options.addArguments("allow-running-insecure-content");
+
+        DesiredCapabilities cap = DesiredCapabilities.chrome();
+        cap.setCapability(ChromeOptions.CAPABILITY, options);
+
+        LoggingPreferences logPrefs = new LoggingPreferences();
+        logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
+        cap.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
+        cap.setJavascriptEnabled(true);
         // Start browser
-        WebDriver driver = new ChromeDriver();
+        WebDriver driver = new ChromeDriver(cap);
         JavascriptExecutor js = (JavascriptExecutor) driver;
         try {
 
+            ClassLoader classLoader = SamsungPayIT.class.getClassLoader();
+            File keyFile = new File(classLoader.getResource("index.html").getFile());
             // Go to partner's website
-            driver.get(partnerUrl);
+            driver.get("file://" + keyFile.getAbsolutePath());
+
+
             js.executeScript(script);
 
             driver.findElement(By.id("email")).sendKeys(EMAIL);
@@ -82,7 +105,7 @@ public class SamsungPayIT {
 
             return driver.getCurrentUrl();
         } finally {
-//            driver.quit();
+            driver.quit();
         }
     }
 
@@ -111,7 +134,7 @@ public class SamsungPayIT {
         Assert.assertNotNull(scriptToLoad);
         Assert.assertNotNull(functionToCall);
 
-        String redirectionUrl = this.payOnPartnerWebsite(PARTNER_URL, functionToCall);
+        String redirectionUrl = this.payOnPartnerWebsite(functionToCall);
         // example of redirection url: https://www.thales.com/?ref_id=e3ecf390809649e98af0b2
 
         // check payment response
