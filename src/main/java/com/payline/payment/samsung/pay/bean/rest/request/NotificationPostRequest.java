@@ -1,13 +1,13 @@
 package com.payline.payment.samsung.pay.bean.rest.request;
 
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PARTNER_CONFIG__SERVICE_ID;
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PAYMENT__PROVIDER;
-
 import com.google.gson.annotations.SerializedName;
 import com.payline.payment.samsung.pay.bean.rest.request.nesteed.Payment;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.payment.samsung.pay.utils.type.PaymentStatusEnum;
 import com.payline.pmapi.bean.payment.request.NotifyTransactionStatusRequest;
+
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PARTNER_CONFIG_SERVICE_ID;
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PAYMENT_PROVIDER;
 
 /**
  * Created by Thales on 16/08/2018.
@@ -71,7 +71,7 @@ public class NotificationPostRequest extends AbstractJsonRequest {
             if ( paylineRequest.getPartnerConfiguration() == null ) {
                 throw new InvalidRequestException( "PartnerConfiguration properties object must not be null" );
             }
-            if ( paylineRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG__SERVICE_ID) == null ) {
+            if ( paylineRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG_SERVICE_ID) == null ) {
                 throw new InvalidRequestException( "Missing PartnerConfiguration property: service id" );
             }
 
@@ -94,7 +94,7 @@ public class NotificationPostRequest extends AbstractJsonRequest {
                                     paylineRequest.getTransactionSatus()
                             )
                     )
-                    .provider(PAYMENT__PROVIDER);
+                    .provider(PAYMENT_PROVIDER);
         }
 
         /**

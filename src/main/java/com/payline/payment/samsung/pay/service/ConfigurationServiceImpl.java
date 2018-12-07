@@ -4,9 +4,6 @@ import com.payline.payment.samsung.pay.bean.rest.request.CreateTransactionPostRe
 import com.payline.payment.samsung.pay.bean.rest.response.CreateTransactionPostResponse;
 import com.payline.payment.samsung.pay.exception.ExternalCommunicationException;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
-import com.payline.payment.samsung.pay.utils.SamsungPayConstants;
-import com.payline.payment.samsung.pay.utils.config.ConfigEnvironment;
-import com.payline.payment.samsung.pay.utils.config.ConfigProperties;
 import com.payline.payment.samsung.pay.utils.http.StringResponse;
 import com.payline.pmapi.bean.configuration.AvailableNetwork;
 import com.payline.pmapi.bean.configuration.ReleaseInformation;
@@ -96,6 +93,14 @@ public class ConfigurationServiceImpl extends AbstractConfigurationHttpService i
 
         parameters.add(networkMastercard);
 
+        final NetworkListBoxParameter networkAmex = new NetworkListBoxParameter();
+        networkMastercard.setKey(AvailableNetwork.AMEX.getKey());
+        networkMastercard.setLabel(i18n.getMessage(CONTRACT_CONFIG_AMEX_PROPERTY_LABEL, locale));
+        networkMastercard.setDescription(i18n.getMessage(CONTRACT_CONFIG_AMEX_PROPERTY_DESCRIPTION, locale));
+        networkMastercard.setNetwork(AvailableNetwork.AMEX);
+
+        parameters.add(networkAmex);
+
         return parameters;
     }
 
@@ -146,12 +151,8 @@ public class ConfigurationServiceImpl extends AbstractConfigurationHttpService i
         CreateTransactionPostRequest samsungRequest = new CreateTransactionPostRequest.Builder().fromCheckRequest(configRequest);
 
         // get all variables needed to call Samsung API
-        ConfigEnvironment environment = configRequest.getEnvironment().isSandbox() ? ConfigEnvironment.DEV : ConfigEnvironment.PROD;
-        String scheme = ConfigProperties.get(SamsungPayConstants.CONFIG__SHEME, environment);
-        String host = ConfigProperties.get(SamsungPayConstants.CONFIG__HOST, environment);
-        String path = ConfigProperties.get(SamsungPayConstants.CONFIG__PATH_TRANSACTION);
-
-        return httpClient.doPost(scheme, host, path, samsungRequest.buildBody(), DEFAULT_XREQUESTID);
+        String host = configRequest.getEnvironment().isSandbox() ? DEV_HOST: PROD_HOST;
+        return httpClient.doPost(SCHEME, host, CREATE_TRANSACTION_PATH, samsungRequest.buildBody(), DEFAULT_XREQUESTID);
     }
 
     @Override

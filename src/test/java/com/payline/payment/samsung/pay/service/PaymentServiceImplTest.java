@@ -74,7 +74,7 @@ public class PaymentServiceImplTest {
     @Test
     public void createConnectCall() {
         String goodConnectCall = "(function(){\n" +
-                "    SamsungPay.connect(000 ,http://a.simple.url ," + Utils.SERVICE_ID + " ," + Utils.SUCCESS_URL + " ," + Utils.FAILURE_URL + " ,FR ,111 ,222 ,333 );\n" +
+                "    SamsungPay.connect('000' ,'http://a.simple.url' ,'" + Utils.SERVICE_ID + "' ,'" + Utils.SUCCESS_URL + "' ,'" + Utils.FAILURE_URL + "' ,'FR' ,'111' ,'222' ,'333' );\n" +
                 "})()";
 
         String jsonResponse = "{" +

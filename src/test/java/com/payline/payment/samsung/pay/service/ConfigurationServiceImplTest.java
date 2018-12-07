@@ -48,7 +48,7 @@ public class ConfigurationServiceImplTest {
     @Test
     public void getParameters() {
         List<AbstractParameter> parameters = service.getParameters(locale);
-        Assert.assertEquals(6, parameters.size());
+        Assert.assertEquals(7, parameters.size());
     }
 
     @Test

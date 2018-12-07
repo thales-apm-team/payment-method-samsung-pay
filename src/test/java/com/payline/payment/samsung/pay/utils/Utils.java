@@ -59,7 +59,7 @@ public class Utils {
         final Buyer buyer = createDefaultBuyer();
 
         Map<String, String> configMap = new HashMap();
-        configMap.put(PARTNER_CONFIG__SERVICE_ID, SERVICE_ID);
+        configMap.put(PARTNER_CONFIG_SERVICE_ID, SERVICE_ID);
         final PartnerConfiguration configuration = new PartnerConfiguration(configMap, new HashMap<>());
 
         return PaymentRequest.builder()
@@ -161,7 +161,7 @@ public class Utils {
 
     public static PartnerConfiguration createDefaultPartnerConfiguration() {
         Map<String, String> partnerConfigMap = new HashMap<>();
-        partnerConfigMap.put(SamsungPayConstants.PARTNER_CONFIG__SERVICE_ID, SERVICE_ID);
+        partnerConfigMap.put(SamsungPayConstants.PARTNER_CONFIG_SERVICE_ID, SERVICE_ID);
         return new PartnerConfiguration(partnerConfigMap, new HashMap<>());
     }
 
@@ -199,7 +199,7 @@ public class Utils {
         final Buyer buyer = createDefaultBuyer();
 
         Map<String, String> configMap = new HashMap();
-        configMap.put(PARTNER_CONFIG__SERVICE_ID, SERVICE_ID);
+        configMap.put(PARTNER_CONFIG_SERVICE_ID, SERVICE_ID);
         final PartnerConfiguration configuration = new PartnerConfiguration(configMap, new HashMap<>());
         final String[] parameterValue = new String[1];
         parameterValue[0] = "thisIsAnId";

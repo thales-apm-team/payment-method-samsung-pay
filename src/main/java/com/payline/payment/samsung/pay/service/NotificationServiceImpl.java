@@ -4,8 +4,6 @@ import com.payline.payment.samsung.pay.bean.rest.request.NotificationPostRequest
 import com.payline.payment.samsung.pay.bean.rest.response.NotificationPostResponse;
 import com.payline.payment.samsung.pay.exception.ExternalCommunicationException;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
-import com.payline.payment.samsung.pay.utils.config.ConfigEnvironment;
-import com.payline.payment.samsung.pay.utils.config.ConfigProperties;
 import com.payline.payment.samsung.pay.utils.http.SamsungPayHttpClient;
 import com.payline.payment.samsung.pay.utils.http.StringResponse;
 import com.payline.pmapi.bean.notification.request.NotificationRequest;
@@ -84,12 +82,8 @@ public class NotificationServiceImpl implements NotificationService {
         NotificationPostRequest notificationPostRequest = this.requestBuilder.fromNotifyTransactionStatusRequest(notificationRequest);
 
         // Send Notification request
-        ConfigEnvironment environment = Boolean.FALSE.equals(notificationRequest.getEnvironment().isSandbox()) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
-        String scheme = ConfigProperties.get(CONFIG__SHEME, environment);
-        String host = ConfigProperties.get(CONFIG__HOST, environment);
-        String path = ConfigProperties.get(CONFIG__PATH_NOTIFICATION);
-
-        return this.httpClient.doPost(scheme, host, path, notificationPostRequest.buildBody(), notificationRequest.getPartnerTransactionId());
+        String host = notificationRequest.getEnvironment().isSandbox() ? DEV_HOST : PROD_HOST;
+        return this.httpClient.doPost(SCHEME, host, NOTIFICATION_PATH, notificationPostRequest.buildBody(), notificationRequest.getPartnerTransactionId());
 
     }
 

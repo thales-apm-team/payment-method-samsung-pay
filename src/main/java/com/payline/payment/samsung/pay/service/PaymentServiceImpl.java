@@ -5,8 +5,6 @@ import com.payline.payment.samsung.pay.bean.rest.response.CreateTransactionPostR
 import com.payline.payment.samsung.pay.exception.ExternalCommunicationException;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.payment.samsung.pay.utils.SamsungPayConstants;
-import com.payline.payment.samsung.pay.utils.config.ConfigEnvironment;
-import com.payline.payment.samsung.pay.utils.config.ConfigProperties;
 import com.payline.payment.samsung.pay.utils.http.StringResponse;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
@@ -63,13 +61,8 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
         CreateTransactionPostRequest createTransactionPostRequest = this.requestBuilder.fromPaymentRequest(paymentRequest);
 
         // Send CreateTransaction request
-        ConfigEnvironment environment = Boolean.FALSE.equals(paymentRequest.getEnvironment().isSandbox()) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
-
-        String scheme = ConfigProperties.get(CONFIG__SHEME, environment);
-        String host = ConfigProperties.get(CONFIG__HOST, environment);
-        String path = ConfigProperties.get(CONFIG__PATH_TRANSACTION);
-
-        return this.httpClient.doPost(scheme, host, path, createTransactionPostRequest.buildBody(), paymentRequest.getTransactionId());
+        String host = paymentRequest.getEnvironment().isSandbox() ? DEV_HOST : PROD_HOST;
+        return this.httpClient.doPost(SCHEME, host, CREATE_TRANSACTION_PATH, createTransactionPostRequest.buildBody(), paymentRequest.getTransactionId());
 
     }
 
@@ -133,12 +126,12 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
 
     public String createConnectCall(PaymentRequest request, CreateTransactionPostResponse response) {
         String functionToCall = "(function(){\n" +
-                "    SamsungPay.connect(transactionId ,href ,serviceId ,callbackUrl ,cancelUrl ,countryCode ,mod ,exp ,keyId );\n" +
+                "    SamsungPay.connect('transactionId' ,'href' ,'serviceId' ,'callbackUrl' ,'cancelUrl' ,'countryCode' ,'mod' ,'exp' ,'keyId' );\n" +
                 "})()";
 
         return functionToCall.replace("transactionId", response.getId())
                 .replace("href", response.getHref())
-                .replace("serviceId", request.getPartnerConfiguration().getProperty(PARTNER_CONFIG__SERVICE_ID))
+                .replace("serviceId", request.getPartnerConfiguration().getProperty(PARTNER_CONFIG_SERVICE_ID))
                 .replace("callbackUrl", request.getEnvironment().getRedirectionReturnURL())
                 .replace("cancelUrl", request.getEnvironment().getRedirectionCancelURL())
                 .replace("countryCode", request.getLocale().getCountry())
