@@ -32,11 +32,15 @@ public class SamsungPayConstants {
 
     // Data used in PaymentFormConfigurationServiceImpl
     public static final boolean NOFIELDFORM_DISPLAY_PAYMENT_BUTTON = true;
-    public static final String LOGO_NAME = "samsung-pay-logo.png";
-    public static final String LOGO_TYPE = "png";
-    public static final String LOGO_CONTENT_TYPE = "image/png";
-    public static final int LOGO_HEIGHT = 25;
-    public static final int LOGO_WIDTH = 104;
+
+
+    public static final String LOGO_FILE_NAME = "logo.file.name";
+    public static final String LOGO_FORMAT = "logo.format";
+    public static final String LOGO_CONTENT_TYPE = "logo.content.type";
+    public static final String LOGO_HEIGHT = "logo.height";
+    public static final String LOGO_WIDTH = "logo.width";
+    public static final String LOGO_PROPERTIES = "logo.properties";
+
     public static final String NOFIELDFORM_BUTTON_TEXT = "form.button.samsungPay.text";
     public static final String NOFIELDFORM_BUTTON_DESCRIPTION = "form.button.samsungPay.description";
 
