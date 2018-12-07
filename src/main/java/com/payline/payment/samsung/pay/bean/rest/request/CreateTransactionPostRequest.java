@@ -113,7 +113,7 @@ public class CreateTransactionPostRequest extends AbstractJsonRequest {
             if (paylineRequest.getPartnerConfiguration() == null) {
                 throw new InvalidRequestException("PartnerConfiguration properties object must not be null");
             }
-            if (paylineRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG__SERVICE_ID) == null) {
+            if (paylineRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG_SERVICE_ID) == null) {
                 throw new InvalidRequestException("Missing PartnerConfiguration property: service id");
             }
 
@@ -137,7 +137,7 @@ public class CreateTransactionPostRequest extends AbstractJsonRequest {
             if (paylineRequest.getPartnerConfiguration() == null) {
                 throw new InvalidRequestException("PartnerConfiguration properties object must not be null");
             }
-            if (paylineRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG__SERVICE_ID) == null) {
+            if (paylineRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG_SERVICE_ID) == null) {
                 throw new InvalidRequestException("Missing PartnerConfiguration property: service id");
             }
         }
@@ -154,7 +154,7 @@ public class CreateTransactionPostRequest extends AbstractJsonRequest {
                             new Service().id(
                                     paylineRequest
                                             .getPartnerConfiguration()
-                                            .getProperty(PARTNER_CONFIG__SERVICE_ID)
+                                            .getProperty(PARTNER_CONFIG_SERVICE_ID)
                             )
                     )
                     .orderNumber(
@@ -164,8 +164,8 @@ public class CreateTransactionPostRequest extends AbstractJsonRequest {
                     )
                     .protocol(
                             new Protocol()
-                                    .type(PAYMENT_DETAILS__PROTOCOL_TYPE)
-                                    .version(PAYMENT_DETAILS__PROTOCOL_VERSION)
+                                    .type(PAYMENT_DETAILS_PROTOCOL_TYPE)
+                                    .version(PAYMENT_DETAILS_PROTOCOL_VERSION)
                     )
                     .amount(
                             new Amount()
@@ -207,10 +207,10 @@ public class CreateTransactionPostRequest extends AbstractJsonRequest {
                                     .getValue()))
                     .orderNumber("0001")
                     .protocol(new Protocol()
-                            .type(PAYMENT_DETAILS__PROTOCOL_TYPE)
-                            .version(PAYMENT_DETAILS__PROTOCOL_VERSION))
+                            .type(PAYMENT_DETAILS_PROTOCOL_TYPE)
+                            .version(PAYMENT_DETAILS_PROTOCOL_VERSION))
                     .service(new Service()
-                            .id(paylineRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG__SERVICE_ID))
+                            .id(paylineRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG_SERVICE_ID))
                     );
         }
 

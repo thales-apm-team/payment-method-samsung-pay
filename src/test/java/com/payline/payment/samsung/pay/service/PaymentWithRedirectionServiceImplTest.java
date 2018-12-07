@@ -9,6 +9,7 @@ import com.payline.payment.samsung.pay.utils.http.SamsungPayHttpClient;
 import com.payline.payment.samsung.pay.utils.http.StringResponse;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
+import com.payline.pmapi.bean.payment.request.TransactionStatusRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseDoPayment;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFailure;
@@ -44,11 +45,12 @@ public class PaymentWithRedirectionServiceImplTest {
     private PaymentWithRedirectionServiceImpl service = spy(new PaymentWithRedirectionServiceImpl());
 
     @Test
-    public void createSendRequest() throws URISyntaxException, IOException, InvalidRequestException, ExternalCommunicationException {
+    public void createSendRequest() throws URISyntaxException, InvalidRequestException, ExternalCommunicationException {
         RedirectionPaymentRequest request = Utils.createRedirectionPaymentRequest();
         String content = "thisIsAResponse";
         StringResponse response = Utils.createStringResponse(content, 200);
-        Mockito.when(httpClient.doGet(anyString(), anyString(), anyString(), anyMap())).thenReturn(response);
+        Mockito.when(httpClient.doGet(anyString(), anyString(), anyString(), anyMap(), anyString())).thenReturn(response);
+        service.setRedirectionPaymentRequest(Utils.createRedirectionPaymentRequest());
 
         StringResponse httpResponse = service.createSendRequest(request);
         Assert.assertEquals(content, httpResponse.getContent());
@@ -100,5 +102,15 @@ public class PaymentWithRedirectionServiceImplTest {
 
         PaymentResponseFailure responseFailure = (PaymentResponseFailure) paymentResponse;
         Assert.assertEquals(FailureCause.INVALID_FIELD_FORMAT, responseFailure.getFailureCause());
+    }
+
+    @Test
+    public void handleSessionExpired() {
+        TransactionStatusRequest request = Utils.createTransactionStatusRequest();
+        PaymentResponse response = service.handleSessionExpired(request);
+
+        Assert.assertNotNull(response);
+        Assert.assertEquals(PaymentResponseFailure.class, response.getClass());
+        Assert.assertEquals(FailureCause.SESSION_EXPIRED, ((PaymentResponseFailure) response).getFailureCause());
     }
 }

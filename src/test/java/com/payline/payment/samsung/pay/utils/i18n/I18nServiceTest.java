@@ -1,10 +1,10 @@
 package com.payline.payment.samsung.pay.utils.i18n;
 
-import java.util.Locale;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Locale;
 
 public class I18nServiceTest {
 
@@ -27,7 +27,7 @@ public class I18nServiceTest {
         Assert.assertNotNull( enMessage );
         Assert.assertNotNull( frMessage );
         Assert.assertNotEquals( frMessage, enMessage );
-        Assert.assertEquals( enMessage, coMessage );
+        Assert.assertNotEquals( enMessage, coMessage );
     }
 
     @Test

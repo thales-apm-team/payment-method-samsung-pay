@@ -7,8 +7,6 @@ import com.payline.payment.samsung.pay.exception.DecryptException;
 import com.payline.payment.samsung.pay.exception.ExternalCommunicationException;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.payment.samsung.pay.utils.JweDecrypt;
-import com.payline.payment.samsung.pay.utils.config.ConfigEnvironment;
-import com.payline.payment.samsung.pay.utils.config.ConfigProperties;
 import com.payline.payment.samsung.pay.utils.http.StringResponse;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
@@ -35,7 +33,7 @@ import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
  */
 public class PaymentWithRedirectionServiceImpl extends AbstractPaymentHttpService<RedirectionPaymentRequest> implements PaymentWithRedirectionService {
 
-    private static final Logger logger = LogManager.getLogger(PaymentWithRedirectionServiceImpl.class);
+    private static final Logger LOGGER = LogManager.getLogger(PaymentWithRedirectionServiceImpl.class);
 
     private PaymentCredentialGetRequest.Builder requestBuilder;
 
@@ -59,33 +57,24 @@ public class PaymentWithRedirectionServiceImpl extends AbstractPaymentHttpServic
 
     @Override
     public PaymentResponse handleSessionExpired(TransactionStatusRequest transactionStatusRequest) {
-        return buildPaymentResponseFailure(TIMEOUT, FailureCause.SESSION_EXPIRED); // todo il faut faire un appel vers SPay pour voir dans quel etat est la transaction(CANCELLED, SUCCESS etc...)
+        return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.SESSION_EXPIRED);
     }
 
     @Override
-    public StringResponse createSendRequest(RedirectionPaymentRequest paymentRequest) throws IOException, InvalidRequestException, URISyntaxException, ExternalCommunicationException {
+    public StringResponse createSendRequest(RedirectionPaymentRequest paymentRequest) throws InvalidRequestException, URISyntaxException, ExternalCommunicationException {
 
         // Create PaymentCredential request form Payline request
         PaymentCredentialGetRequest paymentCredentialGetRequest = this.requestBuilder.fromRedirectionPaymentRequest(paymentRequest);
 
         // Send PaymentCredential request
-        ConfigEnvironment environment = Boolean.FALSE.equals(paymentRequest.getEnvironment().isSandbox()) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
-
-        String scheme = ConfigProperties.get(CONFIG__SHEME, environment);
-        String host = ConfigProperties.get(CONFIG__HOST, environment);
-        String path = ConfigProperties.get(CONFIG__PATH_TRANSACTION_PAYMENT_CREDENTIAL);
-        path += "/" + paymentCredentialGetRequest.getId();
+        String host = paymentRequest.getEnvironment().isSandbox() ? DEV_HOST : PROD_HOST;
+        String path = GET_PAYMENT_CREDENTIALS_PATH + "/" + paymentCredentialGetRequest.getId();
 
         // Build the request query attributes map
         Map<String, String> queryAttributes = new HashMap<>();
         queryAttributes.put(SERVICE_ID, paymentCredentialGetRequest.getServiceId());
 
-        return this.httpClient.doGet(
-                scheme,
-                host,
-                path,
-                queryAttributes
-        );
+        return this.httpClient.doGet(SCHEME, host, path, queryAttributes, redirectionPaymentRequest.getTransactionId());
 
     }
 
@@ -116,7 +105,7 @@ public class PaymentWithRedirectionServiceImpl extends AbstractPaymentHttpServic
                         .withPartnerTransactionId(getPartnerTransactionId())
                         .build();
             } catch (DecryptException e) {
-                logger.error("Unable to decrypt data: {}", e.getMessage(), e);
+                LOGGER.error("Unable to decrypt data: {}", e.getMessage(), e);
                 return PaymentResponseFailure.PaymentResponseFailureBuilder
                         .aPaymentResponseFailure()
                         .withFailureCause(FailureCause.INVALID_FIELD_FORMAT)
@@ -130,8 +119,11 @@ public class PaymentWithRedirectionServiceImpl extends AbstractPaymentHttpServic
 
     }
 
-    public String getPartnerTransactionId(){
+    public String getPartnerTransactionId() {
         return this.redirectionPaymentRequest.getTransactionId();
     }
 
+    public void setRedirectionPaymentRequest(RedirectionPaymentRequest redirectionPaymentRequest) {
+        this.redirectionPaymentRequest = redirectionPaymentRequest;
+    }
 }
