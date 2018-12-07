@@ -8,6 +8,7 @@ import com.payline.pmapi.bean.payment.request.NotifyTransactionStatusRequest;
 
 import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PARTNER_CONFIG_SERVICE_ID;
 import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PAYMENT_PROVIDER;
+import static com.payline.payment.samsung.pay.utils.SamsungPayStringUtils.isEmpty;
 
 /**
  * Created by Thales on 16/08/2018.
@@ -60,7 +61,7 @@ public class NotificationPostRequest extends AbstractJsonRequest {
             }
 
             // Check attributes from PaymentRequest
-            if ( paylineRequest.getPartnerTransactionId() == null ) {
+            if ( isEmpty( paylineRequest.getPartnerTransactionId() ) ) {
                 throw new InvalidRequestException( "Missing NotifyTransactionStatusRequest property: partner transaction id" );
             }
             if ( paylineRequest.getTransactionSatus() == null ) {
@@ -71,7 +72,7 @@ public class NotificationPostRequest extends AbstractJsonRequest {
             if ( paylineRequest.getPartnerConfiguration() == null ) {
                 throw new InvalidRequestException( "PartnerConfiguration properties object must not be null" );
             }
-            if ( paylineRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG_SERVICE_ID) == null ) {
+            if ( isEmpty( paylineRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG_SERVICE_ID) ) ) {
                 throw new InvalidRequestException( "Missing PartnerConfiguration property: service id" );
             }
 
