@@ -48,7 +48,8 @@ public class SamsungPayConstants {
     public static final String FORM_CONFIG_LOGO_TITLE = "formConfiguration.logo.title";
 
     // Data used in PaymentServiceImpl
-    public static final String JAVASCRIPT_URL = "http://www.monext.net";  // todo héberger le SamsungPay.js pour le mettre dans cette URL
+    public static final String JAVASCRIPT_URL_DEV = "https://d35p4vvdul393k.cloudfront.net/sdk_library/us/stg/ops/pc_gsmpi_web_sdk.js";
+    public static final String JAVASCRIPT_URL_PROD = "https://d16i99j5zwwv51.cloudfront.net/sdk_library/us/prd/ops/pc_gsmpi_web_sdk.js";
 
     public static final String PARTNER_CONFIG_SERVICE_ID = "serviceId";
 

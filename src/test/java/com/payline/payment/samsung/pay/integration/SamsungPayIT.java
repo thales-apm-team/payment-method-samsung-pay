@@ -128,10 +128,8 @@ public class SamsungPayIT {
         //
         PaymentFormConfigurationResponseSpecific formConfigurationResponse = (PaymentFormConfigurationResponseSpecific) paymentResponseFormUpdated.getPaymentFormConfigurationResponse();
         PartnerWidgetForm form = (PartnerWidgetForm) formConfigurationResponse.getPaymentForm();
-        String scriptToLoad = form.getLoadingScriptBeforeImport();
         String functionToCall = form.getLoadingScriptAfterImport();
 
-        Assert.assertNotNull(scriptToLoad);
         Assert.assertNotNull(functionToCall);
 
         String redirectionUrl = this.payOnPartnerWebsite(functionToCall);
