@@ -102,6 +102,7 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
                     .withLoadingScriptAfterImport(createConnectCall(paymentRequest, createTransactionPostResponse))
                     .withContainer(container)
                     .withOnPay(onPay)
+                    .withPerformsAutomaticRedirection(true)
                     .build();
 
             PaymentFormConfigurationResponse paymentFormConfigurationResponse = PaymentFormConfigurationResponseSpecific.PaymentFormConfigurationResponseSpecificBuilder
