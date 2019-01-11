@@ -70,7 +70,7 @@ public class ConfigurationServiceImplTest {
         StringResponse mockedResponse = new StringResponse();
         mockedResponse.setContent(goodResponse);
         mockedResponse.setCode(HTTP_CREATED);
-        when(httpClient.doPost(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(mockedResponse);
+        when(httpClient.doPost(anyString(), anyString(), anyString(), anyString())).thenReturn(mockedResponse);
 
         ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest(Utils.MERCHANT_ID);
         Map<String, String> errors = service.check(request);
@@ -82,7 +82,7 @@ public class ConfigurationServiceImplTest {
         StringResponse mockedResponse = new StringResponse();
         mockedResponse.setContent(null);
         mockedResponse.setCode(400);
-        when(httpClient.doPost(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(mockedResponse);
+        when(httpClient.doPost(anyString(), anyString(), anyString(), anyString())).thenReturn(mockedResponse);
 
         ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest(Utils.MERCHANT_ID);
         Map<String, String> errors = service.check(request);
@@ -100,7 +100,7 @@ public class ConfigurationServiceImplTest {
 
     @Test
     public void checkIOExceptionResponse() throws IOException, URISyntaxException, ExternalCommunicationException {
-        when(httpClient.doPost(anyString(), anyString(), anyString(), anyString(), anyString())).thenThrow(IOException.class);
+        when(httpClient.doPost(anyString(), anyString(), anyString(), anyString())).thenThrow(IOException.class);
 
         ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest(Utils.MERCHANT_ID);
         Map<String, String> errors = service.check(request);

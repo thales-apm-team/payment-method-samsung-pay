@@ -18,9 +18,9 @@ import java.io.InputStream;
 import java.util.Locale;
 import java.util.Properties;
 
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.LOGO_FILE_NAME;
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.LOGO_PROPERTIES;
 import static com.payline.payment.samsung.pay.utils.Utils.*;
+import static com.payline.payment.samsung.pay.utils.propertiesFilesConstants.LogoConstants.LOGO_FILE_NAME;
+import static com.payline.payment.samsung.pay.utils.propertiesFilesConstants.LogoConstants.LOGO_PROPERTIES;
 
 /**
  * Created by Thales on 27/08/2018.

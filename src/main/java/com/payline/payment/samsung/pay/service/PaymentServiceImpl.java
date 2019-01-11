@@ -6,7 +6,6 @@ import com.payline.payment.samsung.pay.exception.ExternalCommunicationException;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.payment.samsung.pay.utils.SamsungPayConstants;
 import com.payline.payment.samsung.pay.utils.http.StringResponse;
-import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFormUpdated;
@@ -22,21 +21,12 @@ import com.payline.pmapi.service.PaymentService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.CREATE_TRANSACTION_PATH;
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.DEV_HOST;
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PARTNER_CONFIG_SERVICE_ID;
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PROD_HOST;
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.SCHEME;
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
 
 /**
  * Created by Thales on 16/08/2018.
@@ -70,8 +60,9 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
         CreateTransactionPostRequest createTransactionPostRequest = this.requestBuilder.fromPaymentRequest(paymentRequest);
 
         // Send CreateTransaction request
-        String host = paymentRequest.getEnvironment().isSandbox() ? DEV_HOST : PROD_HOST;
-        return this.httpClient.doPost(SCHEME, host, CREATE_TRANSACTION_PATH, createTransactionPostRequest.buildBody(), paymentRequest.getTransactionId());
+        String hostKey = paymentRequest.getEnvironment().isSandbox() ? PARTNER_URL_API_SANDBOX : PARTNER_URL_API_PROD;
+        String host = paymentRequest.getPartnerConfiguration().getProperty(hostKey);
+        return this.httpClient.doPost(host, CREATE_TRANSACTION_PATH, createTransactionPostRequest.buildBody(), paymentRequest.getTransactionId());
 
     }
 
@@ -83,10 +74,12 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
 
         if (createTransactionPostResponse.isResultOk()) {
             // create the response object
+            String samsungJsUrlKey = paymentRequest.getEnvironment().isSandbox()? SamsungPayConstants.PARTNER_URL_JS_SANDBOX: SamsungPayConstants.PARTNER_URL_JS_PROD;
+            String samsungJsUrl = paymentRequest.getPartnerConfiguration().getProperty(samsungJsUrlKey);
 
             PartnerWidgetScriptImport scriptImport = PartnerWidgetScriptImport.WidgetPartnerScriptImportBuilder
                     .aWidgetPartnerScriptImport()
-                    .withUrl(new URL(SamsungPayConstants.JAVASCRIPT_URL))
+                    .withUrl(new URL(samsungJsUrl))
                     .withCache(true)
                     .withAsync(true)
                     .build();
@@ -103,23 +96,13 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
                     .withName("notUsedButMandatory")
                     .build();
 
-            // temporary load the samsung.js file
-            String script = "";
-            try{
-                script = loadFile();
-            }catch (Exception e){
-                LOGGER.error("Unable to load the script", e);
-                return buildPaymentResponseFailure("Unable to load samsungPay script", FailureCause.INTERNAL_ERROR);
-            }
-
             PartnerWidgetForm paymentForm = PartnerWidgetForm.WidgetPartnerFormBuilder.aWidgetPartnerForm()
-                    //.withDisplayButton(false)    // the "pay" button is embedded in SamsungPay.js
                     .withDescription("")
                     .withScriptImport(scriptImport)
-                    .withLoadingScriptBeforeImport(script)
                     .withLoadingScriptAfterImport(createConnectCall(paymentRequest, createTransactionPostResponse))
                     .withContainer(container)
                     .withOnPay(onPay)
+                    .withPerformsAutomaticRedirection(true)
                     .build();
 
             PaymentFormConfigurationResponse paymentFormConfigurationResponse = PaymentFormConfigurationResponseSpecific.PaymentFormConfigurationResponseSpecificBuilder
@@ -156,16 +139,5 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
                 .replace("mod", response.getEncryptionInfo().getMod())
                 .replace("exp", response.getEncryptionInfo().getExp())
                 .replace("keyId", response.getEncryptionInfo().getKeyId());
-    }
-
-
-    public String loadFile() throws IOException {
-        String file;
-        try(InputStream in = getClass().getResourceAsStream("/samsung.js");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-        Stream<String> lines = reader.lines()) {
-            file = lines.collect(Collectors.joining("\n"));
-        }
-        return file;
     }
 }

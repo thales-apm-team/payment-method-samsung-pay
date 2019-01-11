@@ -79,10 +79,10 @@ public abstract class AbstractConfigurationHttpService {
             }
 
         } catch (InvalidRequestException e) {
-            LOGGER.error("Unable to create the SamsungPay request: {}", e.getMessage(), e);
+            LOGGER.error("Unable to create the SamsungPay request", e);
             errors.put(GENERIC_ERROR, e.getMessage());
         } catch (IOException | URISyntaxException | ExternalCommunicationException e) {
-            LOGGER.error("An error occurred sending the validation request to the SamsungPay server: {}", e.getMessage(), e);
+            LOGGER.error("An error occurred sending the validation request to the SamsungPay server", e);
             errors.put(ContractParametersCheckRequest.GENERIC_ERROR, e.getMessage());
         }
         return errors;

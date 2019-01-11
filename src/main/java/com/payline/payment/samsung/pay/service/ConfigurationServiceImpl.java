@@ -22,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
+import static com.payline.payment.samsung.pay.utils.propertiesFilesConstants.ConfigurationConstants.*;
 import static com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest.GENERIC_ERROR;
 
 /**
@@ -30,7 +31,6 @@ import static com.payline.pmapi.bean.configuration.request.ContractParametersChe
 public class ConfigurationServiceImpl extends AbstractConfigurationHttpService implements ConfigurationService {
 
     private static final Logger LOGGER = LogManager.getLogger(ConfigurationServiceImpl.class);
-    private static final String RELEASE_DATE_FORMAT = "dd/MM/yyyy";
 
     /**
      * Default public constructor
@@ -125,34 +125,35 @@ public class ConfigurationServiceImpl extends AbstractConfigurationHttpService i
     public ReleaseInformation getReleaseInformation() {
         Properties props = new Properties();
         try {
-            props.load(ConfigurationServiceImpl.class.getClassLoader().getResourceAsStream("release.properties"));
+            props.load(ConfigurationServiceImpl.class.getClassLoader().getResourceAsStream(RELEASE_PROPERTIES));
         } catch (IOException e) {
-            LOGGER.error("An error occurred reading the file: release.properties");
-            props.setProperty("release.version", "unknown");
-            props.setProperty("release.date", "01/01/1900");
+            final String message = "An error occurred reading the file: release.properties";
+            LOGGER.error(message);
+            throw new RuntimeException(message, e);
         }
 
-        LocalDate date = LocalDate.parse(props.getProperty("release.date"), DateTimeFormatter.ofPattern(RELEASE_DATE_FORMAT));
+        final LocalDate date = LocalDate.parse(props.getProperty(RELEASE_DATE), DateTimeFormatter.ofPattern(RELEASE_DATE_FORMAT));
         return ReleaseInformation.ReleaseBuilder.aRelease()
                 .withDate(date)
-                .withVersion(props.getProperty("release.version"))
+                .withVersion(props.getProperty(RELEASE_VERSION))
                 .build();
     }
 
     @Override
     public String getName(Locale locale) {
-        return i18n.getMessage("paymentMethod.name", locale);
+        return i18n.getMessage(PAYMENT_METHOD_NAME, locale);
     }
 
     @Override
-    public StringResponse createSendRequest(ContractParametersCheckRequest configRequest) throws IOException, InvalidRequestException, URISyntaxException, ExternalCommunicationException {
+    public StringResponse createSendRequest(ContractParametersCheckRequest configRequest) throws InvalidRequestException, ExternalCommunicationException, IOException, URISyntaxException {
 
         // create Samsung request Object from Payline request Object
         CreateTransactionPostRequest samsungRequest = new CreateTransactionPostRequest.Builder().fromCheckRequest(configRequest);
 
         // get all variables needed to call Samsung API
-        String host = configRequest.getEnvironment().isSandbox() ? DEV_HOST: PROD_HOST;
-        return httpClient.doPost(SCHEME, host, CREATE_TRANSACTION_PATH, samsungRequest.buildBody(), DEFAULT_XREQUESTID);
+        String hostKey = configRequest.getEnvironment().isSandbox() ? PARTNER_URL_API_SANDBOX : PARTNER_URL_API_PROD;
+        String host = configRequest.getPartnerConfiguration().getProperty(hostKey);
+        return httpClient.doPost(host, CREATE_TRANSACTION_PATH, samsungRequest.buildBody(), DEFAULT_XREQUESTID);
     }
 
     @Override

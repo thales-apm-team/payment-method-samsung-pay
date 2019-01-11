@@ -47,7 +47,7 @@ public class NotificationServiceImplTest {
     public void createRequest() throws URISyntaxException, IOException, InvalidRequestException, ExternalCommunicationException {
         String content = "thisIsAContent";
         StringResponse response = Utils.createStringResponse(content, 200);
-        Mockito.when(httpClient.doPost(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(response);
+        Mockito.when(httpClient.doPost(anyString(), anyString(), anyString(), anyString())).thenReturn(response);
 
         NotifyTransactionStatusRequest request = Utils.createNotifyTransactionRequest();
         StringResponse httpResponse = service.createRequest(request);
