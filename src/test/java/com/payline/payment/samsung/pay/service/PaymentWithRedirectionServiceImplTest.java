@@ -24,6 +24,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -49,7 +50,7 @@ public class PaymentWithRedirectionServiceImplTest {
         RedirectionPaymentRequest request = Utils.createRedirectionPaymentRequest();
         String content = "thisIsAResponse";
         StringResponse response = Utils.createStringResponse(content, 200);
-        Mockito.when(httpClient.doGet(anyString(), anyString(), anyString(), anyMap(), anyString())).thenReturn(response);
+        Mockito.when(httpClient.doGet(anyString(), anyString(), anyMap(), anyString())).thenReturn(response);
         service.setRedirectionPaymentRequest(Utils.createRedirectionPaymentRequest());
 
         StringResponse httpResponse = service.createSendRequest(request);
@@ -70,8 +71,10 @@ public class PaymentWithRedirectionServiceImplTest {
         StringResponse response = Utils.createStringResponse(jsonContent, 200);
 
         String goodDecrypt = "{'amount':'100','cryptogram':'AgAAAAAABQrqUtnic6MLQAAAAAA=','currency_code':'USD','eci_indicator':'07','tokenPanExpiration':'1225','utc':'1542290658225','tokenPAN':'4895370013341927'}";
-        Mockito.when(jweDecrypt.getDecryptedData(anyString())).thenReturn(goodDecrypt);
+        Mockito.when(jweDecrypt.getDecryptedData(anyString(),any())).thenReturn(goodDecrypt);
         doReturn("2").when(service).getPartnerTransactionId();
+
+        service.setRedirectionPaymentRequest(Utils.createRedirectionPaymentRequestBuilder().build());
 
         PaymentResponse paymentResponse = service.processResponse(response);
         Assert.assertNotNull(paymentResponse);
@@ -93,7 +96,9 @@ public class PaymentWithRedirectionServiceImplTest {
                 "}";
         StringResponse response = Utils.createStringResponse(jsonContent, 200);
 
-        Mockito.when(jweDecrypt.getDecryptedData(anyString())).thenThrow(DecryptException.class);
+        service.setRedirectionPaymentRequest(Utils.createRedirectionPaymentRequestBuilder().build());
+
+        Mockito.when(jweDecrypt.getDecryptedData(anyString(),any())).thenThrow(DecryptException.class);
         doReturn("2").when(service).getPartnerTransactionId();
 
         PaymentResponse paymentResponse = service.processResponse(response);

@@ -60,8 +60,9 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
         CreateTransactionPostRequest createTransactionPostRequest = this.requestBuilder.fromPaymentRequest(paymentRequest);
 
         // Send CreateTransaction request
-        String host = paymentRequest.getEnvironment().isSandbox() ? DEV_HOST : PROD_HOST;
-        return this.httpClient.doPost(SCHEME, host, CREATE_TRANSACTION_PATH, createTransactionPostRequest.buildBody(), paymentRequest.getTransactionId());
+        String hostKey = paymentRequest.getEnvironment().isSandbox() ? PARTNER_URL_API_SANDBOX : PARTNER_URL_API_PROD;
+        String host = paymentRequest.getPartnerConfiguration().getProperty(hostKey);
+        return this.httpClient.doPost(host, CREATE_TRANSACTION_PATH, createTransactionPostRequest.buildBody(), paymentRequest.getTransactionId());
 
     }
 
@@ -73,7 +74,9 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
 
         if (createTransactionPostResponse.isResultOk()) {
             // create the response object
-            String samsungJsUrl = paymentRequest.getEnvironment().isSandbox()? SamsungPayConstants.JAVASCRIPT_URL_DEV: SamsungPayConstants.JAVASCRIPT_URL_PROD;
+            String samsungJsUrlKey = paymentRequest.getEnvironment().isSandbox()? SamsungPayConstants.PARTNER_URL_JS_SANDBOX: SamsungPayConstants.PARTNER_URL_JS_PROD;
+            String samsungJsUrl = paymentRequest.getPartnerConfiguration().getProperty(samsungJsUrlKey);
+
             PartnerWidgetScriptImport scriptImport = PartnerWidgetScriptImport.WidgetPartnerScriptImportBuilder
                     .aWidgetPartnerScriptImport()
                     .withUrl(new URL(samsungJsUrl))
@@ -94,7 +97,6 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
                     .build();
 
             PartnerWidgetForm paymentForm = PartnerWidgetForm.WidgetPartnerFormBuilder.aWidgetPartnerForm()
-                    //.withDisplayButton(false)    // the "pay" button is embedded in SamsungPay.js
                     .withDescription("")
                     .withScriptImport(scriptImport)
                     .withLoadingScriptAfterImport(createConnectCall(paymentRequest, createTransactionPostResponse))

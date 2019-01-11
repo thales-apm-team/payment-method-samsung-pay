@@ -65,13 +65,13 @@ public class NotificationServiceImpl implements NotificationService {
             }
 
         } catch (InvalidRequestException e) {
-            LOGGER.error("The input payment request is invalid: {}", e.getMessage(), e);
+            LOGGER.error("The input payment request is invalid: ", e);
             // Nothing to do, no response to return
         } catch (IOException e) {
-            LOGGER.error("An IOException occurred while sending the HTTP request or receiving the response: {}", e.getMessage(), e);
+            LOGGER.error("An IOException occurred while sending the HTTP request or receiving the response", e);
             // Nothing to do, no response to return
         } catch (Exception e) {
-            LOGGER.error("An unexpected error occurred: {}", e.getMessage(), e);
+            LOGGER.error("An unexpected error occurred", e);
             // Nothing to do, no response to return
         }
     }
@@ -82,8 +82,10 @@ public class NotificationServiceImpl implements NotificationService {
         NotificationPostRequest notificationPostRequest = this.requestBuilder.fromNotifyTransactionStatusRequest(notificationRequest);
 
         // Send Notification request
-        String host = notificationRequest.getEnvironment().isSandbox() ? DEV_HOST : PROD_HOST;
-        return this.httpClient.doPost(SCHEME, host, NOTIFICATION_PATH, notificationPostRequest.buildBody(), notificationRequest.getPartnerTransactionId());
+        // get all variables needed to call Samsung API
+        String hostKey = notificationRequest.getEnvironment().isSandbox() ? PARTNER_URL_API_SANDBOX : PARTNER_URL_API_PROD;
+        String host = notificationRequest.getPartnerConfiguration().getProperty(hostKey);
+        return this.httpClient.doPost(host, NOTIFICATION_PATH, notificationPostRequest.buildBody(), notificationRequest.getPartnerTransactionId());
 
     }
 
@@ -99,4 +101,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     }
 
+    public void setNotifyTransactionStatusRequest(NotifyTransactionStatusRequest notifyTransactionStatusRequest) {
+        this.notifyTransactionStatusRequest = notifyTransactionStatusRequest;
+    }
 }

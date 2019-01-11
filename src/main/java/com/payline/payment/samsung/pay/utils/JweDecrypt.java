@@ -5,7 +5,6 @@ import com.payline.payment.samsung.pay.exception.DecryptException;
 import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.*;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -28,9 +27,10 @@ public class JweDecrypt {
      * @param encPayload encPayload.
      * @return Decrypted text.
      */
-    public String getDecryptedData(String encPayload) throws DecryptException, IOException {
+    public String getDecryptedData(String encPayload, byte[] encodedPrivateKey) throws DecryptException{
         try {
             Base64.Decoder decoder = Base64.getUrlDecoder();
+            Base64.Decoder mimeDecoder = Base64.getMimeDecoder();
 
             String[] tokens = encPayload.split(DELIMS);
 
@@ -40,18 +40,10 @@ public class JweDecrypt {
             byte[] tag = decoder.decode(tokens[4]);
             byte[] plainText = new byte[cipherText.length];
 
-            // Read private key file
-            ClassLoader classLoader = JweDecrypt.class.getClassLoader();
-            File privateKeyFile = new File(classLoader.getResource(PRIVATE_KEY_FILE_PATH).getFile());
-
-            DataInputStream dis = new DataInputStream(new FileInputStream(privateKeyFile));
-            byte[] privKeyBytes = new byte[(int) privateKeyFile.length()];
-
-            dis.read(privKeyBytes);
-            dis.close();
+            byte[] privateKeyBytes = mimeDecoder.decode(encodedPrivateKey);
 
             // Set private key spec
-            PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(privKeyBytes);
+            PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(privateKeyBytes);
             KeyFactory keyFactory = KeyFactory.getInstance(RSA);
             PrivateKey privKey = keyFactory.generatePrivate(spec);
 
@@ -69,7 +61,7 @@ public class JweDecrypt {
             aes128Cipher.doFinal(plainText, offset);
 
             return new String(plainText);
-        } catch (ShortBufferException | InvalidKeySpecException | NoSuchAlgorithmException | BadPaddingException | InvalidKeyException | InvalidAlgorithmParameterException | NoSuchPaddingException | IllegalBlockSizeException | FileNotFoundException e) {
+        } catch (ShortBufferException | InvalidKeySpecException | NoSuchAlgorithmException | BadPaddingException | InvalidKeyException | InvalidAlgorithmParameterException | NoSuchPaddingException | IllegalBlockSizeException e) {
             throw new DecryptException(e.getMessage());
         }
     }
