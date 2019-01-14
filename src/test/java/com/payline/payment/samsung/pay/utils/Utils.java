@@ -13,6 +13,8 @@ import com.payline.pmapi.bean.payment.request.TransactionStatusRequest;
 import com.payline.pmapi.bean.paymentform.request.PaymentFormConfigurationRequest;
 
 import java.math.BigInteger;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
@@ -23,10 +25,13 @@ public class Utils {
     public static final String SUCCESS_URL = "https://succesurl.com/";
     public static final String FAILURE_URL = "http://cancelurl.com/";
     public static final String NOTIFICATION_URL = "http://notificationurl.com/";
-    public static final String AUTH_URL = "http://authenticationurl.com/";
 
     public static final String MERCHANT_ID = "virtual shop";
     public static final String SERVICE_ID = "db1294c3c8bc42fe9ce762";
+
+    public static final String SANDBOX_URL_API = "https://api-ops.stg.mpay.samsung.com/";
+    public static final String SANDBOX_URL_JS = "https://d35p4vvdul393k.cloudfront.net/sdk_library/us/stg/ops/pc_gsmpi_web_sdk.js";
+
 
     public static ContractParametersCheckRequest createContractParametersCheckRequest(String merchantName) {
         return createContractParametersCheckRequestBuilder(merchantName).build();
@@ -58,10 +63,6 @@ public class Utils {
         final Locale locale = Locale.FRANCE;
         final Buyer buyer = createDefaultBuyer();
 
-        Map<String, String> configMap = new HashMap();
-        configMap.put(PARTNER_CONFIG_SERVICE_ID, SERVICE_ID);
-        final PartnerConfiguration configuration = new PartnerConfiguration(configMap, new HashMap<>());
-
         return PaymentRequest.builder()
                 .withAmount(amount)
                 .withBrowser(new Browser("", Locale.FRANCE))
@@ -72,7 +73,7 @@ public class Utils {
                 .withTransactionId(transactionID)
                 .withSoftDescriptor(softDescriptor)
                 .withBuyer(buyer)
-                .withPartnerConfiguration(configuration);
+                .withPartnerConfiguration(createDefaultPartnerConfiguration());
     }
 
     private static String createTransactionId() {
@@ -156,13 +157,26 @@ public class Utils {
     }
 
     public static Environment createDefaultPaylineEnvironment() {
-        return new Environment("http://notificationURL.com", "http://redirectionURL.com", "http://redirectionCancelURL.com", true);
+        return new Environment(NOTIFICATION_URL, SUCCESS_URL, FAILURE_URL, true);
     }
 
     public static PartnerConfiguration createDefaultPartnerConfiguration() {
+        String PRIVATE_KEY_STG = null;
+        try {
+            PRIVATE_KEY_STG = new String(Files.readAllBytes(Paths.get(JweDecrypt.class.getClassLoader().getResource("keystore/encodedPrivateKey.txt").toURI())));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Map<String, String> partnerConfigMap = new HashMap<>();
         partnerConfigMap.put(SamsungPayConstants.PARTNER_CONFIG_SERVICE_ID, SERVICE_ID);
-        return new PartnerConfiguration(partnerConfigMap, new HashMap<>());
+        partnerConfigMap.put(SamsungPayConstants.PARTNER_URL_API_SANDBOX, SANDBOX_URL_API);
+        partnerConfigMap.put(SamsungPayConstants.PARTNER_URL_JS_SANDBOX, SANDBOX_URL_JS);
+
+        Map<String, String> partnerConfigMapSensitive = new HashMap<>();
+        partnerConfigMapSensitive.put(SamsungPayConstants.PARTNER_PRIVATE_KEY_SANDBOX, PRIVATE_KEY_STG);
+
+        return new PartnerConfiguration(partnerConfigMap, partnerConfigMapSensitive);
+
     }
 
     public static PaymentFormConfigurationRequest createDefaultPaymentFormConfigurationRequest() {
@@ -198,9 +212,6 @@ public class Utils {
         final Locale locale = Locale.FRANCE;
         final Buyer buyer = createDefaultBuyer();
 
-        Map<String, String> configMap = new HashMap();
-        configMap.put(PARTNER_CONFIG_SERVICE_ID, SERVICE_ID);
-        final PartnerConfiguration configuration = new PartnerConfiguration(configMap, new HashMap<>());
         final String[] parameterValue = new String[1];
         parameterValue[0] = "thisIsAnId";
         final Map<String, String[]> parameterMap = new HashMap<>();
@@ -217,7 +228,7 @@ public class Utils {
                 .withTransactionId(transactionID)
                 .withSoftDescriptor(softDescriptor)
                 .withBuyer(buyer)
-                .withPartnerConfiguration(configuration);
+                .withPartnerConfiguration(createDefaultPartnerConfiguration());
     }
 
     public static NotifyTransactionStatusRequest createNotifyTransactionRequest() {

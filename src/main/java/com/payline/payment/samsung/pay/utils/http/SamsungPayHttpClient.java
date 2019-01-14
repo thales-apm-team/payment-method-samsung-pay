@@ -33,30 +33,28 @@ public class SamsungPayHttpClient extends AbstractHttpClient {
     /**
      * Send a POST request, with a JSON content type.
      *
-     * @param scheme      URL scheme
      * @param host        URL host
      * @param path        URL path
      * @param jsonContent The JSON content, as a string
      * @return The response returned from the HTTP call
      * @throws IOException
      */
-    public StringResponse doPost(String scheme, String host, String path, String jsonContent, String xRequestId) throws IOException, URISyntaxException, ExternalCommunicationException {
+    public StringResponse doPost(String host, String path, String jsonContent, String xRequestId) throws IOException, URISyntaxException, ExternalCommunicationException {
         StringEntity entity = new StringEntity(jsonContent);
 
-        return super.doPost(scheme, host, path, entity, ContentType.APPLICATION_JSON.toString(), xRequestId);
+        return super.doPost(host, path, entity, ContentType.APPLICATION_JSON.toString(), xRequestId);
     }
 
     /**
      * Send a GET request.
      *
-     * @param scheme URL scheme
      * @param host   URL host
      * @param path   URL path
      * @return The response returned from the HTTP call
      * @throws IOException
      */
-    public StringResponse doGet(String scheme, String host, String path, Map<String, String> queryAttributes, String xRequestId) throws URISyntaxException, ExternalCommunicationException {
-        return super.doGet(scheme, host, path, queryAttributes, ContentType.APPLICATION_JSON.toString(), xRequestId);
+    public StringResponse doGet(String host, String path, Map<String, String> queryAttributes, String xRequestId) throws URISyntaxException, ExternalCommunicationException {
+        return super.doGet(host, path, queryAttributes, ContentType.APPLICATION_JSON.toString(), xRequestId);
     }
 
 }

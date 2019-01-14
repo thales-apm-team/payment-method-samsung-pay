@@ -20,7 +20,6 @@ import com.payline.pmapi.service.PaymentWithRedirectionService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.YearMonth;
 import java.util.HashMap;
@@ -67,28 +66,33 @@ public class PaymentWithRedirectionServiceImpl extends AbstractPaymentHttpServic
         PaymentCredentialGetRequest paymentCredentialGetRequest = this.requestBuilder.fromRedirectionPaymentRequest(paymentRequest);
 
         // Send PaymentCredential request
-        String host = paymentRequest.getEnvironment().isSandbox() ? DEV_HOST : PROD_HOST;
+        String hostKey = paymentRequest.getEnvironment().isSandbox() ? PARTNER_URL_API_SANDBOX : PARTNER_URL_API_PROD;
+        String host = paymentRequest.getPartnerConfiguration().getProperty(hostKey);
         String path = GET_PAYMENT_CREDENTIALS_PATH + "/" + paymentCredentialGetRequest.getId();
 
         // Build the request query attributes map
         Map<String, String> queryAttributes = new HashMap<>();
         queryAttributes.put(SERVICE_ID, paymentCredentialGetRequest.getServiceId());
 
-        return this.httpClient.doGet(SCHEME, host, path, queryAttributes, redirectionPaymentRequest.getTransactionId());
+        return this.httpClient.doGet(host, path, queryAttributes, redirectionPaymentRequest.getTransactionId());
 
     }
 
     @Override
-    public PaymentResponse processResponse(StringResponse response) throws IOException {
+    public PaymentResponse processResponse(StringResponse response) {
 
         // Parse response
         PaymentCredentialGetResponse paymentCredentialGetResponse = new PaymentCredentialGetResponse.Builder().fromJson(response.getContent());
 
         if (paymentCredentialGetResponse.isResultOk()) {
             try {
+                // get data for decryption step
+                String cipheredData = paymentCredentialGetResponse.getData3DS().getData();
+                String property = redirectionPaymentRequest.getEnvironment().isSandbox()? PARTNER_PRIVATE_KEY_SANDBOX: PARTNER_PRIVATE_KEY_PROD;
+                byte[] privateKey = redirectionPaymentRequest.getPartnerConfiguration().getProperty(property).getBytes();
 
                 // Decrypt 3DS data to retrieve Payment Mode info
-                String cardData = jweDecrypt.getDecryptedData(paymentCredentialGetResponse.getData3DS().getData());
+                String cardData = jweDecrypt.getDecryptedData(cipheredData, privateKey);
                 DecryptedCard decryptedCard = new DecryptedCard.Builder().fromJson(cardData);
 
                 Card card = Card.CardBuilder.aCard()
@@ -105,7 +109,7 @@ public class PaymentWithRedirectionServiceImpl extends AbstractPaymentHttpServic
                         .withPartnerTransactionId(getPartnerTransactionId())
                         .build();
             } catch (DecryptException e) {
-                LOGGER.error("Unable to decrypt data: {}", e.getMessage(), e);
+                LOGGER.error("Unable to decrypt data", e);
                 return PaymentResponseFailure.PaymentResponseFailureBuilder
                         .aPaymentResponseFailure()
                         .withFailureCause(FailureCause.INVALID_FIELD_FORMAT)

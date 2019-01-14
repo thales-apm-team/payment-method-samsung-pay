@@ -61,8 +61,7 @@ public abstract class AbstractHttpClient {
     /**
      * Send a POST request.
      *
-     * @param scheme      URL scheme
-     * @param host        URL host
+     * @param url         URL to call
      * @param path        URL path
      * @param body        Request body
      * @param contentType The content type of the request body
@@ -70,13 +69,9 @@ public abstract class AbstractHttpClient {
      * @return The response returned from the HTTP call
      * @throws IOException
      */
-    protected StringResponse doPost(String scheme, String host, String path, HttpEntity body, String contentType, String requestId) throws URISyntaxException, ExternalCommunicationException {
+    protected StringResponse doPost(String url, String path, HttpEntity body, String contentType, String requestId) throws URISyntaxException, ExternalCommunicationException {
 
-        final URI uri = new URIBuilder()
-                .setScheme(scheme)
-                .setHost(host)
-                .setPath(path)
-                .build();
+        URI uri = new URI(url + path);
 
         Header[] headers = new Header[2];
         headers[0] = new BasicHeader(CONTENT_TYPE, contentType);
@@ -90,7 +85,7 @@ public abstract class AbstractHttpClient {
         int count = 0;
         StringResponse strResponse = null;
 
-        while (count < 3 && strResponse == null){
+        while (count < 3 && strResponse == null) {
             try (CloseableHttpResponse httpResponse = this.client.execute(httpPostRequest)) {
 
                 strResponse = new StringResponse();
@@ -102,7 +97,7 @@ public abstract class AbstractHttpClient {
                     strResponse.setContent(responseAsString);
                 }
 
-            }catch (final IOException e) {
+            } catch (final IOException e) {
                 LOGGER.error("Error while partner call [T: {}ms]", System.currentTimeMillis() - start, e);
                 strResponse = null;
             } finally {
@@ -115,15 +110,12 @@ public abstract class AbstractHttpClient {
         }
 
         return strResponse;
-
-
     }
 
     /**
      * Send a GET request
      *
-     * @param scheme          URL scheme
-     * @param host            URL host
+     * @param url             URL to call
      * @param path            URL path
      * @param queryAttributes Query attribute map
      * @param contentType     The content type of the request body
@@ -131,19 +123,14 @@ public abstract class AbstractHttpClient {
      * @return The response returned from the HTTP call
      * @throws IOException
      */
-    protected StringResponse doGet(String scheme, String host, String path, Map<String, String> queryAttributes, String contentType, String requestId) throws URISyntaxException, ExternalCommunicationException {
+    protected StringResponse doGet(String url, String path, Map<String, String> queryAttributes, String contentType, String requestId) throws URISyntaxException, ExternalCommunicationException {
 
-        final URIBuilder builder = new URIBuilder();
-        builder.setScheme(scheme)
-                .setHost(host)
-                .setPath(path);
-
+        URIBuilder builder = new URIBuilder(url + path);
         if (queryAttributes != null && !queryAttributes.isEmpty()) {
             for (String key : queryAttributes.keySet()) {
                 builder.setParameter(key, queryAttributes.get(key));
             }
         }
-
         final URI uri = builder.build();
 
         Header[] headers = new Header[2];
@@ -157,7 +144,7 @@ public abstract class AbstractHttpClient {
         int count = 0;
         StringResponse strResponse = null;
 
-        while (count < 3 && strResponse == null){
+        while (count < 3 && strResponse == null) {
             try (CloseableHttpResponse httpResponse = this.client.execute(httpGetRequest)) {
 
                 strResponse = new StringResponse();
@@ -169,7 +156,7 @@ public abstract class AbstractHttpClient {
                     strResponse.setContent(responseAsString);
                 }
 
-            }catch (final IOException e) {
+            } catch (final IOException e) {
                 LOGGER.error("Error while partner call [T: {}ms]", System.currentTimeMillis() - start, e);
                 strResponse = null;
             } finally {

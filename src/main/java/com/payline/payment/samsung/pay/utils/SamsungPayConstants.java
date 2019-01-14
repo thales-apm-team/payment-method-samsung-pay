@@ -33,30 +33,14 @@ public class SamsungPayConstants {
     // Data used in PaymentFormConfigurationServiceImpl
     public static final boolean NOFIELDFORM_DISPLAY_PAYMENT_BUTTON = true;
 
-
-    public static final String LOGO_FILE_NAME = "logo.file.name";
-    public static final String LOGO_FORMAT = "logo.format";
-    public static final String LOGO_CONTENT_TYPE = "logo.content.type";
-    public static final String LOGO_HEIGHT = "logo.height";
-    public static final String LOGO_WIDTH = "logo.width";
-    public static final String LOGO_PROPERTIES = "logo.properties";
-
     public static final String NOFIELDFORM_BUTTON_TEXT = "form.button.samsungPay.text";
     public static final String NOFIELDFORM_BUTTON_DESCRIPTION = "form.button.samsungPay.description";
 
-    public static final String FORM_CONFIG_LOGO_ALT = "formConfiguration.logo.alt";
-    public static final String FORM_CONFIG_LOGO_TITLE = "formConfiguration.logo.title";
-
-    // Data used in PaymentServiceImpl
-    public static final String JAVASCRIPT_URL = "http://www.monext.net";  // todo héberger le SamsungPay.js pour le mettre dans cette URL
-
-    public static final String PARTNER_CONFIG_SERVICE_ID = "serviceId";
 
     // Data used in https calls
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String X_REQUEST_ID = "X-Request-Id";
 
-    public static final String APPLICATION_JSON = "application/json";
     public static final String REF_ID = "ref_id";
 
     // data used in request body creation
@@ -66,9 +50,6 @@ public class SamsungPayConstants {
     public static final String PAYMENT_PROVIDER = "PAYLINE";
 
     // data used in http Client
-    public static final String SCHEME = "https";
-    public static final String DEV_HOST = "api-ops.stg.mpay.samsung.com";
-    public static final String PROD_HOST = "api-ops.mpay.samsung.com";
     public static final String CREATE_TRANSACTION_PATH = "ops/v1/transactions";
     public static final String GET_PAYMENT_CREDENTIALS_PATH = "ops/v1/transactions/paymentCredentials";
     public static final String NOTIFICATION_PATH = "ops/v1/notifications";
@@ -109,10 +90,19 @@ public class SamsungPayConstants {
     public static final String SAMSUNG_PAY_CODE_OPM5N9001_DESCRIPTION = "DB data processing error";
 
     // data used in JWEDecrypt
-    public static final String PRIVATE_KEY_FILE_PATH = "keystore/rsapriv.der";
     public static final String RSA = "RSA";
     public static final String AES = "AES";
     public static final String AES_GCM_NO_PADDING = "AES/GCM/NoPadding";
     public static final String RSA_ECB_PKCS_1_PADDING = "RSA/ECB/PKCS1Padding";
     public static final String DELIMS = "[.]";
+
+    // partnerConfiguration data keys
+    public static final String PARTNER_CONFIG_SERVICE_ID = "serviceId";
+    public static final String PARTNER_PRIVATE_KEY_SANDBOX = "sandbox.privateKey";
+    public static final String PARTNER_PRIVATE_KEY_PROD = "prod.privateKey";
+    public static final String PARTNER_URL_API_SANDBOX = "sandbox.url.api";
+    public static final String PARTNER_URL_JS_SANDBOX = "sandbox.url.js";
+    public static final String PARTNER_URL_API_PROD = "prod.url.api";
+    public static final String PARTNER_URL_JS_PROD = "prod.url.js";
+
 }
