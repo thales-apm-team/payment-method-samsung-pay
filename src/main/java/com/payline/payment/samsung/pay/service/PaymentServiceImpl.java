@@ -87,18 +87,19 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
             // this object is not used because the SamsungPay widget is shown with an overlay and not in a specific div
             PartnerWidgetContainer container = PartnerWidgetContainerTargetDivId.WidgetPartnerContainerTargetDivIdBuilder
                     .aWidgetPartnerContainerTargetDivId()
-                    .withId("notUsedButMandatory")
+                    .withId(NOT_USED_BUT_MANDATORY)
                     .build();
 
             // this object is not used because the SansungPay widget does automatically the redirect when transaction is done
             PartnerWidgetOnPay onPay = PartnerWidgetOnPayCallBack.WidgetContainerOnPayCallBackBuilder
                     .aWidgetContainerOnPayCallBack()
-                    .withName("notUsedButMandatory")
+                    .withName(NOT_USED_BUT_MANDATORY)
                     .build();
 
             PartnerWidgetForm paymentForm = PartnerWidgetForm.WidgetPartnerFormBuilder.aWidgetPartnerForm()
-                    .withDescription("")
+                    .withDescription(EMPTY_STRING)
                     .withScriptImport(scriptImport)
+                    .withLoadingScriptBeforeImport(SCRIPT_BEFORE_IMPORT)
                     .withLoadingScriptAfterImport(createConnectCall(paymentRequest, createTransactionPostResponse))
                     .withContainer(container)
                     .withOnPay(onPay)

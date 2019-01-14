@@ -36,6 +36,11 @@ public class SamsungPayConstants {
     public static final String NOFIELDFORM_BUTTON_TEXT = "form.button.samsungPay.text";
     public static final String NOFIELDFORM_BUTTON_DESCRIPTION = "form.button.samsungPay.description";
 
+    // Data used in PaymentService
+    public static final String EMPTY_STRING ="";
+    public static final String SCRIPT_BEFORE_IMPORT ="var $ = Payline.jQuery;";
+    public static final String NOT_USED_BUT_MANDATORY ="notUsedButMandatory";
+
 
     // Data used in https calls
     public static final String CONTENT_TYPE = "Content-Type";
