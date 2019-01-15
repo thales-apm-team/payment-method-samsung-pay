@@ -40,7 +40,8 @@ public class SamsungPayConstants {
     public static final String EMPTY_STRING ="";
     public static final String SCRIPT_BEFORE_IMPORT ="var $ = Payline.jQuery;";
     public static final String NOT_USED_BUT_MANDATORY ="notUsedButMandatory";
-
+    public static final String PAYMENTDATA_TOKENDATA ="PAYMENTDATA_TOKENDATA";
+    public static final String REFERENCE_ID ="REFERENCE_ID";
 
     // Data used in https calls
     public static final String CONTENT_TYPE = "Content-Type";
