@@ -29,6 +29,7 @@ public class SamsungPayConstants {
     public static final String CONTRACT_CONFIG_AMEX_PROPERTY_DESCRIPTION = "contractConfiguration.amex.description";
 
     public static final String DEFAULT_XREQUESTID = "123456789";
+    public static final String DEFAULT_CALLBACK = "http://default.callback.url";
 
     // Data used in PaymentFormConfigurationServiceImpl
     public static final boolean NOFIELDFORM_DISPLAY_PAYMENT_BUTTON = true;
