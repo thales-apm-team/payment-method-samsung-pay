@@ -1,5 +1,8 @@
 package com.payline.payment.samsung.pay.utils;
 
+import java.math.BigInteger;
+import java.util.Currency;
+
 public class SamsungPayStringUtils {
     public static boolean isEmpty(String str){
         if( str == null || str.length() == 0){
@@ -12,5 +15,20 @@ public class SamsungPayStringUtils {
             }
             return true;
         }
+    }
+
+    public static String createStringAmount(BigInteger amount, Currency currency) {
+        //récupérer le nombre de digits dans currency
+        int nbDigits = currency.getDefaultFractionDigits();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(amount);
+
+        for (int i = sb.length(); i < 3; i++) {
+            sb.insert(0, "0");
+        }
+
+        sb.insert(sb.length() - nbDigits, ".");
+        return sb.toString();
     }
 }
