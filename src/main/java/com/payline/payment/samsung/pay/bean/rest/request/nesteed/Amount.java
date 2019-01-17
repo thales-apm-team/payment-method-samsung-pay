@@ -1,7 +1,5 @@
 package com.payline.payment.samsung.pay.bean.rest.request.nesteed;
 
-import java.math.BigInteger;
-
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -16,7 +14,7 @@ public class Amount {
     private String currency;
 
     @SerializedName("total")
-    private BigInteger total;
+    private String total;
 
     /**
      * Public default constructor
@@ -28,7 +26,7 @@ public class Amount {
      */
     public Amount(String option,
                   String currency,
-                  BigInteger total) {
+                  String total) {
 
         this.option     = option;
         this.currency   = currency;
@@ -46,7 +44,7 @@ public class Amount {
         return this;
     }
 
-    public Amount total(BigInteger total) {
+    public Amount total(String total) {
         this.total = total;
         return this;
     }

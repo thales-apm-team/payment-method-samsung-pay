@@ -9,9 +9,8 @@ import com.payline.pmapi.bean.payment.Environment;
 import com.payline.pmapi.bean.payment.Order;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 
-import java.math.BigInteger;
-
 import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
+import static com.payline.payment.samsung.pay.utils.SamsungPayStringUtils.createStringAmount;
 import static com.payline.payment.samsung.pay.utils.SamsungPayStringUtils.isEmpty;
 
 /**
@@ -97,7 +96,7 @@ public class CreateTransactionPostRequest extends AbstractJsonRequest {
                     || paylineRequest.getContractConfiguration().getContractProperties() == null) {
                 throw new InvalidRequestException("ContractConfiguration properties object must not be null");
             }
-            if ( paylineRequest.getContractConfiguration().getProperty(CONTRACT_CONFIG_MERCHANT_NAME) == null) {
+            if (paylineRequest.getContractConfiguration().getProperty(CONTRACT_CONFIG_MERCHANT_NAME) == null) {
                 throw new InvalidRequestException("Missing ContractConfiguration property: merchant name");
             }
 
@@ -115,7 +114,7 @@ public class CreateTransactionPostRequest extends AbstractJsonRequest {
             if (paylineRequest.getPartnerConfiguration() == null) {
                 throw new InvalidRequestException("PartnerConfiguration properties object must not be null");
             }
-            if ( isEmpty( paylineRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG_SERVICE_ID) )) {
+            if (isEmpty(paylineRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG_SERVICE_ID))) {
                 throw new InvalidRequestException("Missing PartnerConfiguration property: service id");
             }
 
@@ -131,7 +130,7 @@ public class CreateTransactionPostRequest extends AbstractJsonRequest {
                     || paylineRequest.getContractConfiguration().getContractProperties() == null) {
                 throw new InvalidRequestException("ContractConfiguration properties object must not be null");
             }
-            if ( paylineRequest.getContractConfiguration().getProperty(CONTRACT_CONFIG_MERCHANT_NAME) == null) {
+            if (paylineRequest.getContractConfiguration().getProperty(CONTRACT_CONFIG_MERCHANT_NAME) == null) {
                 throw new InvalidRequestException("Missing ContractConfiguration property: merchant name");
             }
 
@@ -139,7 +138,7 @@ public class CreateTransactionPostRequest extends AbstractJsonRequest {
             if (paylineRequest.getPartnerConfiguration() == null) {
                 throw new InvalidRequestException("PartnerConfiguration properties object must not be null");
             }
-            if ( isEmpty( paylineRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG_SERVICE_ID) )) {
+            if (isEmpty(paylineRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG_SERVICE_ID))) {
                 throw new InvalidRequestException("Missing PartnerConfiguration property: service id");
             }
         }
@@ -151,6 +150,9 @@ public class CreateTransactionPostRequest extends AbstractJsonRequest {
          * @return
          */
         private PaymentDetails getPaymentDetailsFromPaymentRequest(PaymentRequest paylineRequest) {
+            String amount = createStringAmount(
+                    paylineRequest.getAmount().getAmountInSmallestUnit(),
+                    paylineRequest.getAmount().getCurrency());
             return new PaymentDetails()
                     .service(
                             new Service().id(
@@ -177,11 +179,7 @@ public class CreateTransactionPostRequest extends AbstractJsonRequest {
                                                     .getCurrency()
                                                     .getCurrencyCode()
                                     )
-                                    .total(
-                                            paylineRequest
-                                                    .getAmount()
-                                                    .getAmountInSmallestUnit()
-                                    )
+                                    .total(amount)
                     )
                     .merchant(
                             new Merchant()
@@ -202,9 +200,9 @@ public class CreateTransactionPostRequest extends AbstractJsonRequest {
 
         private PaymentDetails getPaymentDetailsFromPaymentRequest(ContractParametersCheckRequest paylineRequest) {
             return new PaymentDetails()
-                    .amount(new Amount().currency("USD").total(BigInteger.valueOf(1)))
+                    .amount(new Amount().currency("USD").total("1"))
                     .merchant(new Merchant()
-                            .name( paylineRequest.getContractConfiguration()
+                            .name(paylineRequest.getContractConfiguration()
                                     .getProperty(CONTRACT_CONFIG_MERCHANT_NAME)
                                     .getValue()))
                     .orderNumber("0001")
