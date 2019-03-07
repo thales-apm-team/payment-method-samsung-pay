@@ -113,4 +113,12 @@ processResources {
     }
 }
 
+// To create a JAR including test classes and dependencies
+task testJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+    dependsOn 'shadowJar', 'testClasses'
+    classifier = 'tests'
+    from sourceSets.test.output.classesDirs + shadowJar
+    configurations = [project.configurations.fatJarTest]
+}
+
 test.exclude '**/*IT.class'
