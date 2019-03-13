@@ -20,9 +20,9 @@ import java.util.Properties;
 import static com.payline.payment.samsung.pay.utils.propertiesFilesConstants.LogoConstants.*;
 
 
-public interface ThalesPaymentFormConfigurationService extends PaymentFormConfigurationService {
+public interface DefaultPaymentFormConfigurationService extends PaymentFormConfigurationService {
 
-    Logger LOGGER = LogManager.getLogger(ThalesPaymentFormConfigurationService.class);
+    Logger LOGGER = LogManager.getLogger(DefaultPaymentFormConfigurationService.class);
     I18nService i18n = I18nService.getInstance();
 
     @Override
@@ -56,7 +56,7 @@ public interface ThalesPaymentFormConfigurationService extends PaymentFormConfig
         String fileName = props.getProperty(LOGO_FILE_NAME);
         try {
             // Read logo file
-            InputStream input = ThalesPaymentFormConfigurationService.class.getClassLoader().getResourceAsStream(fileName);
+            InputStream input = DefaultPaymentFormConfigurationService.class.getClassLoader().getResourceAsStream(fileName);
             BufferedImage logo = ImageIO.read(input);
 
             // Recover byte array from image

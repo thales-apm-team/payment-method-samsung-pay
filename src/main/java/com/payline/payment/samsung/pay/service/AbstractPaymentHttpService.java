@@ -190,6 +190,7 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
 
                 Card card = Card.CardBuilder.aCard()
                         .withPan(decryptedCard.getTokenPan())
+                        .withHolder("")
                         .withExpirationDate(YearMonth.of(decryptedCard.getExpiryYear(), decryptedCard.getExpiryMonth()))
                         .build();
 

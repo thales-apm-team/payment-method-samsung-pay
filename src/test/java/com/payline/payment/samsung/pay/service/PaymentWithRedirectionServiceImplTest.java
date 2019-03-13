@@ -10,6 +10,7 @@ import com.payline.payment.samsung.pay.utils.http.StringResponse;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
 import com.payline.pmapi.bean.payment.request.TransactionStatusRequest;
+import com.payline.pmapi.bean.payment.response.PaymentModeCard;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseDoPayment;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFailure;
@@ -74,6 +75,8 @@ public class PaymentWithRedirectionServiceImplTest {
         PaymentResponse paymentResponse = service.processResponse(response);
         Assert.assertNotNull(paymentResponse);
         Assert.assertEquals(PaymentResponseDoPayment.class, paymentResponse.getClass());
+        PaymentResponseDoPayment responseDoPayment  = (PaymentResponseDoPayment) paymentResponse;
+        Assert.assertEquals("",((PaymentModeCard) responseDoPayment.getPaymentMode()).getCard().getHolder());
     }
 
     @Test
