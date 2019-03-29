@@ -78,15 +78,12 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
         try {
             // Mandate the child class to create and send the request (which is specific to each implementation)
             StringResponse response = this.createSendRequest(paymentRequest);
-            if (response != null && (response.getCode() == HTTP_OK || response.getCode() == HTTP_CREATED) && response.getContent() != null) {
+            if (response != null && response.getContent() != null) {
                 // Mandate the child class to process the request when it's OK (which is specific to each implementation)
                 return this.processResponse(response);
-            } else if (response != null && response.getCode() != HTTP_OK) {
-                LOGGER.error("An HTTP error occurred while sending the request: " + response.getContent());
-                return buildPaymentResponseFailure(Integer.toString(response.getCode()), FailureCause.COMMUNICATION_ERROR);
             } else {
                 LOGGER.error("The HTTP response or its body is null and should not be");
-                return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
+                return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.COMMUNICATION_ERROR);
             }
 
         } catch (InvalidRequestException e) {
@@ -106,15 +103,12 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
         try {
             // Mandate the child class to create and send the request (which is specific to each implementation)
             StringResponse response = this.createGetCredentialRequest(paymentRequest, refId);
-            if (response != null && (response.getCode() == HTTP_OK || response.getCode() == HTTP_CREATED) && response.getContent() != null) {
+            if (response != null && response.getContent() != null) {
                 // Mandate the child class to process the request when it's OK (which is specific to each implementation)
-                return this.processDirectResponse(paymentRequest, response);
-            } else if (response != null && response.getCode() != HTTP_OK) {
-                LOGGER.error("An HTTP error occurred while sending the request: " + response.getContent());
-                return buildPaymentResponseFailure(Integer.toString(response.getCode()), FailureCause.COMMUNICATION_ERROR);
+                return this.processResponse(response);
             } else {
                 LOGGER.error("The HTTP response or its body is null and should not be");
-                return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
+                return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.COMMUNICATION_ERROR);
             }
 
         } catch (Exception e) {

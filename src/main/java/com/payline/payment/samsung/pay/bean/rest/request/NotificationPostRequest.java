@@ -42,13 +42,10 @@ public class NotificationPostRequest extends AbstractJsonRequest {
             this.checkInputRequest(paylineRequest);
 
             // Instantiate the CreateTransactionPostRequest from input request
-            NotificationPostRequest request = new NotificationPostRequest(
+            return new NotificationPostRequest(
                     this.getPaymentFromPaymentRequest(paylineRequest),
                     System.currentTimeMillis()
             );
-
-            return request;
-
         }
 
         /**
