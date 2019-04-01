@@ -6,13 +6,17 @@ import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.payment.samsung.pay.utils.Utils;
 import com.payline.payment.samsung.pay.utils.http.SamsungPayHttpClient;
 import com.payline.payment.samsung.pay.utils.http.StringResponse;
+import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.bean.payment.response.buyerpaymentidentifier.impl.Email;
+import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFailure;
+import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFormUpdated;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseSuccess;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -103,7 +107,32 @@ public class PaymentServiceImplTest {
 
         PaymentResponse paymentResponse = service.processResponse(response);
         Assert.assertNotNull(paymentResponse);
+        Assert.assertEquals(PaymentResponseFormUpdated.class, paymentResponse.getClass());
+
     }
+
+    @Test
+    public void processResponseFail() throws MalformedURLException {
+        String jsonContent = "{" +
+                "   'resultCode': 'OPM1N1001'," +
+                "   'resultMessage': 'FAIL'," +
+                "   'id': '000'," +
+                "   'href': 'http://a.simple.url'," +
+                "   'encInfo': { 'mod': '111', 'exp': '222', 'keyId': '333' }" +
+                "}";
+        StringResponse response = new StringResponse();
+        response.setCode(400);
+        response.setContent(jsonContent);
+
+        service.setPaymentRequest(Utils.createCompletePaymentBuilder().build());
+
+        PaymentResponse paymentResponse = service.processResponse(response);
+        Assert.assertEquals(PaymentResponseFailure.class, paymentResponse.getClass());
+        PaymentResponseFailure responseFailure = (PaymentResponseFailure) paymentResponse;
+        Assertions.assertEquals(FailureCause.INVALID_DATA, responseFailure.getFailureCause());
+
+    }
+
 
     @Test
     public void createConnectCall() {
