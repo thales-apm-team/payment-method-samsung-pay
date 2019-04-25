@@ -7,6 +7,9 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Payment {
 
+    @SerializedName("service")
+    private Service service;
+
     @SerializedName("reference")
     private String reference;
 
@@ -37,6 +40,11 @@ public class Payment {
         this.provider   = provider;
         this.merchant   = merchant;
 
+    }
+
+    public Payment service(Service service) {
+        this.service = service;
+        return this;
     }
 
     public Payment reference(String reference) {

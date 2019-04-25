@@ -13,7 +13,7 @@ import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
 /**
  * Created by Thales on 27/08/2018.
  */
-public class PaymentFormConfigurationServiceImpl implements ThalesPaymentFormConfigurationService {
+public class PaymentFormConfigurationServiceImpl implements DefaultPaymentFormConfigurationService {
     private static final Logger LOGGER = LogManager.getLogger(PaymentFormConfigurationServiceImpl.class);
 
     private I18nService i18n;
