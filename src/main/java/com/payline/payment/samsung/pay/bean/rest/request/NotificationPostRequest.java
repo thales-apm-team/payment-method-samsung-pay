@@ -2,7 +2,9 @@ package com.payline.payment.samsung.pay.bean.rest.request;
 
 import com.google.gson.annotations.SerializedName;
 import com.payline.payment.samsung.pay.bean.rest.request.nesteed.Payment;
+import com.payline.payment.samsung.pay.bean.rest.request.nesteed.Service;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
+import com.payline.payment.samsung.pay.utils.SamsungPayConstants;
 import com.payline.payment.samsung.pay.utils.type.PaymentStatusEnum;
 import com.payline.pmapi.bean.payment.request.NotifyTransactionStatusRequest;
 
@@ -40,13 +42,10 @@ public class NotificationPostRequest extends AbstractJsonRequest {
             this.checkInputRequest(paylineRequest);
 
             // Instantiate the CreateTransactionPostRequest from input request
-            NotificationPostRequest request = new NotificationPostRequest(
+            return new NotificationPostRequest(
                     this.getPaymentFromPaymentRequest(paylineRequest),
                     System.currentTimeMillis()
             );
-
-            return request;
-
         }
 
         /**
@@ -86,6 +85,7 @@ public class NotificationPostRequest extends AbstractJsonRequest {
          */
         private Payment getPaymentFromPaymentRequest(NotifyTransactionStatusRequest paylineRequest) {
             return new Payment()
+                    .service(new Service(paylineRequest.getPartnerConfiguration().getProperty(SamsungPayConstants.PARTNER_CONFIG_SERVICE_ID)))
                     .reference(
                             paylineRequest
                                 .getPartnerTransactionId()
@@ -110,6 +110,9 @@ public class NotificationPostRequest extends AbstractJsonRequest {
             }
             if (NotifyTransactionStatusRequest.TransactionStatus.FAIL.equals(status)) {
                 paymentStatus = PaymentStatusEnum.ERRED.name();
+            }
+            if (NotifyTransactionStatusRequest.TransactionStatus.CANCELLED.equals(status)) {
+                paymentStatus = PaymentStatusEnum.CANCELLED.name();
             }
             return paymentStatus;
         }
