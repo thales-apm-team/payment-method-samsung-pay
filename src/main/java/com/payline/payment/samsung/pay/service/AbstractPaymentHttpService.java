@@ -151,7 +151,7 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
     public StringResponse createGetCredentialRequest(PaymentRequest paymentRequest, String referenceId) throws URISyntaxException, ExternalCommunicationException {
 
         // Create PaymentCredential request form Payline request
-        PaymentCredentialGetRequest paymentCredentialGetRequest = new PaymentCredentialGetRequest(referenceId, paymentRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG_SERVICE_ID));
+        PaymentCredentialGetRequest paymentCredentialGetRequest = new PaymentCredentialGetRequest(referenceId, paymentRequest.getPartnerConfiguration().getProperty(paymentRequest.getEnvironment().isSandbox()? PARTNER_SERVICE_ID_SANDBOX: PARTNER_SERVICE_ID_PROD));
 
         // Send PaymentCredential request
         String hostKey = paymentRequest.getEnvironment().isSandbox() ? PARTNER_URL_API_SANDBOX : PARTNER_URL_API_PROD;

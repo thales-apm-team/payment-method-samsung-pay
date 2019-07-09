@@ -104,7 +104,8 @@ public class SamsungPayConstants {
     public static final String DELIMS = "[.]";
 
     // partnerConfiguration data keys
-    public static final String PARTNER_CONFIG_SERVICE_ID = "serviceId";
+    public static final String PARTNER_SERVICE_ID_SANDBOX = "sandbox.serviceId";
+    public static final String PARTNER_SERVICE_ID_PROD = "prod.serviceId";
     public static final String PARTNER_PRIVATE_KEY_SANDBOX = "sandbox.privateKey";
     public static final String PARTNER_PRIVATE_KEY_PROD = "prod.privateKey";
     public static final String PARTNER_URL_API_SANDBOX = "sandbox.url.api";
