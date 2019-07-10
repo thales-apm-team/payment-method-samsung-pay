@@ -4,12 +4,10 @@ import com.google.gson.annotations.SerializedName;
 import com.payline.payment.samsung.pay.bean.rest.request.nesteed.Payment;
 import com.payline.payment.samsung.pay.bean.rest.request.nesteed.Service;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
-import com.payline.payment.samsung.pay.utils.SamsungPayConstants;
 import com.payline.payment.samsung.pay.utils.type.PaymentStatusEnum;
 import com.payline.pmapi.bean.payment.request.NotifyTransactionStatusRequest;
 
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PARTNER_CONFIG_SERVICE_ID;
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PAYMENT_PROVIDER;
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
 import static com.payline.payment.samsung.pay.utils.SamsungPayStringUtils.isEmpty;
 
 /**
@@ -71,7 +69,7 @@ public class NotificationPostRequest extends AbstractJsonRequest {
             if ( paylineRequest.getPartnerConfiguration() == null ) {
                 throw new InvalidRequestException( "PartnerConfiguration properties object must not be null" );
             }
-            if ( isEmpty( paylineRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG_SERVICE_ID) ) ) {
+            if ( isEmpty( paylineRequest.getPartnerConfiguration().getProperty(paylineRequest.getEnvironment().isSandbox()? PARTNER_SERVICE_ID_SANDBOX: PARTNER_SERVICE_ID_PROD) ) ) {
                 throw new InvalidRequestException( "Missing PartnerConfiguration property: service id" );
             }
 
@@ -85,7 +83,7 @@ public class NotificationPostRequest extends AbstractJsonRequest {
          */
         private Payment getPaymentFromPaymentRequest(NotifyTransactionStatusRequest paylineRequest) {
             return new Payment()
-                    .service(new Service(paylineRequest.getPartnerConfiguration().getProperty(SamsungPayConstants.PARTNER_CONFIG_SERVICE_ID)))
+                    .service(new Service(paylineRequest.getPartnerConfiguration().getProperty(paylineRequest.getEnvironment().isSandbox()? PARTNER_SERVICE_ID_SANDBOX: PARTNER_SERVICE_ID_PROD)))
                     .reference(
                             paylineRequest
                                 .getPartnerTransactionId()

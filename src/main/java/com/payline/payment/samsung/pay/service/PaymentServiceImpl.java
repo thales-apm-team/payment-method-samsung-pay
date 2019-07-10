@@ -15,8 +15,6 @@ import com.payline.pmapi.bean.paymentform.bean.form.partnerwidget.*;
 import com.payline.pmapi.bean.paymentform.response.configuration.PaymentFormConfigurationResponse;
 import com.payline.pmapi.bean.paymentform.response.configuration.impl.PaymentFormConfigurationResponseSpecific;
 import com.payline.pmapi.service.PaymentService;
-import com.payline.pmapi.logger.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -137,7 +135,7 @@ public class PaymentServiceImpl extends AbstractPaymentHttpService<PaymentReques
 
         return functionToCall.replace("transactionId", response.getId())
                 .replace("href", response.getHref())
-                .replace("serviceId", request.getPartnerConfiguration().getProperty(PARTNER_CONFIG_SERVICE_ID))
+                .replace("serviceId", request.getPartnerConfiguration().getProperty(request.getEnvironment().isSandbox()? PARTNER_SERVICE_ID_SANDBOX: PARTNER_SERVICE_ID_PROD))
                 .replace("callbackUrl", request.getEnvironment().getRedirectionReturnURL())
                 .replace("cancelUrl", request.getEnvironment().getRedirectionCancelURL())
                 .replace("countryCode", request.getLocale().getCountry())

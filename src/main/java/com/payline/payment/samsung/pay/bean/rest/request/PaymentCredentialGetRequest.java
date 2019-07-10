@@ -3,7 +3,8 @@ package com.payline.payment.samsung.pay.bean.rest.request;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
 
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PARTNER_CONFIG_SERVICE_ID;
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PARTNER_SERVICE_ID_PROD;
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PARTNER_SERVICE_ID_SANDBOX;
 import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.REF_ID;
 import static com.payline.payment.samsung.pay.utils.SamsungPayStringUtils.isEmpty;
 
@@ -42,7 +43,7 @@ public class PaymentCredentialGetRequest {
             // Instantiate the PaymentCredentialGetRequest from input request
             return new PaymentCredentialGetRequest(
                     paylineRequest.getHttpRequestParametersMap().get(REF_ID)[0],
-                    paylineRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG_SERVICE_ID)
+                    paylineRequest.getPartnerConfiguration().getProperty(paylineRequest.getEnvironment().isSandbox()? PARTNER_SERVICE_ID_SANDBOX: PARTNER_SERVICE_ID_PROD)
             );
         }
 
@@ -66,7 +67,7 @@ public class PaymentCredentialGetRequest {
             if (paymentRequest.getPartnerConfiguration() == null) {
                 throw new InvalidRequestException("PartnerConfiguration properties object must not be null");
             }
-            if ( isEmpty( paymentRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG_SERVICE_ID))) {
+            if ( isEmpty( paymentRequest.getPartnerConfiguration().getProperty(paymentRequest.getEnvironment().isSandbox()? PARTNER_SERVICE_ID_SANDBOX: PARTNER_SERVICE_ID_PROD))) {
                 throw new InvalidRequestException("Missing PartnerConfiguration property: service id");
             }
 

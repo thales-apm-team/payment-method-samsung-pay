@@ -5,14 +5,15 @@ import com.payline.payment.samsung.pay.bean.rest.response.CreateTransactionPostR
 import com.payline.payment.samsung.pay.exception.ExternalCommunicationException;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.payment.samsung.pay.utils.http.StringResponse;
+import com.payline.payment.samsung.pay.utils.type.WSRequestResultEnum;
 import com.payline.pmapi.bean.configuration.AvailableNetwork;
 import com.payline.pmapi.bean.configuration.ReleaseInformation;
 import com.payline.pmapi.bean.configuration.parameter.AbstractParameter;
 import com.payline.pmapi.bean.configuration.parameter.impl.InputParameter;
 import com.payline.pmapi.bean.configuration.parameter.impl.NetworkListBoxParameter;
 import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
-import com.payline.pmapi.service.ConfigurationService;
 import com.payline.pmapi.logger.LogManager;
+import com.payline.pmapi.service.ConfigurationService;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
@@ -164,7 +165,14 @@ public class ConfigurationServiceImpl extends AbstractConfigurationHttpService i
         CreateTransactionPostResponse createTransactionPostResponse = new CreateTransactionPostResponse.Builder().fromJson(response.getContent());
 
         if (!createTransactionPostResponse.isResultOk()) {
-            errors.put(GENERIC_ERROR, createTransactionPostResponse.getResultMessage());
+            LOGGER.info(response.getContent());
+            WSRequestResultEnum resultEnum = WSRequestResultEnum.fromResultCodeValue(createTransactionPostResponse.getResultCode());
+            if (resultEnum != null) {
+                // unknown error
+                errors.put(GENERIC_ERROR, resultEnum.getDescription());
+            }else{
+                errors.put(GENERIC_ERROR, createTransactionPostResponse.getResultMessage());
+            }
         }
         return errors;
     }
