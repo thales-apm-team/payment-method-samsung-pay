@@ -13,6 +13,7 @@ import com.payline.payment.samsung.pay.utils.http.StringResponse;
 import com.payline.payment.samsung.pay.utils.type.WSRequestResultEnum;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
+import com.payline.pmapi.bean.payment.response.PaymentData3DS;
 import com.payline.pmapi.bean.payment.response.PaymentModeCard;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.bean.payment.response.buyerpaymentidentifier.Card;
@@ -188,8 +189,15 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
                         .withExpirationDate(YearMonth.of(decryptedCard.getExpiryYear(), decryptedCard.getExpiryMonth()))
                         .build();
 
+                PaymentData3DS paymentData3DS = PaymentData3DS.Data3DSBuilder.aData3DS()
+                        .withEci(decryptedCard.getEciIndicator())
+                        .withCavv(decryptedCard.getCryptogram())
+//                        .withCavvAlgorithm()
+                        .build();
+
                 PaymentModeCard paymentModeCard = PaymentModeCard.PaymentModeCardBuilder.aPaymentModeCard()
                         .withCard(card)
+                        .withPaymentDatas3DS(paymentData3DS)
                         .build();
 
                 return PaymentResponseDoPayment.PaymentResponseDoPaymentBuilder.aPaymentResponseDoPayment()
