@@ -76,7 +76,15 @@ public class PaymentWithRedirectionServiceImplTest {
         Assert.assertNotNull(paymentResponse);
         Assert.assertEquals(PaymentResponseDoPayment.class, paymentResponse.getClass());
         PaymentResponseDoPayment responseDoPayment  = (PaymentResponseDoPayment) paymentResponse;
-        Assert.assertEquals("",((PaymentModeCard) responseDoPayment.getPaymentMode()).getCard().getHolder());
+        Assert.assertNotNull(responseDoPayment);
+        Assert.assertNotNull(responseDoPayment.getPaymentMode());
+
+        PaymentModeCard paymentModeCard = (PaymentModeCard) responseDoPayment.getPaymentMode();
+        Assert.assertNotNull(paymentModeCard.getCard());
+        Assert.assertNotNull(paymentModeCard.getPaymentData3DS());
+        Assert.assertEquals("07",paymentModeCard.getPaymentData3DS().getEci());
+        Assert.assertEquals("AgAAAAAABQrqUtnic6MLQAAAAAA=",paymentModeCard.getPaymentData3DS().getCavv());
+        Assert.assertEquals("",paymentModeCard.getCard().getHolder());
     }
 
     @Test
