@@ -192,7 +192,6 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
                 PaymentData3DS paymentData3DS = PaymentData3DS.Data3DSBuilder.aData3DS()
                         .withEci(decryptedCard.getEciIndicator())
                         .withCavv(decryptedCard.getCryptogram())
-//                        .withCavvAlgorithm()
                         .build();
 
                 PaymentModeCard paymentModeCard = PaymentModeCard.PaymentModeCardBuilder.aPaymentModeCard()
