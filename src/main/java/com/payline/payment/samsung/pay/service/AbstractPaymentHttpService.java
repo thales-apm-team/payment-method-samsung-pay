@@ -28,6 +28,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.YearMonth;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
 
@@ -189,6 +190,8 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
                         .withExpirationDate(YearMonth.of(decryptedCard.getExpiryYear(), decryptedCard.getExpiryMonth()))
                         .build();
 
+                LOGGER.debug("Valeur de l'eci {}", decryptedCard::getEciIndicator);
+                LOGGER.debug("Valeur du cavv {}", decryptedCard::getCryptogram);
                 PaymentData3DS paymentData3DS = PaymentData3DS.Data3DSBuilder.aData3DS()
                         .withEci(decryptedCard.getEciIndicator())
                         .withCavv(decryptedCard.getCryptogram())
