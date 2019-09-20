@@ -168,7 +168,7 @@ public class Utils {
             e.printStackTrace();
         }
         Map<String, String> partnerConfigMap = new HashMap<>();
-        partnerConfigMap.put(SamsungPayConstants.PARTNER_CONFIG_SERVICE_ID, SERVICE_ID);
+        partnerConfigMap.put(SamsungPayConstants.PARTNER_SERVICE_ID_SANDBOX, SERVICE_ID);
         partnerConfigMap.put(SamsungPayConstants.PARTNER_URL_API_SANDBOX, SANDBOX_URL_API);
         partnerConfigMap.put(SamsungPayConstants.PARTNER_URL_JS_SANDBOX, SANDBOX_URL_JS);
 

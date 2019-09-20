@@ -63,7 +63,6 @@ public class SamsungPayConstants {
 
     public static final String SERVICE_ID = "serviceId";
 
-    public static final int HTTP_OK = 200;
     public static final int HTTP_CREATED = 201;
 
     public static final String HTTP_CODE_200 = "200";
@@ -104,7 +103,8 @@ public class SamsungPayConstants {
     public static final String DELIMS = "[.]";
 
     // partnerConfiguration data keys
-    public static final String PARTNER_CONFIG_SERVICE_ID = "serviceId";
+    public static final String PARTNER_SERVICE_ID_SANDBOX = "sandbox.serviceId";
+    public static final String PARTNER_SERVICE_ID_PROD = "prod.serviceId";
     public static final String PARTNER_PRIVATE_KEY_SANDBOX = "sandbox.privateKey";
     public static final String PARTNER_PRIVATE_KEY_PROD = "prod.privateKey";
     public static final String PARTNER_URL_API_SANDBOX = "sandbox.url.api";

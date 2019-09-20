@@ -13,6 +13,7 @@ import com.payline.payment.samsung.pay.utils.http.StringResponse;
 import com.payline.payment.samsung.pay.utils.type.WSRequestResultEnum;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
+import com.payline.pmapi.bean.payment.response.PaymentData3DS;
 import com.payline.pmapi.bean.payment.response.PaymentModeCard;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.bean.payment.response.buyerpaymentidentifier.Card;
@@ -151,7 +152,7 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
     public StringResponse createGetCredentialRequest(PaymentRequest paymentRequest, String referenceId) throws URISyntaxException, ExternalCommunicationException {
 
         // Create PaymentCredential request form Payline request
-        PaymentCredentialGetRequest paymentCredentialGetRequest = new PaymentCredentialGetRequest(referenceId, paymentRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG_SERVICE_ID));
+        PaymentCredentialGetRequest paymentCredentialGetRequest = new PaymentCredentialGetRequest(referenceId, paymentRequest.getPartnerConfiguration().getProperty(paymentRequest.getEnvironment().isSandbox()? PARTNER_SERVICE_ID_SANDBOX: PARTNER_SERVICE_ID_PROD));
 
         // Send PaymentCredential request
         String hostKey = paymentRequest.getEnvironment().isSandbox() ? PARTNER_URL_API_SANDBOX : PARTNER_URL_API_PROD;
@@ -188,8 +189,14 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
                         .withExpirationDate(YearMonth.of(decryptedCard.getExpiryYear(), decryptedCard.getExpiryMonth()))
                         .build();
 
+                PaymentData3DS paymentData3DS = PaymentData3DS.Data3DSBuilder.aData3DS()
+                        .withEci(decryptedCard.getEciIndicator())
+                        .withCavv(decryptedCard.getCryptogram())
+                        .build();
+
                 PaymentModeCard paymentModeCard = PaymentModeCard.PaymentModeCardBuilder.aPaymentModeCard()
                         .withCard(card)
+                        .withPaymentDatas3DS(paymentData3DS)
                         .build();
 
                 return PaymentResponseDoPayment.PaymentResponseDoPaymentBuilder.aPaymentResponseDoPayment()

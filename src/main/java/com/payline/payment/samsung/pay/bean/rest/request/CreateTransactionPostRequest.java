@@ -114,7 +114,8 @@ public class CreateTransactionPostRequest extends AbstractJsonRequest {
             if (paylineRequest.getPartnerConfiguration() == null) {
                 throw new InvalidRequestException("PartnerConfiguration properties object must not be null");
             }
-            if (isEmpty(paylineRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG_SERVICE_ID))) {
+            String serviceKey = paylineEnvironment.isSandbox()? PARTNER_SERVICE_ID_SANDBOX: PARTNER_SERVICE_ID_PROD;
+            if (isEmpty(paylineRequest.getPartnerConfiguration().getProperty(serviceKey))) {
                 throw new InvalidRequestException("Missing PartnerConfiguration property: service id");
             }
 
@@ -138,7 +139,8 @@ public class CreateTransactionPostRequest extends AbstractJsonRequest {
             if (paylineRequest.getPartnerConfiguration() == null) {
                 throw new InvalidRequestException("PartnerConfiguration properties object must not be null");
             }
-            if (isEmpty(paylineRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG_SERVICE_ID))) {
+            String serviceKey = paylineRequest.getEnvironment().isSandbox()? PARTNER_SERVICE_ID_SANDBOX: PARTNER_SERVICE_ID_PROD;
+            if (isEmpty(paylineRequest.getPartnerConfiguration().getProperty(serviceKey))) {
                 throw new InvalidRequestException("Missing PartnerConfiguration property: service id");
             }
         }
@@ -158,7 +160,7 @@ public class CreateTransactionPostRequest extends AbstractJsonRequest {
                             new Service().id(
                                     paylineRequest
                                             .getPartnerConfiguration()
-                                            .getProperty(PARTNER_CONFIG_SERVICE_ID)
+                                            .getProperty(paylineRequest.getEnvironment().isSandbox()? PARTNER_SERVICE_ID_SANDBOX: PARTNER_SERVICE_ID_PROD)
                             )
                     )
                     .orderNumber(
@@ -210,7 +212,7 @@ public class CreateTransactionPostRequest extends AbstractJsonRequest {
                             .type(PAYMENT_DETAILS_PROTOCOL_TYPE)
                             .version(PAYMENT_DETAILS_PROTOCOL_VERSION))
                     .service(new Service()
-                            .id(paylineRequest.getPartnerConfiguration().getProperty(PARTNER_CONFIG_SERVICE_ID))
+                            .id(paylineRequest.getPartnerConfiguration().getProperty(paylineRequest.getEnvironment().isSandbox()? PARTNER_SERVICE_ID_SANDBOX: PARTNER_SERVICE_ID_PROD))
                     );
         }
 
