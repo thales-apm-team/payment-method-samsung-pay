@@ -188,6 +188,7 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
                         .withPan(decryptedCard.getTokenPan())
                         .withHolder("")
                         .withExpirationDate(YearMonth.of(decryptedCard.getExpiryYear(), decryptedCard.getExpiryMonth()))
+                        .withPanType(Card.PanType.TOKEN_PAN)
                         .build();
 
                 LOGGER.debug("Valeur de l'eci {}", decryptedCard::getEciIndicator);
