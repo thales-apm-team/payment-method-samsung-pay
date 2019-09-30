@@ -42,7 +42,7 @@ configurations {
 }
 
 ext {
-    paymentMethodApiVersion = '1.5-CBR-SNAPSHOT'
+    paymentMethodApiVersion = '1.5-SNAPSHOT'
     paymentMethodIntegrationVersion = '1.2'
     releaseDirectoryPath = 'D:/build'
 }
