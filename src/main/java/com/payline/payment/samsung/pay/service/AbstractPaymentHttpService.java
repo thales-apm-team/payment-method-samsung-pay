@@ -1,5 +1,7 @@
 package com.payline.payment.samsung.pay.service;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.payline.payment.samsung.pay.bean.rest.request.PaymentCredentialGetRequest;
 import com.payline.payment.samsung.pay.bean.rest.response.AbstractJsonResponse;
 import com.payline.payment.samsung.pay.bean.rest.response.PaymentCredentialGetResponse;
@@ -20,6 +22,7 @@ import com.payline.pmapi.bean.payment.response.buyerpaymentidentifier.Card;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseDoPayment;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFailure;
 import com.payline.pmapi.logger.LogManager;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
@@ -28,9 +31,16 @@ import java.security.NoSuchAlgorithmException;
 import java.time.YearMonth;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
-import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.*;
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.DEFAULT_ERROR_CODE;
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.GET_PAYMENT_CREDENTIALS_PATH;
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PARTNER_PRIVATE_KEY_PROD;
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PARTNER_PRIVATE_KEY_SANDBOX;
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PARTNER_SERVICE_ID_PROD;
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PARTNER_SERVICE_ID_SANDBOX;
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PARTNER_URL_API_PROD;
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.PARTNER_URL_API_SANDBOX;
+import static com.payline.payment.samsung.pay.utils.SamsungPayConstants.SERVICE_ID;
 
 /**
  * This abstract service handles the common issues encountered when sending, receiving and processing a {@link PaymentRequest} (or subclass)
@@ -182,6 +192,12 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
 
                 // Decrypt 3DS data to retrieve Payment Mode info
                 String cardData = jweDecrypt.getDecryptedData(cipheredData, privateKey);
+                LOGGER.info(() -> {
+                    final JsonParser jsonParser = new JsonParser();
+                    final JsonObject jsonObject = jsonParser.parse(cardData).getAsJsonObject();
+                    jsonObject.remove("tokenPAN");
+                    return jsonObject.toString();
+                });
                 DecryptedCard decryptedCard = new DecryptedCard.Builder().fromJson(cardData);
 
                 Card card = Card.CardBuilder.aCard()
@@ -191,11 +207,11 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
                         .withPanType(Card.PanType.TOKEN_PAN)
                         .build();
 
-                LOGGER.debug("Valeur de l'eci {}", decryptedCard::getEciIndicator);
-                LOGGER.debug("Valeur du cavv {}", decryptedCard::getCryptogram);
+                final String cryptogram = decryptedCard.getCryptogram();
+                final String decodedCavv = new String(Base64.decodeBase64(cryptogram));
                 PaymentData3DS paymentData3DS = PaymentData3DS.Data3DSBuilder.aData3DS()
                         .withEci(decryptedCard.getEciIndicator())
-                        .withCavv(decryptedCard.getCryptogram())
+                        .withCavv(decodedCavv)
                         .build();
 
                 PaymentModeCard paymentModeCard = PaymentModeCard.PaymentModeCardBuilder.aPaymentModeCard()
