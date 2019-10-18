@@ -22,7 +22,6 @@ import com.payline.pmapi.bean.payment.response.buyerpaymentidentifier.Card;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseDoPayment;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFailure;
 import com.payline.pmapi.logger.LogManager;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
@@ -207,11 +206,9 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
                         .withPanType(Card.PanType.TOKEN_PAN)
                         .build();
 
-                final String cryptogram = decryptedCard.getCryptogram();
-                final String decodedCavv = new String(Base64.decodeBase64(cryptogram));
                 PaymentData3DS paymentData3DS = PaymentData3DS.Data3DSBuilder.aData3DS()
                         .withEci(decryptedCard.getEciIndicator())
-                        .withCavv(decodedCavv)
+                        .withCavv(decryptedCard.getCryptogram())
                         .build();
 
                 PaymentModeCard paymentModeCard = PaymentModeCard.PaymentModeCardBuilder.aPaymentModeCard()
