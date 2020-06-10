@@ -10,6 +10,7 @@ import com.payline.payment.samsung.pay.exception.DecryptException;
 import com.payline.payment.samsung.pay.exception.ExternalCommunicationException;
 import com.payline.payment.samsung.pay.exception.InvalidRequestException;
 import com.payline.payment.samsung.pay.utils.JweDecrypt;
+import com.payline.payment.samsung.pay.utils.SamsungPayStringUtils;
 import com.payline.payment.samsung.pay.utils.http.SamsungPayHttpClient;
 import com.payline.payment.samsung.pay.utils.http.StringResponse;
 import com.payline.payment.samsung.pay.utils.type.WSRequestResultEnum;
@@ -206,8 +207,14 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
                         .withPanType(Card.PanType.TOKEN_PAN)
                         .build();
 
+                // set the right value to the ECI (see PAYLAPMEXT243)
+                String eci = decryptedCard.getEciIndicator();
+                if (SamsungPayStringUtils.isEmpty(eci) || Integer.parseInt(eci) == 5){
+                    eci = "02";
+                }
+
                 PaymentData3DS paymentData3DS = PaymentData3DS.Data3DSBuilder.aData3DS()
-                        .withEci(decryptedCard.getEciIndicator())
+                        .withEci(eci)
                         .withCavv(decryptedCard.getCryptogram())
                         .build();
 
