@@ -42,8 +42,8 @@ configurations {
 }
 
 ext {
-    paymentMethodApiVersion = '1.4.1'
-    paymentMethodIntegrationVersion = '1.2'
+    paymentMethodApiVersion = '1.7'
+    paymentMethodIntegrationVersion = '1.4'
     releaseDirectoryPath = 'D:/build'
 }
 
